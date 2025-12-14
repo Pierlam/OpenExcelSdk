@@ -1,0 +1,48 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36804.6 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1-App", "1-App", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2-Tests", "2-Tests", "{B7B61942-D953-4D55-98BC-8A1ED2C0F8B2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3-Dev", "3-Dev", "{399BE74F-7472-4A27-B696-9D32871401FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevApp", "3-Dev\DevApp\DevApp.csproj", "{F9E91692-0D9C-4DB8-B5A4-B3FB94B523CF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenExcelSdk", "1-App\OpenExcelSdk\OpenExcelSdk.csproj", "{D48C3DA6-BB06-4F0A-9562-583668AC74BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenExcelSdk.Tests", "2-Tests\OpenExcelSdk.Tests\OpenExcelSdk.Tests.csproj", "{1D95F40C-A531-4D82-BEA1-EA28B3830B80}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F9E91692-0D9C-4DB8-B5A4-B3FB94B523CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9E91692-0D9C-4DB8-B5A4-B3FB94B523CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9E91692-0D9C-4DB8-B5A4-B3FB94B523CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9E91692-0D9C-4DB8-B5A4-B3FB94B523CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D48C3DA6-BB06-4F0A-9562-583668AC74BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D48C3DA6-BB06-4F0A-9562-583668AC74BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D48C3DA6-BB06-4F0A-9562-583668AC74BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D48C3DA6-BB06-4F0A-9562-583668AC74BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D95F40C-A531-4D82-BEA1-EA28B3830B80}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D95F40C-A531-4D82-BEA1-EA28B3830B80}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D95F40C-A531-4D82-BEA1-EA28B3830B80}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D95F40C-A531-4D82-BEA1-EA28B3830B80}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F9E91692-0D9C-4DB8-B5A4-B3FB94B523CF} = {399BE74F-7472-4A27-B696-9D32871401FD}
+		{D48C3DA6-BB06-4F0A-9562-583668AC74BB} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{1D95F40C-A531-4D82-BEA1-EA28B3830B80} = {B7B61942-D953-4D55-98BC-8A1ED2C0F8B2}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {07CB5B03-1AE3-4D48-8961-6B5CFE9B4F03}
+	EndGlobalSection
+EndGlobal
