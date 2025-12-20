@@ -1,7 +1,14 @@
 ﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Drawing.Charts;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using DocumentFormat.OpenXml.VariantTypes;
 using OpenExcelSdk.System;
+using System;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using NumberingFormat = DocumentFormat.OpenXml.Spreadsheet.NumberingFormat;
+using Text = DocumentFormat.OpenXml.Spreadsheet.Text;
 
 namespace OpenExcelSdk;
 
@@ -10,6 +17,8 @@ namespace OpenExcelSdk;
 /// </summary>
 public class ExcelProcessor
 {
+    StyleMgr _styleMgr = new StyleMgr();
+
     #region Open/Close Create Excel file
     public bool Open(string fileName, out ExcelFile excelFile, out ExcelError error)
     {
@@ -26,7 +35,7 @@ public class ExcelProcessor
         }
         catch (Exception ex)
         {
-            error = new ExcelError(ExcelErrorCode.UnableCreateFile, ex);
+            error = new ExcelError(ExcelErrorCode.UnableOpenFile, ex);
             return false;
         }
     }
@@ -80,7 +89,7 @@ public class ExcelProcessor
             return false;
         }
 
-        if(string.IsNullOrWhiteSpace(sheetName))
+        if (string.IsNullOrWhiteSpace(sheetName))
         {
             error = new ExcelError(ExcelErrorCode.ValueNull);
             return false;
@@ -120,6 +129,19 @@ public class ExcelProcessor
     #endregion
 
     #region get sheet, row ,cell
+
+    /// <summary>
+    /// Get the first sheet of the excel file.
+    /// </summary>
+    /// <param name="excelFile"></param>
+    /// <param name="index"></param>
+    /// <param name="excelSheet"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool GetFirstSheet(ExcelFile excelFile, int index, out ExcelSheet excelSheet, out ExcelError error)
+    {
+        return GetSheetAt(excelFile, 0, out excelSheet, out error);
+    }
 
     /// <summary>
     /// Get the sheet of the excel file by index base0.
@@ -245,164 +267,200 @@ public class ExcelProcessor
             excelCell = new ExcelCell(excelSheet, cell);
             return true;
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
             excelError = new ExcelError(ExcelErrorCode.UnableGetCell, ex);
             return false;
         }
-
     }
 
     /// <summary>
-    /// Get the type of cell value.
-    /// </summary>
-    /// <param name="excelSheet"></param>
-    /// <param name="excelCell"></param>
-    /// <returns></returns>
-    public ExcelCellValueType GetCellValueType(ExcelSheet excelSheet, ExcelCell excelCell)
-    {
-        if (excelCell.Cell == null) return ExcelCellValueType.Undefined;
-
-        //--cell datatype is defined?
-        if (excelCell.Cell.DataType is not null)
-        {
-            if (excelCell.Cell.DataType.Value == CellValues.String) return ExcelCellValueType.String;
-            if (excelCell.Cell.DataType.Value == CellValues.InlineString) return ExcelCellValueType.String;
-            if (excelCell.Cell.DataType.Value == CellValues.SharedString) return ExcelCellValueType.String;
-
-            if (excelCell.Cell.DataType.Value == CellValues.Boolean) return ExcelCellValueType.Boolean;
-        }
-
-        //--cell style is defined?
-        if (IsCellValueTypeDate(excelSheet, excelCell, out ExcelCellValueType valueType))
-            return valueType;
-
-        string value = excelCell.Cell.InnerText;
-
-        // cell value is blank?
-        if (value is null)return ExcelCellValueType.Undefined;
-
-        // is it an int?
-        bool res= int.TryParse(value, out int  valInt);
-        if (res) return ExcelCellValueType.Integer;
-
-        // is it a double?  cultureInfo prb: replace . by ,
-        value = value.Replace('.', ',');
-        res = double.TryParse(value, out double valDouble);
-        if (res) return ExcelCellValueType.Double;
-
-        // not a string, not an number, the cell value is blank
-        return ExcelCellValueType.Undefined;
-    }
-
-    /// <summary>
-    /// Get the value as a string.
+    /// Get the value of the cell as a string.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="cell"></param>
     /// <param name="stringValue"></param>
     /// <param name="error"></param>
     /// <returns></returns>
-    public bool GetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, out string stringValue, out ExcelError error)
+    public string GetCellValueAsString(ExcelSheet excelSheet, ExcelCell excelCell)
     {
-        error = null;
+        bool res = GetCellTypeAndValue(excelSheet, excelCell, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError);
+        if(!res)
+            return string.Empty;
 
-        if(excelCell.Cell.DataType==null)
+        if (excelCellValueMulti.CellType== ExcelCellType.String) 
+            return excelCellValueMulti.StringValue;
+
+        if (excelCellValueMulti.CellType == ExcelCellType.Integer)
+            return excelCellValueMulti.IntValue.ToString();
+
+        if (excelCellValueMulti.CellType == ExcelCellType.Double)
+            return excelCellValueMulti.DoubleValue.ToString();
+
+        if (excelCellValueMulti.CellType == ExcelCellType.DateTime)
+            return excelCellValueMulti.DateTimeValue.ToString();
+
+        if (excelCellValueMulti.CellType == ExcelCellType.DateOnly)
+            return excelCellValueMulti.DateOnlyValue.ToString();
+
+        if (excelCellValueMulti.CellType == ExcelCellType.TimeOnly)
+            return excelCellValueMulti.TimeOnlyValue.ToString();
+        return string.Empty;
+    }
+
+    public double GetCellValueAsDouble(ExcelSheet excelSheet, ExcelCell excelCell)
+    {
+        bool res = GetCellTypeAndValue(excelSheet, excelCell, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError);
+        if (!res)
+            return 0;
+
+        if (excelCellValueMulti.CellType == ExcelCellType.String)
+            return 0;
+
+        if (excelCellValueMulti.CellType == ExcelCellType.Integer)
+            return excelCellValueMulti.IntValue.Value;
+
+        if (excelCellValueMulti.CellType == ExcelCellType.Double)
+            return excelCellValueMulti.DoubleValue.Value;
+
+        if (excelCellValueMulti.CellType == ExcelCellType.DateTime)
+            return excelCellValueMulti.DateTimeValue.Value.ToOADate();
+
+        if (excelCellValueMulti.CellType == ExcelCellType.DateOnly)
+            // not possible, so return zero
+            return 0;
+
+        if (excelCellValueMulti.CellType == ExcelCellType.TimeOnly)
+            // not possible, so return zero
+            return 0;
+
+        return 0;
+    }
+
+    /// <summary>
+    /// Get the type of cell value.
+    /// GetCellTypeOfValue
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <returns></returns>
+    public ExcelCellType GetCellType(ExcelSheet excelSheet, ExcelCell excelCell)
+    {
+        bool res= GetCellTypeAndValue(excelSheet, excelCell, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError);
+        if(res)return excelCellValueMulti.CellType;
+        return ExcelCellType.Error;
+    }
+
+    /// <summary>
+    /// Geth the type, the value and the data format of cell.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="excelCellValueMulti"></param>
+    /// <param name="excelError"></param>
+    /// <returns></returns>
+    public bool GetCellTypeAndValue(ExcelSheet excelSheet, ExcelCell excelCell, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
+    {
+        excelCellValueMulti = null;
+        excelError = null;
+
+        if (excelSheet == null || excelCell == null || excelCell.Cell == null)
         {
-            stringValue = excelCell.Cell.CellValue.InnerText;
+            excelError = new ExcelError(ExcelErrorCode.ObjectNull);
+            return false;
+        }
+
+        bool isTheCase;
+
+        //--cell datatype is defined?
+        if (!GetCellStringValue(excelSheet, excelCell, out isTheCase, out excelCellValueMulti, out excelError))
+            return false;
+        if (isTheCase) return true;
+
+        // get the number format id
+        if (!_styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numFmtId))
+        {
+            excelError = new ExcelError(ExcelErrorCode.TypeWrong);
+            return false;
+        }
+
+        string value = excelCell.Cell.InnerText;
+        double valDouble;
+        int valInt;
+
+        // is it a built-in format?
+        if (BuiltInNumberFormatMgr.Get(numFmtId, out string dataFormat, out ExcelCellType cellType))
+        {
+            if (cellType == ExcelCellType.Integer)
+                return CreateValueInteger(value, dataFormat, out excelCellValueMulti, out excelError);
+
+            if (cellType == ExcelCellType.Double)
+                return CreateValueDouble(value, dataFormat, out excelCellValueMulti, out excelError);
+
+            if (cellType == ExcelCellType.DateOnly)
+                return CreateValueDateOnly(value, dataFormat, out excelCellValueMulti, out excelError);
+
+            if (cellType == ExcelCellType.DateTime)
+                return CreateValueDateTime(value, dataFormat, out excelCellValueMulti, out excelError);
+
+            if (cellType == ExcelCellType.TimeOnly)
+                return CreateValueTimeOnly(value, dataFormat, out excelCellValueMulti, out excelError);
+
+            excelError = new ExcelError(ExcelErrorCode.TypeWrong);
+            return false;
+        }
+
+        // Try to get custom format if exists
+        if (_styleMgr.GetNumberFormat(excelSheet, numFmtId, out dataFormat))
+        {
+            // then determine the type from the data format: date, number,...
+            cellType = GetCellType(dataFormat);
+
+            if(cellType == ExcelCellType.DateTime)
+                return CreateValueDateTime(value, dataFormat, out excelCellValueMulti, out excelError);
+
+            if (cellType == ExcelCellType.DateOnly)
+                return CreateValueDateOnly(value, dataFormat, out excelCellValueMulti, out excelError);
+
+            if (cellType == ExcelCellType.TimeOnly)
+                return CreateValueTimeOnly(value, dataFormat, out excelCellValueMulti, out excelError);
+
+            if (cellType == ExcelCellType.Double)
+                return CreateValueDouble(value, dataFormat, out excelCellValueMulti, out excelError);
+
+            excelError = new ExcelError(ExcelErrorCode.TypeWrong);
+            return false;
+        }
+
+        // on value in the cell?
+        string cellValue = excelCell.Cell.InnerText;
+        if (cellValue == string.Empty)
+        {
+            excelCellValueMulti = new ExcelCellValueMulti();
             return true;
         }
 
-        if (excelCell.Cell.DataType.Value == CellValues.SharedString)
+        // is it an int?
+        bool res = int.TryParse(cellValue, out valInt);
+        if (res)
         {
-            // For shared strings, look up the value in the shared strings table.
-            var stringTable = excelSheet.ExcelFile.WorkbookPart.GetPartsOfType<SharedStringTablePart>().FirstOrDefault();
-
-            // If the shared string table is missing, something is wrong. 
-            // Return the index that is in the cell. 
-            // Otherwise, look up the correct text in the table.
-            if (stringTable is not null)
-            {
-                string value= excelCell.Cell.CellValue.InnerText;
-                stringValue = stringTable.SharedStringTable.ElementAt(int.Parse(value)).InnerText;
-                return true;
-            }
-        }
-
-        if (excelCell.Cell.DataType != null && excelCell.Cell.DataType.Value == CellValues.InlineString)
-        {
-            stringValue= excelCell.Cell.InlineString?.Text?.Text ?? string.Empty;
+            excelCellValueMulti = new ExcelCellValueMulti(valInt);
+            isTheCase = true;
             return true;
         }
 
-        stringValue = string.Empty;
-        return true;
-    }
-
-    public bool GetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, out int intValue, out ExcelError error)
-    {
-        intValue = 0;
-        error = null;
-
-        string value = excelCell.Cell.InnerText;
-
-        // TODO: not tested, is it ok?
-        if (excelCell.Cell.DataType == null)
+        // is it a double?  cultureInfo prb: replace . by ,
+        cellValue = cellValue.Replace('.', ',');
+        res = double.TryParse(cellValue, out valDouble);
+        if (res)
         {
-            bool res = int.TryParse(value, out int valInt);
-            if (res)
-            {
-                intValue = valInt;
-                return true;
-            }
+            excelCellValueMulti = new ExcelCellValueMulti(valDouble);
+            isTheCase = true;
+            return true;
         }
 
-        if (excelCell.Cell.DataType != null && excelCell.Cell.DataType.Value == CellValues.Number)
-        {
-            bool res = int.TryParse(value, out int valInt);
-            if (res)
-            {
-                intValue = valInt;
-                return true;
-            }
-        }
-
-        error = new ExcelError(ExcelErrorCode.TypeWrong);
-        return false;
-    }
-
-    public bool GetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, out double doubleValue, out ExcelError error)
-    {
-        doubleValue = 0;
-        error = null;
-
-        string value = excelCell.Cell.InnerText;
-        if (value != null)
-            value = value.Replace('.', ',');
-        //value = value.ToString(global::System.Globalization.CultureInfo.InvariantCulture);
-
-        // TODO: not tested, is it ok?
-        if (excelCell.Cell.DataType == null)
-        {
-            bool res = double.TryParse(value, out double valDouble);
-            if (res)
-            {
-                doubleValue = valDouble;
-                return true;
-            }
-        }
-
-        if (excelCell.Cell.DataType != null && excelCell.Cell.DataType.Value == CellValues.Number)
-        {
-            bool res = double.TryParse(value, out double valDouble);
-            if (res)
-            {
-                doubleValue = valDouble;
-                return true;
-            }
-        }
-
-        error = new ExcelError(ExcelErrorCode.TypeWrong);
+        // not able to find the type
+        excelError = new ExcelError(ExcelErrorCode.TypeWrong);
         return false;
     }
 
@@ -413,8 +471,8 @@ public class ExcelProcessor
 
     public bool CreateCell(ExcelSheet excelSheet, int colIdx, int rowIdx, out ExcelCell excelCell, out ExcelError error)
     {
-        string colName= ExcelUtils.GetColumnName(colIdx);
-        return CreateCell(excelSheet, colName, (uint) rowIdx, out excelCell, out error);
+        string colName = ExcelUtils.GetColumnName(colIdx);
+        return CreateCell(excelSheet, colName, (uint)rowIdx, out excelCell, out error);
     }
 
     /// <summary>
@@ -436,7 +494,7 @@ public class ExcelProcessor
         Worksheet worksheet = excelSheet.Worksheet;
         SheetData? sheetData = worksheet.GetFirstChild<SheetData>();
         string cellReference = columnName + rowIndex;
-        
+
         // If the worksheet does not contain a row with the specified row index, insert one.
         Row row;
 
@@ -453,8 +511,8 @@ public class ExcelProcessor
         // If there is not a cell with the specified column name, insert one.  
         if (row.Elements<Cell>().Where(c => c.CellReference is not null && c.CellReference.Value == columnName + rowIndex).Count() > 0)
         {
-            Cell cell= row.Elements<Cell>().Where(c => c.CellReference is not null && c.CellReference.Value == cellReference).First();
-            excelCell= new ExcelCell(excelSheet, cell);
+            Cell cell = row.Elements<Cell>().Where(c => c.CellReference is not null && c.CellReference.Value == cellReference).First();
+            excelCell = new ExcelCell(excelSheet, cell);
             return true;
         }
         else
@@ -503,7 +561,7 @@ public class ExcelProcessor
 
             return true;
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
             error = new ExcelError(ExcelErrorCode.UnableSetCellValue, ex);
             return false;
@@ -516,7 +574,7 @@ public class ExcelProcessor
         // Important: store as number
         excelCell.Cell.DataType = CellValues.Number;
         // Must be string in XML
-        excelCell.Cell.CellValue = new CellValue(value.ToString()); 
+        excelCell.Cell.CellValue = new CellValue(value.ToString());
         return true;
     }
 
@@ -531,6 +589,76 @@ public class ExcelProcessor
 
     #endregion
 
+    #region privates methods
+
+    bool GetCellStringValue(ExcelSheet excelSheet, ExcelCell excelCell, out bool isTheCase, out ExcelCellValueMulti excelCellValueMulti, out ExcelError error)
+    {
+        isTheCase = false;
+        excelCellValueMulti = null;
+        error = null;
+        string cellValue;
+
+        if (excelCell.Cell.DataType == null) return true;
+
+        if (excelCell.Cell.DataType.Value == CellValues.SharedString)
+        {
+            if (!GetSharedStringValue(excelSheet, excelCell, out cellValue))
+            {
+                error = new ExcelError(ExcelErrorCode.UnableGetCellStringValue);
+                return false;
+            }
+            excelCellValueMulti = new ExcelCellValueMulti(cellValue);
+            isTheCase = true;
+            return true;
+        }
+
+        if (excelCell.Cell.DataType.Value == CellValues.InlineString)
+        {
+            cellValue = excelCell.Cell.InlineString?.Text?.Text ?? string.Empty;
+            if (cellValue == null)
+            {
+                error = new ExcelError(ExcelErrorCode.UnableGetCellStringValue);
+                return false;
+            }
+            excelCellValueMulti = new ExcelCellValueMulti(cellValue);
+            isTheCase = true;
+            return true;
+        }
+
+        if (excelCell.Cell.DataType.Value == CellValues.String)
+        {
+            string value = excelCell.Cell.InnerText;
+            if (value == null) value = string.Empty;
+            excelCellValueMulti = new ExcelCellValueMulti(value);
+            isTheCase = true;
+            return true;
+        }
+
+        // not a string, bye
+        return true;
+    }
+
+    bool GetSharedStringValue(ExcelSheet excelSheet, ExcelCell excelCell, out string stringValue)
+    {
+        stringValue = string.Empty;
+
+        if (excelCell.Cell.DataType.Value != CellValues.SharedString) return false;
+
+        // For shared strings, look up the value in the shared strings table.
+        var stringTable = excelSheet.ExcelFile.WorkbookPart.GetPartsOfType<SharedStringTablePart>().FirstOrDefault();
+
+        // If the shared string table is missing, something is wrong. 
+        // Return the index that is in the cell. 
+        // Otherwise, look up the correct text in the table.
+        if (stringTable is not null)
+        {
+            string value = excelCell.Cell.CellValue.InnerText;
+            stringValue = stringTable.SharedStringTable.ElementAt(int.Parse(value)).InnerText;
+            return true;
+        }
+        return false;
+    }
+
     /// <summary>
     /// Get the SharedStringTablePart. If it does not exist, create a new one.
     /// </summary>
@@ -538,37 +666,10 @@ public class ExcelProcessor
     /// <returns></returns>
     private SharedStringTablePart GetOrCreateSharedStringTablePart(WorkbookPart workbookPart)
     {
-        if (workbookPart.GetPartsOfType<SharedStringTablePart>().Count() > 0)        
+        if (workbookPart.GetPartsOfType<SharedStringTablePart>().Count() > 0)
             return workbookPart.GetPartsOfType<SharedStringTablePart>().First();
-        
-        return  workbookPart.AddNewPart<SharedStringTablePart>();       
-    }
 
-
-    private bool IsCellValueTypeDate(ExcelSheet excelSheet, ExcelCell excelCell, out ExcelCellValueType valueType)
-    {
-        valueType = ExcelCellValueType.Undefined;
-
-        //--no style, not a date
-        if (excelCell.Cell.StyleIndex == null)return false;
-
-        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
-        var cellFormat = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
-
-        if (cellFormat.NumberFormatId == null) return false;
-
-        uint numFmtId = cellFormat.NumberFormatId.Value;
-
-        // Excel built-in date formats are typically between 14 and 22
-        if ((numFmtId >= 14 && numFmtId <= 22) || numFmtId == 165) // 165+ are often custom date formats
-        {
-            // TODO: which date ???
-            valueType = ExcelCellValueType.DateOnly;
-            return true;
-        }
-
-        // not a date
-        return false;
+        return workbookPart.AddNewPart<SharedStringTablePart>();
     }
 
     /// <summary>
@@ -589,9 +690,7 @@ public class ExcelProcessor
         foreach (SharedStringItem item in shareStringPart.SharedStringTable.Elements<SharedStringItem>())
         {
             if (item.InnerText == text)
-            {
                 return i;
-            }
 
             i++;
         }
@@ -601,4 +700,131 @@ public class ExcelProcessor
 
         return i;
     }
+
+    static bool CreateValueInteger(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
+    {
+        bool res = int.TryParse(value, out int valInt);
+        if (!res)
+        {
+            excelError = new ExcelError(ExcelErrorCode.TypeWrong);
+            excelCellValueMulti = null;
+            return false;
+        }
+        excelError = null;
+        excelCellValueMulti = new ExcelCellValueMulti(valInt);
+        return true;
+    }
+
+    static bool CreateValueDouble(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
+    {
+        // cultureInfo prb: replace . by ,
+        value = value.Replace('.', ',');
+        bool res = double.TryParse(value, out double valDouble);
+        if (!res)
+        {
+            excelError = new ExcelError(ExcelErrorCode.TypeWrong);
+            excelCellValueMulti = null;
+            return false;
+        }
+        excelError = null;
+        excelCellValueMulti = new ExcelCellValueMulti(valDouble);
+        return true;
+    }
+
+    static bool CreateValueDateOnly(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
+    {
+        excelError = null;
+
+        try
+        {
+            value = value.Replace('.', ',');
+            double valDouble = double.Parse(value);
+
+            // convert the value to date
+            DateTime dateTime = DateTime.FromOADate(valDouble);
+            DateOnly dateOnly = DateOnly.FromDateTime(dateTime);
+            excelCellValueMulti = new ExcelCellValueMulti(dateOnly);
+            excelCellValueMulti.DataFormat = dataFormat;
+            return true;
+        }
+        catch (Exception ex)
+        {
+            excelError = new ExcelError(ExcelErrorCode.TypeWrong, ex);
+            excelCellValueMulti = null;
+            return false;
+        }
+    }
+
+    static bool CreateValueDateTime(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
+    {
+        excelError = null;
+
+        try
+        {
+            value = value.Replace('.', ',');
+            double valDouble = double.Parse(value);
+
+            // convert the value to date
+            DateTime dateTime = DateTime.FromOADate(valDouble);
+            excelCellValueMulti = new ExcelCellValueMulti(dateTime);
+            excelCellValueMulti.DataFormat = dataFormat;
+            return true;
+        }
+        catch (Exception ex)
+        {
+            excelError = new ExcelError(ExcelErrorCode.TypeWrong, ex);
+            excelCellValueMulti = null;
+            return false;
+        }
+    }
+
+    static bool CreateValueTimeOnly(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
+    {
+        excelError = null;
+
+        try
+        {
+            value = value.Replace('.', ',');
+            double valDouble = double.Parse(value);
+
+            // convert the value to date
+            DateTime dateTime = DateTime.FromOADate(valDouble);
+            TimeOnly timeOnly = TimeOnly.FromDateTime(dateTime);
+            excelCellValueMulti = new ExcelCellValueMulti(timeOnly);
+            excelCellValueMulti.DataFormat = dataFormat;
+            return true;
+        }
+        catch (Exception ex)
+        {
+            excelError = new ExcelError(ExcelErrorCode.TypeWrong, ex);
+            excelCellValueMulti = null;
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Get the type of cell from the data format.
+    /// exp:
+    /// "dd/mm/yyyy\\ hh:mm:ss" , it's a DateTime.
+    /// </summary>
+    /// <param name="dataFormat"></param>
+    /// <returns></returns>
+    static ExcelCellType GetCellType(string dataFormat)
+    {
+        if((dataFormat.Contains("y") || dataFormat.Contains("d")) && dataFormat.Contains("h"))
+            return ExcelCellType.DateTime;
+
+        if (dataFormat.Contains("y"))
+            return ExcelCellType.DateOnly;
+
+        if (dataFormat.Contains("h") || dataFormat.Contains("m"))
+            return ExcelCellType.TimeOnly;
+
+        if (dataFormat.Contains("0") || dataFormat.Contains("#"))
+            return ExcelCellType.Double;
+
+        return ExcelCellType.Undefined;
+    }
+    #endregion
 }
+
