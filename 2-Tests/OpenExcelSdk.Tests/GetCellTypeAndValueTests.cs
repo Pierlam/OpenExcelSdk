@@ -194,4 +194,33 @@ public class GetCellTypeAndValueTests : TestBase
 
         // TODO
     }
+
+    /// <summary>
+    /// https://github.com/ClosedXML/ClosedXML/wiki/NumberFormatId-Lookup-Table
+    /// </summary>
+    [TestMethod]
+    public void GetCellTypeAndValueCustom()
+    {
+        bool res;
+        ExcelError error;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "GetCellTypeAndValueCustom.xlsx";
+        res = proc.Open(filename, out ExcelFile excelFile, out error);
+        Assert.IsTrue(res);
+
+        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+        Assert.IsTrue(res);
+
+        ExcelCell cell;
+        ExcelCellValueMulti cellValueMulti;
+
+        //--B2: datetime, custom format: dd-MMM-yyyy HH:mm:ss -> 27/09/2025 12:34:56
+        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.DateTime, cellValueMulti.CellType);
+        Assert.AreEqual(new DateTime(2025, 09, 27, 12, 34, 56), cellValueMulti.DateTimeValue);
+    }
 }

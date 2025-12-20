@@ -379,19 +379,19 @@ public class ExcelProcessor
         if (BuiltInNumberFormatMgr.Get(numFmtId, out string dataFormat, out ExcelCellType cellType))
         {
             if (cellType == ExcelCellType.Integer)
-                return CreateExcelValueInteger(value, dataFormat, out excelCellValueMulti, out excelError);
+                return CreateValueInteger(value, dataFormat, out excelCellValueMulti, out excelError);
 
             if (cellType == ExcelCellType.Double)
-                return CreateExcelValueDouble(value, dataFormat, out excelCellValueMulti, out excelError);
+                return CreateValueDouble(value, dataFormat, out excelCellValueMulti, out excelError);
 
             if (cellType == ExcelCellType.DateOnly)
-                return CreateExcelValueDateOnly(value, dataFormat, out excelCellValueMulti, out excelError);
+                return CreateValueDateOnly(value, dataFormat, out excelCellValueMulti, out excelError);
 
             if (cellType == ExcelCellType.DateTime)
-                return CreateExcelValueDateTime(value, dataFormat, out excelCellValueMulti, out excelError);
+                return CreateValueDateTime(value, dataFormat, out excelCellValueMulti, out excelError);
 
             if (cellType == ExcelCellType.TimeOnly)
-                return CreateExcelValueTimeOnly(value, dataFormat, out excelCellValueMulti, out excelError);
+                return CreateValueTimeOnly(value, dataFormat, out excelCellValueMulti, out excelError);
 
             excelError = new ExcelError(ExcelErrorCode.TypeWrong);
             return false;
@@ -400,8 +400,23 @@ public class ExcelProcessor
         // Try to get custom format if exists
         if (_styleMgr.GetNumberFormat(excelSheet, numFmtId, out dataFormat))
         {
-            // then determine the type from the data format
-            // TODO:
+            // then determine the type from the data format: date, number,...
+            cellType = GetCellType(dataFormat);
+
+            if(cellType == ExcelCellType.DateTime)
+                return CreateValueDateTime(value, dataFormat, out excelCellValueMulti, out excelError);
+
+            if (cellType == ExcelCellType.DateOnly)
+                return CreateValueDateOnly(value, dataFormat, out excelCellValueMulti, out excelError);
+
+            if (cellType == ExcelCellType.TimeOnly)
+                return CreateValueTimeOnly(value, dataFormat, out excelCellValueMulti, out excelError);
+
+            if (cellType == ExcelCellType.Double)
+                return CreateValueDouble(value, dataFormat, out excelCellValueMulti, out excelError);
+
+            excelError = new ExcelError(ExcelErrorCode.TypeWrong);
+            return false;
         }
 
         // on value in the cell?
@@ -673,7 +688,7 @@ public class ExcelProcessor
         return i;
     }
 
-    static bool CreateExcelValueInteger(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
+    static bool CreateValueInteger(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
     {
         bool res = int.TryParse(value, out int valInt);
         if (!res)
@@ -687,7 +702,7 @@ public class ExcelProcessor
         return true;
     }
 
-    static bool CreateExcelValueDouble(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
+    static bool CreateValueDouble(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
     {
         // cultureInfo prb: replace . by ,
         value = value.Replace('.', ',');
@@ -703,12 +718,13 @@ public class ExcelProcessor
         return true;
     }
 
-    static bool CreateExcelValueDateOnly(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
+    static bool CreateValueDateOnly(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
     {
         excelError = null;
 
         try
         {
+            value = value.Replace('.', ',');
             double valDouble = double.Parse(value);
 
             // convert the value to date
@@ -726,12 +742,13 @@ public class ExcelProcessor
         }
     }
 
-    static bool CreateExcelValueDateTime(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
+    static bool CreateValueDateTime(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
     {
         excelError = null;
 
         try
         {
+            value = value.Replace('.', ',');
             double valDouble = double.Parse(value);
 
             // convert the value to date
@@ -748,12 +765,13 @@ public class ExcelProcessor
         }
     }
 
-    static bool CreateExcelValueTimeOnly(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
+    static bool CreateValueTimeOnly(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
     {
         excelError = null;
 
         try
         {
+            value = value.Replace('.', ',');
             double valDouble = double.Parse(value);
 
             // convert the value to date
@@ -771,6 +789,29 @@ public class ExcelProcessor
         }
     }
 
+    /// <summary>
+    /// Get the type of cell from the data format.
+    /// exp:
+    /// "dd/mm/yyyy\\ hh:mm:ss" , it's a DateTime.
+    /// </summary>
+    /// <param name="dataFormat"></param>
+    /// <returns></returns>
+    static ExcelCellType GetCellType(string dataFormat)
+    {
+        if((dataFormat.Contains("y") || dataFormat.Contains("d")) && dataFormat.Contains("h"))
+            return ExcelCellType.DateTime;
+
+        if (dataFormat.Contains("y"))
+            return ExcelCellType.DateOnly;
+
+        if (dataFormat.Contains("h") || dataFormat.Contains("m"))
+            return ExcelCellType.TimeOnly;
+
+        if (dataFormat.Contains("0") || dataFormat.Contains("#"))
+            return ExcelCellType.Double;
+
+        return ExcelCellType.Undefined;
+    }
     #endregion
 }
 
