@@ -9,19 +9,23 @@ namespace OpenExcelSdk.System;
 public enum ExcelErrorCode
 {
     NoError,
+
+    ObjectNull,
+    ValueNull,
+    FileNull,
+
     UnableCreateFile,
     FileAlreadyExists,
     FileNotFound,
     UnableOpenFile,
     UnableCloseFile,
 
-    ValueNull,
-    FileNull,
     IndexWrong,
     IndexMustBePositive,
     TypeWrong,
 
     UnableGetCell,
+    UnableGetCellStringValue,    
     UnableSetCellValue,
 }
 

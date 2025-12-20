@@ -25,7 +25,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="10-Files\GetCellValue.xlsx">
+    <None Update="10-Files\GetCellTypeAndValueString.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="10-Files\GetCellTypeAndValueNumber.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="10-Files\GetCellTypeAndValueDate.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="10-Files\GetCellTypeAndValueSpecial.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="10-Files\data3rows.xlsx">

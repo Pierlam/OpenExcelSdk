@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace OpenExcelSdk.System;
 
-public enum ExcelCellValueType
+/// <summary>
+/// Type of a Excel cell value.
+/// </summary>
+public enum ExcelCellType
 {
     Undefined,
     Error,

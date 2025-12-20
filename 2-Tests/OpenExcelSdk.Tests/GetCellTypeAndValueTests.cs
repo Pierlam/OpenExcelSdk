@@ -1,0 +1,197 @@
+﻿using OpenExcelSdk.System;
+using OpenExcelSdk.Tests._50_Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace OpenExcelSdk.Tests;
+
+[TestClass]
+public class GetCellTypeAndValueTests : TestBase
+{
+    [TestMethod]
+    public void GetCellTypeAndValueSpecial()
+    {
+        bool res;
+        ExcelError error;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "GetCellTypeAndValueSpecial.xlsx";
+        res = proc.Open(filename, out ExcelFile excelFile, out error);
+        Assert.IsTrue(res);
+
+        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+        Assert.IsTrue(res);
+
+        ExcelCell cell;
+        ExcelCellValueMulti cellValueMulti;
+
+        //--B2: null
+        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
+        Assert.IsTrue(res);
+        Assert.IsNull(cell);
+        // no cell, is null not an error!
+        Assert.IsNull(error);
+
+        //--B3: empty, bgColor:yellow
+        res = proc.GetCellAt(excelSheet, 2, 3, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        // empty cell, type is undefined
+        Assert.AreEqual(ExcelCellType.Undefined, cellValueMulti.CellType);
+    }
+
+    [TestMethod]
+    public void GetCellTypeAndValueString()
+    {
+        bool res;
+        ExcelError error;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "GetCellTypeAndValueString.xlsx";
+        res = proc.Open(filename, out ExcelFile excelFile, out error);
+        Assert.IsTrue(res);
+
+        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+        Assert.IsTrue(res);
+
+        ExcelCell cell;
+        ExcelCellValueMulti cellValueMulti;
+
+        //--B2: string:hello
+        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.String, cellValueMulti.CellType);
+        Assert.AreEqual("hello", cellValueMulti.StringValue);
+
+        //--B3: string:wind, bgColor:yellow
+        res = proc.GetCellAt(excelSheet, 2, 3, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.String, cellValueMulti.CellType);
+        Assert.AreEqual("wind", cellValueMulti.StringValue);
+
+        //--B4: string:great, border:all, thick,black
+        res = proc.GetCellAt(excelSheet, 2, 4, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.String, cellValueMulti.CellType);
+        Assert.AreEqual("great", cellValueMulti.StringValue);
+    }
+
+    /// <summary>
+    /// https://github.com/ClosedXML/ClosedXML/wiki/NumberFormatId-Lookup-Table
+    /// </summary>
+    [TestMethod]
+    public void GetCellTypeAndValueNumber()
+    {
+        bool res;
+        ExcelError error;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "GetCellTypeAndValueNumber.xlsx";
+        res = proc.Open(filename, out ExcelFile excelFile, out error);
+        Assert.IsTrue(res);
+
+        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+        Assert.IsTrue(res);
+
+        ExcelCell cell;
+        ExcelCellValueMulti cellValueMulti;
+
+        //--B2: int
+        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.Integer, cellValueMulti.CellType);
+        Assert.AreEqual(12, cellValueMulti.IntValue);
+
+        //--B3: double
+        res = proc.GetCellAt(excelSheet, 2, 3, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
+        Assert.AreEqual(34.56, cellValueMulti.DoubleValue);
+
+        // --B4: double, number format: 0.00, number format id: 2
+        res = proc.GetCellAt(excelSheet, 2, 4, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
+        Assert.AreEqual(27.13, cellValueMulti.DoubleValue);
+
+        //--B5: double, number format: 0%, number format id: 9
+        res = proc.GetCellAt(excelSheet, 2, 5, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
+        // 12.5%  -> 0.125
+        Assert.AreEqual(0.125, cellValueMulti.DoubleValue);
+
+        //--B6: double+BgColor+border, 36.29
+        res = proc.GetCellAt(excelSheet, 2, 6, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
+        Assert.AreEqual(36.29, cellValueMulti.DoubleValue);
+
+        //3	#,##0
+        //4	#,##0.00
+
+        //9   0 %
+        //10  0.00 %
+
+        //11  0.00E+00
+
+        //12	# ?/?
+        //13	# ??/??
+    }
+
+
+    /// <summary>
+    /// https://github.com/ClosedXML/ClosedXML/wiki/NumberFormatId-Lookup-Table
+    /// </summary>
+    [TestMethod]
+    public void GetCellTypeAndValueDate()
+    {
+        bool res;
+        ExcelError error;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "GetCellTypeAndValueDate.xlsx";
+        res = proc.Open(filename, out ExcelFile excelFile, out error);
+        Assert.IsTrue(res);
+
+        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+        Assert.IsTrue(res);
+
+        ExcelCell cell;
+        ExcelCellValueMulti cellValueMulti;
+
+        //--B2: date
+        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.DateOnly, cellValueMulti.CellType);
+        Assert.AreEqual(new DateOnly(2019, 12, 7), cellValueMulti.DateOnlyValue);
+
+        //--B3: datetime: 15/09/2021 12:30
+
+        //--B4: time: 09:34:56
+
+        // TODO
+    }
+}
