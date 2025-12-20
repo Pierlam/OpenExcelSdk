@@ -9,11 +9,13 @@
     <Title>OpenExcelSdk - Backend library to work easily with Excel content</Title>
     <Authors>Pierlam</Authors>
     <Company></Company>
-    <Description>Backend library to work easily with Excel content</Description>
+    <Description>Backend library to work easily with Excel content: get row, get cell type and value, ...</Description>
     <PackageProjectUrl>https://github.com/Pierlam/OpenExcelSdk</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Pierlam/OpenExcelSdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
+	<PackageTags>excel dotnet csharp row col cell get read</PackageTags>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>

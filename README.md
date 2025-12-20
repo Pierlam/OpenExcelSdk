@@ -1,8 +1,8 @@
 # What is OpenExcelSdk ?
 
-OpenExcelSdk is a backend dotnet library to use Excel (xlsx) very easily.
+OpenExcelSdk is a open-source backend .NET library to use Excel (xlsx) very easily.
 
-It's an open-source .NET library written in C#/NET8.
+It's written in C#/NET8.
 
 The only dependency is OpenXML SDK, the official Microsoft library to work with Excel files.
 
@@ -24,31 +24,31 @@ ExcelCellValueMulti cellValueMulti;
 ExcelProcessor proc = new ExcelProcessor();
 
 // open an excel file
-string filename = PathFiles + "GetCellTypeAndValueCustom.xlsx";
+string filename = @".\Files\data.xlsx";
 res = proc.Open(filename, out ExcelFile excelFile, out error);
 
 // get the first sheet of the excel file
 proc.GetFirstSheet(excelFile, out ExcelSheet excelSheet, out error);
 
-
-// get cell at B2 
-proc.GetCellAt(excelSheet, 2, 2, out ExcelCell cell, out error);
+// get cell at B7 (A is 1, B is 2)
+proc.GetCellAt(excelSheet, 2, 7, out ExcelCell cell, out error);
 
 // get the type and the value of cell
 proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
 
-// type: of the cell can be: string, int, double, DateTime, DateOnly, TimeOnly.
+//> type of the cell can be: string, int, double, DateTime, DateOnly, TimeOnly.
 
-if(cellValueMulti.CellType== ExcelCellType.String)
+// if the cell type is string, get the value and display it
+if(cellValueMulti.CellType == ExcelCellType.String)
 {
-  Console.WriteLine("B2 type: string, value:" + proc.GetCellValueAsString(excelFile, cell));
+  Console.WriteLine("B7 type: string, value:" + proc.GetCellValueAsString(excelFile, cell));
 } 
 ```
 
 
-## others functions
+# Others functions
 
-# Get row/last row index
+## Get row/last row index
 
 The code below get a the last row index, and also get a row at an index.
 
@@ -64,13 +64,14 @@ proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
 int lastRowIdx = proc.GetLastRowIndex(excelSheet);
 Console.WriteLine("last row idx: " + lastRowIdx);
 
+// get row at index 0, the first one
 res = proc.GetRowAt(excelSheet, 0, out ExcelRow row, out error);
 if (!res)
 	Console.WriteLine("ERROR, unbale to read the row");
 ```
 
 
-# Create an excel file
+## Create an excel file
 
 The code create an excel file with one sheet.
 
@@ -79,7 +80,7 @@ bool res;
 ExcelError error;
 ExcelProcessor proc = new ExcelProcessor();
 
-string filename = PathFiles + "nmyExcel.xlsx";
+string filename = @".\Files\data.xlsx";
 res=proc.CreateExcelFile(filename, out ExcelFile excelFile, out error);
 ```
 
