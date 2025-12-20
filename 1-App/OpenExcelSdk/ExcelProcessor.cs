@@ -131,6 +131,19 @@ public class ExcelProcessor
     #region get sheet, row ,cell
 
     /// <summary>
+    /// Get the first sheet of the excel file.
+    /// </summary>
+    /// <param name="excelFile"></param>
+    /// <param name="index"></param>
+    /// <param name="excelSheet"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool GetFirstSheet(ExcelFile excelFile, int index, out ExcelSheet excelSheet, out ExcelError error)
+    {
+        return GetSheetAt(excelFile, 0, out excelSheet, out error);
+    }
+
+    /// <summary>
     /// Get the sheet of the excel file by index base0.
     /// </summary>
     /// <param name="excelFile"></param>

@@ -11,13 +11,9 @@ internal class CellReader
 {
     public static void Read()
     {
-        ExcelProcessor proc = new ExcelProcessor();
-
-        //string filename = @".\Files\myexcel.xlsx";
-        //proc.CreateSpreadsheetWorkbook(filename);
-
         ExcelError error;
         bool res;
+        ExcelProcessor proc = new ExcelProcessor();
 
         string filename = @".\Files\data.xlsx";
         proc.Open(filename, out ExcelFile excelFile, out error);
