@@ -24,9 +24,12 @@ public class BuiltInNumberFormatMgr
         if (numFmtId == 0)
             return false;
 
+        //  1 = '0'
         if (numFmtId == 1)
         {
-
+            numberFormat = "0";
+            cellType = ExcelCellType.Double;
+            return true;
         }
 
         if (numFmtId == 2)
@@ -51,6 +54,13 @@ public class BuiltInNumberFormatMgr
             cellType = ExcelCellType.Double;
             return true;
         }
+
+        /* TODO: currency formats
+         5 = '$#,##0;\-$#,##0'
+         6 = '$#,##0;[Red]\-$#,##0'
+         7 = '$#,##0.00;\-$#,##0.00'
+         8 = '$#,##0.00;[Red]\-$#,##0.00'
+         */
 
         //--9: 0 %
         if (numFmtId == 9)
@@ -93,13 +103,116 @@ public class BuiltInNumberFormatMgr
             return true;
         }
 
-
         if (numFmtId == 14)
         {
             numberFormat = "d/m/yyyy";
             cellType = ExcelCellType.DateOnly;
             return true;
         }
+
+        // 15 = 'd-mmm-yy'
+        if (numFmtId == 15)
+        {
+            numberFormat = "d-mmm-yy";
+            cellType = ExcelCellType.DateOnly;
+            return true;
+        }
+
+        if (numFmtId == 16)
+        {
+            numberFormat = "d-mmm";
+            cellType = ExcelCellType.DateOnly;
+            return true;
+        }
+
+        //17 = 'mmm-yy'
+        if (numFmtId == 17)
+        {
+            numberFormat = "mmm-yy";
+            cellType = ExcelCellType.DateOnly;
+            return true;
+        }
+
+        //18 = 'h:mm AM/PM'
+        if (numFmtId == 17)
+        {
+            numberFormat = "h:mm AM/PM";
+            cellType = ExcelCellType.TimeOnly;
+            return true;
+        }
+
+        //19 = 'h:mm:ss AM/PM'
+        if (numFmtId == 17)
+        {
+            numberFormat = "h:mm:ss AM/PM";
+            cellType = ExcelCellType.TimeOnly;
+            return true;
+        }
+
+        //20 = 'h:mm'
+        if (numFmtId == 17)
+        {
+            numberFormat = "h:mm";
+            cellType = ExcelCellType.TimeOnly;
+            return true;
+        }
+
+        //21 = 'h:mm:ss'
+        if (numFmtId == 21)
+        {
+            numberFormat = "h:mm:ss";
+            cellType = ExcelCellType.TimeOnly;
+            return true;
+        }
+
+        // 22 = "m/d/yyyy h:mm"
+        if (numFmtId == 22)
+        {
+            numberFormat = "m/d/yyyy h:mm";
+            cellType = ExcelCellType.DateTime;
+            return true;
+        }
+
+        // TODO:
+        // 27 = '[$-404]e/m/d'
+        // 28 = [$-404]e"?"m"?"d"?" m"?"d"?"
+        // 30 = 'm/d/yy'
+        // 36 = '[$-404]e/m/d'
+
+        //---
+        // 37 = '#,##0 ;(#,##0)'               ou "#,##0_);(#,##0)"
+        // 38 = '#,##0 ;[Red](#,##0)'          ou "#,##0_);[Red]"
+        // 39 = '#,##0.00;(#,##0.00)'          ou "#,##0.00_);(#,##0.00)"
+        // 40 = '#,##0.00;[Red](#,##0.00)'     ou  "#,##0.00_);[Red]"
+
+
+        // 44 = '_("$"* #,##0.00_);_("$"* \(#,##0.00\);_("$"* "-"??_);_(@_)'  -> currency with 2 decimals
+        if (numFmtId == 44)
+        {
+            numberFormat = "_(\"$\"* #,##0.00_);_(\"$\"* \\(#,##0.00\\);_(\"$\"* \"-\"??_);_(@_)";
+            cellType = ExcelCellType.Double;
+            return true;
+        }
+
+        // 45 = 'mm:ss'
+        // 46 = '[h]:mm:ss'
+        // 47 = 'mmss.0'       ou "mm:ss.0"
+        // 48 = '##0.0E+0'
+        // 49 = '@'
+
+
+        // 50 = '[$-404]e/m/d'
+        // 55 = 'yyyy/mm/dd'
+        // 57 = '[$-404]e/m/d'
+        // 59 = 't0'
+        // 60 = 't0.00'
+        // 61 = 't#,##0'
+        // 62 = 't#,##0.00'
+        // 67 = 't0%'
+        // 68 = 't0.00%'
+        // 69 = 't# ?/?'
+        // 70 = 't# ??/??'          
+
 
         // not a built-in data format
         numberFormat = string.Empty;

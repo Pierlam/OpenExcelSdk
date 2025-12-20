@@ -188,11 +188,22 @@ public class GetCellTypeAndValueTests : TestBase
         Assert.AreEqual(ExcelCellType.DateOnly, cellValueMulti.CellType);
         Assert.AreEqual(new DateOnly(2019, 12, 7), cellValueMulti.DateOnlyValue);
 
-        //--B3: datetime: 15/09/2021 12:30
+        //--B3: datetime: 15/09/2021 12:30:45  displayed: 15/09/2021 12:30  sec are not diplayed
+        res = proc.GetCellAt(excelSheet, 2, 3, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.DateTime, cellValueMulti.CellType);
+        Assert.AreEqual(new DateTime(2021, 09, 15,12,30,45), cellValueMulti.DateTimeValue);
 
         //--B4: time: 09:34:56
+        res = proc.GetCellAt(excelSheet, 2, 4, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.TimeOnly, cellValueMulti.CellType);
+        Assert.AreEqual(new TimeOnly(09,34,56), cellValueMulti.TimeOnlyValue);
 
-        // TODO
     }
 
     /// <summary>
