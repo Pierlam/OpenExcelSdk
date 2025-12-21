@@ -351,6 +351,17 @@ public class ExcelProcessor
         return ExcelCellType.Error;
     }
 
+    public bool GetCellTypeAndValue(ExcelSheet excelSheet, int colIdx, int rowIdx, out ExcelCell excelCell, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
+    { 
+        excelCell = null;
+        excelCellValueMulti = null;
+        excelError = null;
+        bool res = GetCellAt(excelSheet, colIdx, rowIdx, out excelCell, out excelError);
+        if (!res) return false;
+
+        return GetCellTypeAndValue(excelSheet, excelCell, out  excelCellValueMulti, out excelError);
+    }
+
     /// <summary>
     /// Geth the type, the value and the data format of cell.
     /// </summary>
@@ -364,10 +375,17 @@ public class ExcelProcessor
         excelCellValueMulti = null;
         excelError = null;
 
-        if (excelSheet == null || excelCell == null || excelCell.Cell == null)
+        if (excelSheet == null || excelCell == null)
         {
             excelError = new ExcelError(ExcelErrorCode.ObjectNull);
             return false;
+        }
+
+        // no cell, is null, not an error
+        if (excelCell.Cell == null)
+        {
+            excelCellValueMulti= new ExcelCellValueMulti();
+            return true;
         }
 
         bool isTheCase;
@@ -469,6 +487,16 @@ public class ExcelProcessor
 
     #region Create sheet, row ,cell
 
+    /// <summary>
+    /// Given a column name, a row index, and a WorksheetPart, inserts a cell into the worksheet. 
+    /// If the cell already exists, returns it. 
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
     public bool CreateCell(ExcelSheet excelSheet, int colIdx, int rowIdx, out ExcelCell excelCell, out ExcelError error)
     {
         string colName = ExcelUtils.GetColumnName(colIdx);
@@ -542,6 +570,32 @@ public class ExcelProcessor
 
     #region Set cell value
 
+    /// <summary>
+    /// Set a string value in the cell.
+    /// If the cell does not exist, it will be created.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <param name="value"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, string value, out ExcelError error)
+    {
+        string colName = ExcelUtils.GetColumnName(colIdx);
+        if(!CreateCell(excelSheet, colName, (uint)rowIdx, out ExcelCell excelCell, out error))
+            return false;
+        return SetCellValue(excelSheet, excelCell, value, out error);
+    }
+
+    /// <summary>
+    /// Set a string value in the existing cell.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="value"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, string value, out ExcelError error)
     {
         error = null;
@@ -552,12 +606,28 @@ public class ExcelProcessor
             // get the table
             SharedStringTablePart shareStringPart = GetOrCreateSharedStringTablePart(excelSheet.ExcelFile.WorkbookPart);
 
-            // Insert the text into the SharedStringTablePart.
+            // Insert the text into the SharedStringTablePart
             int index = InsertSharedStringItem(value, shareStringPart);
 
-            // Set the value of cell A1.
+            // Set the value of cell A1
             excelCell.Cell.CellValue = new CellValue(index.ToString());
             excelCell.Cell.DataType = new EnumValue<CellValues>(CellValues.SharedString);
+
+            // remove formula if it's there
+            _styleMgr.RemoveFormula(excelSheet, excelCell);
+
+            // no cell format, nothing more to do
+            if (!_styleMgr.HasCellFormat(excelSheet, excelCell))return true;
+
+            // all other style than format (no border, no color,...) are null, clear the style of the cell
+            if (_styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
+            {
+                excelCell.Cell.StyleIndex = 0;
+                return true;
+            }
+
+            // need to clone the style and modify it
+            // TODO:
 
             return true;
         }

@@ -3,6 +3,9 @@ using OpenExcelSdk.Tests._50_Common;
 
 namespace OpenExcelSdk.Tests;
 
+/// <summary>
+/// Open/Create Excel file tests.
+/// </summary>
 [TestClass]
 public sealed class ExcelFileTests :TestBase
 {

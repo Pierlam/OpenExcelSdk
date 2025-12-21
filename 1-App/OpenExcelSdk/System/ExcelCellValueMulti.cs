@@ -12,6 +12,9 @@ namespace OpenExcelSdk.System;
 /// </summary>
 public class ExcelCellValueMulti
 {
+    /// <summary>
+    /// Used for null cell.
+    /// </summary>
     public ExcelCellValueMulti()
     {
         CellType = ExcelCellType.Undefined;
