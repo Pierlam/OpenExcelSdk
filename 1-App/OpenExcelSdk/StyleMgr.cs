@@ -13,13 +13,19 @@ namespace OpenExcelSdk;
 public class StyleMgr
 {
     /// <summary>
+    /// last id of custom format created.
+    /// min=164
+    /// </summary>
+    uint _customFormatIdMax = 0;
+
+    /// <summary>
     /// Create a new style to update numberFormatId, in Cellformat.
     /// Clone the style and modify it.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
     /// <returns></returns>
-    public bool UpdateStyleNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, int? numberFormatId)
+    public bool UpdateCellStyleNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, uint? numberFormatId)
     {
         // the cell has no style
         if (excelCell.Cell.StyleIndex == null) return true;
@@ -73,8 +79,33 @@ public class StyleMgr
 
         // get the index and set to cell
         int count = stylesPart.Stylesheet.CellFormats.Elements().Count();
-        count = stylesPart.Stylesheet.CellFormats.Elements().Count();
         excelCell.Cell.StyleIndex= (uint)(count - 1);
+        return true;
+    }
+
+    /// <summary>
+    /// Get the NumberFormatID (built-in or custom) or create a format (custom).
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="format"></param>
+    /// <param name="formatId"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool GetOrCreateNumberFormat(ExcelSheet excelSheet, string format, out uint formatId, out ExcelError error)
+    {
+        error = null;
+
+        // is the format a Built-In format?
+        if (!BuiltInNumberFormatMgr.GetFormatId(format, out formatId))
+        {
+            // is the format a custom format?
+            if (!GetCustomNumberFormatId(excelSheet, format, out formatId))
+            {
+                // create a new custom format
+                if (!CreateCustomNumberFormat(excelSheet, format, out formatId, out error))
+                    return false;                
+            }
+        }
         return true;
     }
 
@@ -103,14 +134,17 @@ public class StyleMgr
     public bool HasCellFormat(ExcelSheet excelSheet, ExcelCell excelCell)
     {
         // no style, ok
-        if (excelCell.Cell.StyleIndex == null) return true;
+        if (excelCell.Cell.StyleIndex == null) return false;
 
         // get the style and then the cell format
         var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
         var cellFormat = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
 
-        if (cellFormat.ApplyNumberFormat != null) return true;
-        return false;
+        // no number format
+        if (cellFormat.ApplyNumberFormat == null) return false;
+
+        // has number format
+        return true;
     }
 
     /// <summary>
@@ -141,7 +175,7 @@ public class StyleMgr
     /// <param name="cellFormat"></param>
     /// <param name="numberFormatId"></param>
     /// <returns></returns>
-    public CellFormat? FindCellFormatWithNumberFormatId(WorkbookStylesPart stylesPart, CellFormat cellFormat, int? numberFormatId, out int index)
+    public CellFormat? FindCellFormatWithNumberFormatId(WorkbookStylesPart stylesPart, CellFormat cellFormat, uint? numberFormatId, out int index)
     {
         index = 0;
         if (cellFormat==null) return null;
@@ -167,13 +201,56 @@ public class StyleMgr
     }
 
     /// <summary>
-    /// Get number format string from formatId
+    /// Create a new custom format.
+    ///
+    /// IDs 0-163 are reserved by Excel
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="format"></param>
+    /// <param name="formatId"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool CreateCustomNumberFormat(ExcelSheet excelSheet, string format, out uint formatId, out ExcelError error)
+    {
+        error = null;
+
+        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+
+        // max id not yet calculated?
+        if (_customFormatIdMax == 0)
+        {
+            // Get the maximum numFmtId from all NumberingFormat elements
+            _customFormatIdMax = stylesPart.Stylesheet.NumberingFormats
+                .Elements<NumberingFormat>()
+                .Select(nf => nf.NumberFormatId.Value)
+                .Max();
+        }
+
+        // use the new one
+        _customFormatIdMax++;
+
+        uint customFormatId = _customFormatIdMax;
+
+        // create a new custom format 
+        stylesPart.Stylesheet.NumberingFormats.Append(new NumberingFormat()
+        {
+            NumberFormatId = (uint)customFormatId,
+            FormatCode = StringValue.FromString(format)
+        });
+        stylesPart.Stylesheet.Save();
+        formatId= (uint)customFormatId;
+        return true;
+    }
+
+    /// <summary>
+    /// Get number format string from formatId, only custom formats.
+    /// If built-in format, return false. Not saved in the Styles part!
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="formatId"></param>
     /// <param name="dataFormat"></param>
     /// <returns></returns>
-    public bool GetNumberFormat(ExcelSheet excelSheet, uint formatId, out string dataFormat)
+    public bool GetCustomNumberFormat(ExcelSheet excelSheet, uint formatId, out string dataFormat)
     {
         var stylesheet = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet;
         if (stylesheet.NumberingFormats != null)
@@ -190,6 +267,26 @@ public class StyleMgr
 
         // Built-in format
         dataFormat=string.Empty;
+        return false;
+    }
+
+    public bool GetCustomNumberFormatId(ExcelSheet excelSheet, string dataFormat, out uint formatId)
+    {
+        var stylesheet = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet;
+        if (stylesheet.NumberingFormats != null)
+        {
+            foreach (NumberingFormat nf in stylesheet.NumberingFormats.Elements<NumberingFormat>())
+            {
+                if (nf.FormatCode.Value == dataFormat)
+                {
+                    formatId = nf.NumberFormatId.Value;
+                    return true;
+                }
+            }
+        }
+
+        // Built-in format
+        formatId = 0;
         return false;
     }
 

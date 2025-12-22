@@ -28,6 +28,9 @@
     <None Update="10-Files\GetCellTypeAndValueCustom.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="10-Files\SetCellValueAndFormat.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="10-Files\SetCellValueDouble.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

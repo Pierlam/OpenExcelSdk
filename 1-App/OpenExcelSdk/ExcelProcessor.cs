@@ -307,7 +307,7 @@ public class ExcelProcessor
             return excelCellValueMulti.StringValue;
 
         if (excelCellValueMulti.CellType == ExcelCellType.Integer)
-            return excelCellValueMulti.IntValue.ToString();
+            return excelCellValueMulti.IntegerValue.ToString();
 
         if (excelCellValueMulti.CellType == ExcelCellType.Double)
             return excelCellValueMulti.DoubleValue.ToString();
@@ -333,7 +333,7 @@ public class ExcelProcessor
             return 0;
 
         if (excelCellValueMulti.CellType == ExcelCellType.Integer)
-            return excelCellValueMulti.IntValue.Value;
+            return excelCellValueMulti.IntegerValue.Value;
 
         if (excelCellValueMulti.CellType == ExcelCellType.Double)
             return excelCellValueMulti.DoubleValue.Value;
@@ -422,7 +422,7 @@ public class ExcelProcessor
         int valInt;
 
         // is it a built-in format?
-        if (BuiltInNumberFormatMgr.Get(numFmtId, out string dataFormat, out ExcelCellType cellType))
+        if (BuiltInNumberFormatMgr.GetFormatAndType(numFmtId, out string dataFormat, out ExcelCellType cellType))
         {
             if (cellType == ExcelCellType.Integer)
                 return CreateValueInteger(value, dataFormat, out excelCellValueMulti, out excelError);
@@ -444,7 +444,7 @@ public class ExcelProcessor
         }
 
         // Try to get custom format if exists
-        if (_styleMgr.GetNumberFormat(excelSheet, numFmtId, out dataFormat))
+        if (_styleMgr.GetCustomNumberFormat(excelSheet, numFmtId, out dataFormat))
         {
             // then determine the type from the data format: date, number,...
             cellType = GetCellType(dataFormat);
@@ -656,6 +656,24 @@ public class ExcelProcessor
     }
 
     /// <summary>
+    /// Set a double value in the cell.
+    /// If the cell does not exist, it will be created.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <param name="value"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, double value, string format, out ExcelError error)
+    {
+        string colName = ExcelUtils.GetColumnName(colIdx);
+        if (!CreateCell(excelSheet, colName, (uint)rowIdx, out ExcelCell excelCell, out error))
+            return false;
+        return SetCellValue(excelSheet, excelCell, value, format, out error);
+    }
+
+    /// <summary>
     /// Set a string value in the existing cell.
     /// </summary>
     /// <param name="excelSheet"></param>
@@ -701,7 +719,7 @@ public class ExcelProcessor
             }
 
             // duplicate the style to update the CellFormat
-            _styleMgr.UpdateStyleNumberFormatId(excelSheet, excelCell, null);
+            _styleMgr.UpdateCellStyleNumberFormatId(excelSheet, excelCell, null);
 
             return true;
         }
@@ -712,34 +730,82 @@ public class ExcelProcessor
         }
     }
 
-    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, int value, out ExcelError error)
+    //public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, int value, out ExcelError error)
+    //{
+    //    error = null;
+    //    // Important: store as number
+    //    excelCell.Cell.DataType = CellValues.Number;
+    //    // Must be string in XML
+    //    excelCell.Cell.CellValue = new CellValue(value.ToString());
+
+    //    // remove formula if it's there
+    //    _styleMgr.RemoveFormula(excelSheet, excelCell);
+
+    //    // no cell format, nothing more to do
+    //    if (!_styleMgr.HasCellFormat(excelSheet, excelCell)) return true;
+
+    //    // all other style than format (no border, no color,...) are null, clear the style of the cell
+    //    if (_styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
+    //    {
+    //        excelCell.Cell.StyleIndex = 0;
+    //        return true;
+    //    }
+
+    //    // duplicate the style to update the CellFormat
+    //    _styleMgr.UpdateCellStyleNumberFormatId(excelSheet, excelCell, null);
+
+    //    return true;
+    //}
+
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, int value, string format, out ExcelError error)
     {
         error = null;
-        // Important: store as number
-        excelCell.Cell.DataType = CellValues.Number;
-        // Must be string in XML
-        excelCell.Cell.CellValue = new CellValue(value.ToString());
 
-        // remove formula if it's there
-        _styleMgr.RemoveFormula(excelSheet, excelCell);
+        uint formatId;
 
-        // no cell format, nothing more to do
-        if (!_styleMgr.HasCellFormat(excelSheet, excelCell)) return true;
+        // get (built-in or custom) or create the format (custom)
+        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId, out error))
+            return false;
 
-        // all other style than format (no border, no color,...) are null, clear the style of the cell
-        if (_styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
-        {
-            excelCell.Cell.StyleIndex = 0;
-            return true;
-        }
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId, out error);
+    }
 
-        // duplicate the style to update the CellFormat
-        _styleMgr.UpdateStyleNumberFormatId(excelSheet, excelCell, null);
 
-        return true;
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, double value, string format, out ExcelError error)
+    {
+        error = null;
+
+        uint formatId;
+
+        // get (built-in or custom) or create the format (custom)
+        if(!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId, out error))
+            return false;
+
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId, out error);
+    }
+
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, int value, out ExcelError error)
+    {
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, null, out error);
     }
 
     public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, double value, out ExcelError error)
+    {
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, null, out error);
+    }
+
+    /// <summary>
+    /// Set cell value as double.
+    /// Keep some aprt of the style: border, color, font...
+    /// but clear the number format -> style/CellFormat/NumberingFormat
+    /// TODO: to remove or rework.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="value"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool SetCellValueAndNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, double value, uint? numberFormatId, out ExcelError error)
     {
         error = null;
         // Important: store as number
@@ -749,18 +815,25 @@ public class ExcelProcessor
         // remove formula if it's there
         _styleMgr.RemoveFormula(excelSheet, excelCell);
 
+        // TODO: numberFormatId
+
         // no cell format, nothing more to do
         if (!_styleMgr.HasCellFormat(excelSheet, excelCell)) return true;
 
+        // the cell contains the expected number format 
+        _styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatIdCell);
+        if(numberFormatIdCell == (numberFormatId ?? 0)) return true;
+
         // all other style than format (no border, no color,...) are null, clear the style of the cell
-        if (_styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
+        if (numberFormatId ==null && _styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
         {
+            // TODO:
             excelCell.Cell.StyleIndex = 0;
             return true;
         }
 
         // duplicate the style to update the CellFormat
-        _styleMgr.UpdateStyleNumberFormatId(excelSheet, excelCell, null);
+        _styleMgr.UpdateCellStyleNumberFormatId(excelSheet, excelCell, numberFormatId);
 
         return true;
     }

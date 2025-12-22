@@ -237,6 +237,120 @@ public class SetCellValueTests : TestBase
         Assert.IsTrue(res);
         Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
         Assert.AreEqual(234.9, cellValueMulti.DoubleValue);
+    }
 
+    [TestMethod]
+    public void SetCellValueAndFormat()
+    {
+        bool res;
+        ExcelError error;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "SetCellValueAndFormat.xlsx";
+        res = proc.Open(filename, out ExcelFile excelFile, out error);
+        Assert.IsTrue(res);
+
+        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+        Assert.IsTrue(res);
+
+        ExcelCell cell;
+        ExcelCellValueMulti cellValueMulti;
+
+        // to check style/CellFormat creation
+        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        int count = stylesPart.Stylesheet.CellFormats.Elements().Count();
+
+        //--B2: built-in format 2
+        proc.SetCellValue(excelSheet, 2, 2, 12.5, "0.00", out error);
+
+        //--B3: datetime custom format,  set 25.8  -> display 25.80, built-in format 2
+        proc.SetCellValue(excelSheet, 2, 3, 25.8, "0.00", out error);
+
+        //--B4: currency -> 357.20 
+        proc.SetCellValue(excelSheet, 2, 4, 357.2, "0.000", out error);
+
+        //--B5: string,  # ##0,00 €
+        proc.SetCellValue(excelSheet, 2, 5, 1450, "# ##0,00 €", out error);
+
+        // save the changes
+        res = proc.Close(excelFile, out error);
+
+
+        //==>check the excel content
+        res = proc.Open(filename, out excelFile, out error);
+        Assert.IsTrue(res);
+        res = proc.GetSheetAt(excelFile, 0, out excelSheet, out error);
+        Assert.IsTrue(res);
+
+        //--only one style must be created
+        int countUpdate = stylesPart.Stylesheet.CellFormats.Elements().Count();
+        //Assert.AreEqual(count + 1, countUpdate);
+
+        //--B2: 12.3
+        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
+        Assert.AreEqual(12.5, cellValueMulti.DoubleValue);
+
+        // check the style and the number format
+        Assert.IsNotNull(cell.Cell.StyleIndex);
+        var cellFormat = proc.GetCellFormat(excelSheet, cell);
+
+        // numberFormat must be defined, is a built-in format
+        Assert.IsNotNull(cellFormat.ApplyNumberFormat);
+        Assert.AreEqual(2, (int)cellFormat.NumberFormatId.Value);
+
+
+        //--B3: datetime custom format,  set 25.8  -> display 25.80, built-in format 2
+        res = proc.GetCellAt(excelSheet, 2, 3, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
+        Assert.AreEqual(25.8, cellValueMulti.DoubleValue);
+
+        // check the style and the number format
+        Assert.IsNotNull(cell.Cell.StyleIndex);
+        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        // numberFormat must be defined, it is a built-in format
+        Assert.IsNotNull(cellFormat.ApplyNumberFormat);
+        Assert.AreEqual(2, (int)cellFormat.NumberFormatId.Value);
+
+        //--B4: 357,200
+        res = proc.GetCellAt(excelSheet, 2, 4, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
+        Assert.AreEqual(357.2, cellValueMulti.DoubleValue);
+
+        // numberFormat must be defined, is a custom format > 164
+        Assert.IsNotNull(cell.Cell.StyleIndex);
+        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        Assert.IsNotNull(cellFormat.ApplyNumberFormat);
+        // TODO:pas possible!! doit etre un custom format!!
+        Assert.IsTrue((int)cellFormat.NumberFormatId.Value>163);
+        StyleMgr styleMgr = new StyleMgr();
+        styleMgr.GetCustomNumberFormat(excelSheet, cellFormat.NumberFormatId.Value, out string dataFormat);
+        Assert.AreEqual("0.000", dataFormat);
+
+        //--B5: int 1 450,00 €
+        res = proc.GetCellAt(excelSheet, 2, 5, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.Integer, cellValueMulti.CellType);
+        Assert.AreEqual(1450, cellValueMulti.IntegerValue);
+
+        // check the style and the number format
+        Assert.IsNotNull(cell.Cell.StyleIndex);
+        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        // numberFormat must be defined, is a custom format > 164
+        Assert.IsNotNull(cellFormat.ApplyNumberFormat);
+        //Assert.AreEqual(2, (int)cellFormat.NumberFormatId.Value);
+        styleMgr.GetCustomNumberFormat(excelSheet, cellFormat.NumberFormatId.Value, out dataFormat);
+        Assert.AreEqual("0.000", dataFormat);
     }
 }

@@ -29,7 +29,7 @@ public class ExcelCellValueMulti
     public ExcelCellValueMulti(int value)
     {
         CellType = ExcelCellType.Integer;
-        IntValue = value;
+        IntegerValue = value;
     }
 
     public ExcelCellValueMulti(double value)
@@ -66,11 +66,11 @@ public class ExcelCellValueMulti
 
     public string? StringValue { get; set; } = null;
 
-    public int? IntValue { get; set; } = null;
+    public int? IntegerValue { get; set; } = null;
 
     public double? DoubleValue { get; set; } = null;
     
-    public bool? BoolValue { get; set; } = null;
+    public bool? BooleanValue { get; set; } = null;
 
     public DateOnly? DateOnlyValue { get; set; }= null;
 

@@ -112,7 +112,7 @@ public class GetCellTypeAndValueTests : TestBase
         res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
         Assert.IsTrue(res);
         Assert.AreEqual(ExcelCellType.Integer, cellValueMulti.CellType);
-        Assert.AreEqual(12, cellValueMulti.IntValue);
+        Assert.AreEqual(12, cellValueMulti.IntegerValue);
 
         //--B3: double
         res = proc.GetCellAt(excelSheet, 2, 3, out cell, out error);
