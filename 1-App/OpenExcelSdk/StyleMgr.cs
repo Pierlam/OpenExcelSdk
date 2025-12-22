@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
+﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using OpenExcelSdk.System;
@@ -11,6 +12,72 @@ using System.Threading.Tasks;
 namespace OpenExcelSdk;
 public class StyleMgr
 {
+    /// <summary>
+    /// Create a new style to update numberFormatId, in Cellformat.
+    /// Clone the style and modify it.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <returns></returns>
+    public bool UpdateStyleNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, int? numberFormatId)
+    {
+        // the cell has no style
+        if (excelCell.Cell.StyleIndex == null) return true;
+
+        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+
+        // set a new value or set null?
+        BooleanValue? applyNumberFormat = null;
+        UInt32Value? numFmtId = null;
+        if (numberFormatId != null)
+        {
+            applyNumberFormat = true;
+            numFmtId = (uint)numberFormatId;
+        }
+
+        // get the style of cell 
+        var currCellFormat = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
+
+        // same style/cellFormat already exists?
+        CellFormat? cellFormat = FindCellFormatWithNumberFormatId(stylesPart, currCellFormat, numberFormatId, out int index);
+        if(cellFormat!=null)
+        {
+            // get the index of the found style
+            excelCell.Cell.StyleIndex = (uint)index;
+            return true;
+        }
+
+        // need to create a new style
+        cellFormat = new CellFormat { 
+            Alignment = currCellFormat.Alignment,
+            ApplyAlignment = currCellFormat.ApplyAlignment,
+            ApplyBorder = currCellFormat.ApplyBorder,
+            ApplyFill = currCellFormat.ApplyFill,
+            ApplyFont = currCellFormat.ApplyFont,
+            // apply a value or null
+            ApplyNumberFormat = applyNumberFormat,
+            ApplyProtection = currCellFormat.ApplyProtection,
+            BorderId = currCellFormat.BorderId,
+            FillId = currCellFormat.FillId,
+            FontId = currCellFormat.FontId,
+
+            // apply a value or null
+            NumberFormatId = numFmtId,
+            Protection = currCellFormat.Protection
+        };
+
+        // append the new style
+        stylesPart.Stylesheet.CellFormats.AppendChild(cellFormat);
+
+        stylesPart.Stylesheet.Save();
+
+        // get the index and set to cell
+        int count = stylesPart.Stylesheet.CellFormats.Elements().Count();
+        count = stylesPart.Stylesheet.CellFormats.Elements().Count();
+        excelCell.Cell.StyleIndex= (uint)(count - 1);
+        return true;
+    }
+
     public bool GetCellNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, out uint numFmtId)
     {
         numFmtId = 0;
@@ -66,6 +133,37 @@ public class StyleMgr
             cellFormat.ApplyFont == null && cellFormat.ApplyProtection == null) return true;
 
         return false;
+    }
+
+    /// <summary>
+    /// same style/cellFormat already exists?
+    /// </summary>
+    /// <param name="cellFormat"></param>
+    /// <param name="numberFormatId"></param>
+    /// <returns></returns>
+    public CellFormat? FindCellFormatWithNumberFormatId(WorkbookStylesPart stylesPart, CellFormat cellFormat, int? numberFormatId, out int index)
+    {
+        index = 0;
+        if (cellFormat==null) return null;
+        if(stylesPart.Stylesheet==null) return null;
+
+        UInt32Value? numFmtId = null; 
+        if(numberFormatId!=null) numFmtId= (uint)numberFormatId;
+
+        // scan each cell format
+        for (int i=0; i<stylesPart.Stylesheet.CellFormats.Elements().Count(); i++)
+        {
+            index = i;
+            var cellFormatFound = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt(i);
+            if(cellFormatFound.Alignment== cellFormat.Alignment &&
+                cellFormatFound.BorderId== cellFormat.BorderId &&
+                cellFormatFound.FillId == cellFormat.FillId &&
+                cellFormatFound.Protection == cellFormat.Protection &&
+                cellFormatFound.FontId == cellFormat.FontId &&
+                cellFormatFound.NumberFormatId== numFmtId)
+                return cellFormatFound;
+        }
+        return null;
     }
 
     /// <summary>
