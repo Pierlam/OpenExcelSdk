@@ -674,6 +674,18 @@ public class ExcelProcessor
         return SetCellValue(excelSheet, excelCell, value, format, out error);
     }
 
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, string value, string format, out ExcelError error)
+    {
+        error = null;
+        uint formatId;
+
+        // get (built-in or custom) or create the format (custom)
+        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId, out error))
+            return false;
+
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId, out error);
+    }
+
     public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, int value, string format, out ExcelError error)
     {
         error = null;
@@ -698,6 +710,11 @@ public class ExcelProcessor
         return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId, out error);
     }
 
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, string value, out ExcelError error)
+    {
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, null, out error);
+    }
+
     public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, int value, out ExcelError error)
     {
         return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, null, out error);
@@ -716,7 +733,65 @@ public class ExcelProcessor
     /// <param name="value"></param>
     /// <param name="error"></param>
     /// <returns></returns>
-    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, string value, out ExcelError error)
+    //public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, string value, out ExcelError error)
+    //{
+    //    error = null;
+
+    //    if (excelCell == null || excelCell.Cell == null)
+    //    {
+    //        error = new ExcelError(ExcelErrorCode.ObjectNull);
+    //        return false;
+    //    }
+
+    //    try
+    //    {
+    //        WorkbookPart workbookPart = excelSheet.ExcelFile.WorkbookPart;
+
+    //        // get the table
+    //        SharedStringTablePart shareStringPart = GetOrCreateSharedStringTablePart(excelSheet.ExcelFile.WorkbookPart);
+
+    //        // Insert the text into the SharedStringTablePart
+    //        int index = InsertSharedStringItem(value, shareStringPart);
+
+    //        // Set the value of cell A1
+    //        excelCell.Cell.CellValue = new CellValue(index.ToString());
+    //        excelCell.Cell.DataType = new EnumValue<CellValues>(CellValues.SharedString);
+
+    //        // remove formula if it's there
+    //        _styleMgr.RemoveFormula(excelSheet, excelCell);
+
+    //        // no cell format, nothing more to do
+    //        if (!_styleMgr.HasCellFormat(excelSheet, excelCell)) return true;
+
+    //        // all other style than format (no border, no color,...) are null, clear the style of the cell
+    //        if (_styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
+    //        {
+    //            // no format to set, all others style part style are null, so clear the style
+    //            excelCell.Cell.StyleIndex = 0;
+    //            return true;
+    //        }
+
+    //        // duplicate the style to update the CellFormat
+    //        _styleMgr.UpdateCellStyleNumberFormatId(excelSheet, excelCell, null);
+
+    //        return true;
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        error = new ExcelError(ExcelErrorCode.UnableSetCellValue, ex);
+    //        return false;
+    //    }
+    //}
+
+    /// <summary>
+    /// Set a string value and a number format in the existing cell.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="value"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool SetCellValueAndNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, string value, uint? numberFormatId,  out ExcelError error)
     {
         error = null;
 
@@ -744,10 +819,14 @@ public class ExcelProcessor
             _styleMgr.RemoveFormula(excelSheet, excelCell);
 
             // no cell format, nothing more to do
-            if (!_styleMgr.HasCellFormat(excelSheet, excelCell)) return true;
+            if (numberFormatId == null && !_styleMgr.HasCellFormat(excelSheet, excelCell)) return true;
+
+            // the cell contains the expected number format 
+            _styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatIdCell);
+            if (numberFormatIdCell == (numberFormatId ?? 0)) return true;
 
             // all other style than format (no border, no color,...) are null, clear the style of the cell
-            if (_styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
+            if (numberFormatId == null && _styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
             {
                 // no format to set, all others style part style are null, so clear the style
                 excelCell.Cell.StyleIndex = 0;
@@ -755,7 +834,7 @@ public class ExcelProcessor
             }
 
             // duplicate the style to update the CellFormat
-            _styleMgr.UpdateCellStyleNumberFormatId(excelSheet, excelCell, null);
+            _styleMgr.UpdateCellStyleNumberFormatId(excelSheet, excelCell, numberFormatId);
 
             return true;
         }
