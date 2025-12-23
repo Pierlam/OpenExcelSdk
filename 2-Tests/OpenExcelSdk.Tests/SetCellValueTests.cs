@@ -269,8 +269,8 @@ public class SetCellValueTests : TestBase
         //--B4: currency -> 357.20 
         proc.SetCellValue(excelSheet, 2, 4, 357.2, "0.000", out error);
 
-        //--B5: string,  # ##0,00 €
-        proc.SetCellValue(excelSheet, 2, 5, 1450, "# ##0,00 €", out error);
+        //--B5: string,  -> "#,##0.00\\ \"€\"" 
+        proc.SetCellValue(excelSheet, 2, 5, 1450, "#,##0.00\\ \"€\"", out error);
 
         // save the changes
         res = proc.Close(excelFile, out error);
@@ -341,8 +341,9 @@ public class SetCellValueTests : TestBase
         Assert.IsTrue(res);
         res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
         Assert.IsTrue(res);
-        Assert.AreEqual(ExcelCellType.Integer, cellValueMulti.CellType);
-        Assert.AreEqual(1450, cellValueMulti.IntegerValue);
+        // currency value is always a double
+        Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
+        Assert.AreEqual(1450, cellValueMulti.DoubleValue);
 
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
@@ -351,6 +352,6 @@ public class SetCellValueTests : TestBase
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
         //Assert.AreEqual(2, (int)cellFormat.NumberFormatId.Value);
         styleMgr.GetCustomNumberFormat(excelSheet, cellFormat.NumberFormatId.Value, out dataFormat);
-        Assert.AreEqual("0.000", dataFormat);
+        Assert.AreEqual("#,##0.00\\ \"€\"", dataFormat);
     }
 }

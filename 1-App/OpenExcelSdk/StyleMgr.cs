@@ -28,48 +28,74 @@ public class StyleMgr
     public bool UpdateCellStyleNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, uint? numberFormatId)
     {
         // the cell has no style
-        if (excelCell.Cell.StyleIndex == null) return true;
+        //if (excelCell.Cell.StyleIndex == null) return true;
 
         var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
 
-        // set a new value or set null?
+        CellFormat? currCellFormat = null;
+        CellFormat? cellFormat = null;
+        Alignment? alignment = null;
+        BooleanValue? applyAlignement = null;
+        BooleanValue? applyBorder = null;
+        BooleanValue? applyFill = null;
+        BooleanValue? applyFont = null;
         BooleanValue? applyNumberFormat = null;
+        BooleanValue? applyProtection = null;
+        UInt32Value? borderId = null;
+        UInt32Value? fillId = null;
+        UInt32Value? fontId = null;
         UInt32Value? numFmtId = null;
+        Protection? protection = null;
+
+        // set the new value or set null?
         if (numberFormatId != null)
         {
             applyNumberFormat = true;
             numFmtId = (uint)numberFormatId;
         }
 
-        // get the style of cell 
-        var currCellFormat = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
-
-        // same style/cellFormat already exists?
-        CellFormat? cellFormat = FindCellFormatWithNumberFormatId(stylesPart, currCellFormat, numberFormatId, out int index);
-        if(cellFormat!=null)
+        if (excelCell.Cell.StyleIndex != null)
         {
-            // get the index of the found style
-            excelCell.Cell.StyleIndex = (uint)index;
-            return true;
+            // get the style of cell 
+            currCellFormat = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
+
+            // same style/cellFormat already exists?
+            cellFormat = FindCellFormatWithNumberFormatId(stylesPart, currCellFormat, numberFormatId, out int index);
+            if (cellFormat != null)
+            {
+                // get the index of the found style
+                excelCell.Cell.StyleIndex = (uint)index;
+                return true;
+            }
+            alignment = currCellFormat.Alignment;
+            applyAlignement= currCellFormat.ApplyAlignment;
+            applyBorder= currCellFormat.ApplyBorder;
+            applyFill = currCellFormat.ApplyFill;
+            applyFont = currCellFormat.ApplyFont;
+            applyProtection= currCellFormat.ApplyProtection;
+            borderId= currCellFormat.BorderId;
+            fillId= currCellFormat.FillId;
+            fontId= currCellFormat.FontId;
+            protection= currCellFormat.Protection;
         }
 
         // need to create a new style
         cellFormat = new CellFormat { 
-            Alignment = currCellFormat.Alignment,
-            ApplyAlignment = currCellFormat.ApplyAlignment,
-            ApplyBorder = currCellFormat.ApplyBorder,
-            ApplyFill = currCellFormat.ApplyFill,
-            ApplyFont = currCellFormat.ApplyFont,
+            Alignment = alignment,
+            ApplyAlignment = applyAlignement,
+            ApplyBorder = applyBorder,
+            ApplyFill =  applyFill,
+            ApplyFont = applyFont,
             // apply a value or null
             ApplyNumberFormat = applyNumberFormat,
-            ApplyProtection = currCellFormat.ApplyProtection,
-            BorderId = currCellFormat.BorderId,
-            FillId = currCellFormat.FillId,
-            FontId = currCellFormat.FontId,
+            ApplyProtection = applyProtection,
+            BorderId = borderId,
+            FillId = fillId,
+            FontId = fontId,
 
             // apply a value or null
             NumberFormatId = numFmtId,
-            Protection = currCellFormat.Protection
+            Protection = protection
         };
 
         // append the new style

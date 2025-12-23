@@ -210,8 +210,6 @@ public class ExcelProcessor
         return true;
     }
 
-    //public IExcelCell GetCellAt(IExcelSheet excelSheet, int rowNum, int colNum)
-
     /// <summary>
     /// Return the last row index, base1.
     /// </summary>
@@ -461,11 +459,14 @@ public class ExcelProcessor
             if (cellType == ExcelCellType.Double)
                 return CreateValueDouble(value, dataFormat, out excelCellValueMulti, out excelError);
 
+            if (cellType == ExcelCellType.Integer)
+                return CreateValueDouble(value, dataFormat, out excelCellValueMulti, out excelError);
+
             excelError = new ExcelError(ExcelErrorCode.TypeWrong);
             return false;
         }
 
-        // on value in the cell?
+        // get the cell value as string
         string cellValue = excelCell.Cell.InnerText;
         if (cellValue == string.Empty)
         {
@@ -673,6 +674,40 @@ public class ExcelProcessor
         return SetCellValue(excelSheet, excelCell, value, format, out error);
     }
 
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, int value, string format, out ExcelError error)
+    {
+        error = null;
+        uint formatId;
+
+        // get (built-in or custom) or create the format (custom)
+        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId, out error))
+            return false;
+
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId, out error);
+    }
+
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, double value, string format, out ExcelError error)
+    {
+        error = null;
+        uint formatId;
+
+        // get (built-in or custom) or create the format (custom)
+        if(!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId, out error))
+            return false;
+
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId, out error);
+    }
+
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, int value, out ExcelError error)
+    {
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, null, out error);
+    }
+
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, double value, out ExcelError error)
+    {
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, null, out error);
+    }
+
     /// <summary>
     /// Set a string value in the existing cell.
     /// </summary>
@@ -685,7 +720,7 @@ public class ExcelProcessor
     {
         error = null;
 
-        if(excelCell == null || excelCell.Cell == null)
+        if (excelCell == null || excelCell.Cell == null)
         {
             error = new ExcelError(ExcelErrorCode.ObjectNull);
             return false;
@@ -709,11 +744,12 @@ public class ExcelProcessor
             _styleMgr.RemoveFormula(excelSheet, excelCell);
 
             // no cell format, nothing more to do
-            if (!_styleMgr.HasCellFormat(excelSheet, excelCell))return true;
+            if (!_styleMgr.HasCellFormat(excelSheet, excelCell)) return true;
 
             // all other style than format (no border, no color,...) are null, clear the style of the cell
             if (_styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
             {
+                // no format to set, all others style part style are null, so clear the style
                 excelCell.Cell.StyleIndex = 0;
                 return true;
             }
@@ -730,70 +766,6 @@ public class ExcelProcessor
         }
     }
 
-    //public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, int value, out ExcelError error)
-    //{
-    //    error = null;
-    //    // Important: store as number
-    //    excelCell.Cell.DataType = CellValues.Number;
-    //    // Must be string in XML
-    //    excelCell.Cell.CellValue = new CellValue(value.ToString());
-
-    //    // remove formula if it's there
-    //    _styleMgr.RemoveFormula(excelSheet, excelCell);
-
-    //    // no cell format, nothing more to do
-    //    if (!_styleMgr.HasCellFormat(excelSheet, excelCell)) return true;
-
-    //    // all other style than format (no border, no color,...) are null, clear the style of the cell
-    //    if (_styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
-    //    {
-    //        excelCell.Cell.StyleIndex = 0;
-    //        return true;
-    //    }
-
-    //    // duplicate the style to update the CellFormat
-    //    _styleMgr.UpdateCellStyleNumberFormatId(excelSheet, excelCell, null);
-
-    //    return true;
-    //}
-
-    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, int value, string format, out ExcelError error)
-    {
-        error = null;
-
-        uint formatId;
-
-        // get (built-in or custom) or create the format (custom)
-        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId, out error))
-            return false;
-
-        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId, out error);
-    }
-
-
-    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, double value, string format, out ExcelError error)
-    {
-        error = null;
-
-        uint formatId;
-
-        // get (built-in or custom) or create the format (custom)
-        if(!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId, out error))
-            return false;
-
-        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId, out error);
-    }
-
-    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, int value, out ExcelError error)
-    {
-        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, null, out error);
-    }
-
-    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, double value, out ExcelError error)
-    {
-        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, null, out error);
-    }
-
     /// <summary>
     /// Set cell value as double.
     /// Keep some aprt of the style: border, color, font...
@@ -808,6 +780,7 @@ public class ExcelProcessor
     public bool SetCellValueAndNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, double value, uint? numberFormatId, out ExcelError error)
     {
         error = null;
+
         // Important: store as number
         excelCell.Cell.DataType = CellValues.Number;
         excelCell.Cell.CellValue = new CellValue(value.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
@@ -815,10 +788,8 @@ public class ExcelProcessor
         // remove formula if it's there
         _styleMgr.RemoveFormula(excelSheet, excelCell);
 
-        // TODO: numberFormatId
-
         // no cell format, nothing more to do
-        if (!_styleMgr.HasCellFormat(excelSheet, excelCell)) return true;
+        if (numberFormatId==null && !_styleMgr.HasCellFormat(excelSheet, excelCell)) return true;
 
         // the cell contains the expected number format 
         _styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatIdCell);
@@ -827,7 +798,7 @@ public class ExcelProcessor
         // all other style than format (no border, no color,...) are null, clear the style of the cell
         if (numberFormatId ==null && _styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
         {
-            // TODO:
+            // no format to set, all others style part style are null, so clear the style
             excelCell.Cell.StyleIndex = 0;
             return true;
         }
