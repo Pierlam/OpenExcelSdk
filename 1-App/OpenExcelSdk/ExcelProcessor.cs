@@ -128,7 +128,7 @@ public class ExcelProcessor
     }
     #endregion
 
-    #region get sheet, row ,cell
+    #region Get sheet, row ,cell
 
     /// <summary>
     /// Get the first sheet of the excel file.
@@ -223,6 +223,28 @@ public class ExcelProcessor
         //return rows.Max(r => r.RowIndex.Value);
         return excelSheet.Rows.Count();
     }
+
+    /// <summary>
+    /// Return the count of custom number formats in the excel sheet.
+    /// It's style on cell value, exp: date, currency, percentage,...
+    /// built-in number formats are not counted.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <returns></returns>
+    public int GetCustomNumberFormatsCount(ExcelSheet excelSheet)
+    {
+        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        if(stylesPart == null)
+            return 0;
+        if (stylesPart.Stylesheet == null)
+            return 0;
+
+        return stylesPart.Stylesheet.CellFormats.Elements().Count();
+    }
+
+    #endregion
+
+    #region Get Cell, CellValue, CellType
 
     /// <summary>
     /// Get a cell in the sheet by col and row index, base1.
@@ -348,6 +370,24 @@ public class ExcelProcessor
             return 0;
 
         return 0;
+    }
+
+    public DateOnly GetCellValueAsDateOnly(ExcelSheet excelSheet, ExcelCell excelCell)
+    {
+        bool res = GetCellTypeAndValue(excelSheet, excelCell, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError);
+        if (!res)
+            return new DateOnly();
+
+        if (excelCellValueMulti.CellType == ExcelCellType.DateOnly)
+            return excelCellValueMulti.DateOnlyValue.Value;
+
+        if (excelCellValueMulti.CellType == ExcelCellType.DateTime)
+        {
+            // convert the date time to date only
+            return DateOnly.FromDateTime(excelCellValueMulti.DateTimeValue.Value);
+        }
+
+        return new DateOnly();
     }
 
     /// <summary>
@@ -657,6 +697,60 @@ public class ExcelProcessor
     }
 
     /// <summary>
+    /// Set a DateOnly value in the cell.
+    /// If the cell does not exist, it will be created.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <param name="value"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, DateOnly value, string format, out ExcelError error)
+    {
+        string colName = ExcelUtils.GetColumnName(colIdx);
+        if (!CreateCell(excelSheet, colName, (uint)rowIdx, out ExcelCell excelCell, out error))
+            return false;
+        return SetCellValue(excelSheet, excelCell, value, format, out error);
+    }
+
+    /// <summary>
+    /// Set a DateTime value in the cell.
+    /// If the cell does not exist, it will be created.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <param name="value"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, DateTime value, string format, out ExcelError error)
+    {
+        string colName = ExcelUtils.GetColumnName(colIdx);
+        if (!CreateCell(excelSheet, colName, (uint)rowIdx, out ExcelCell excelCell, out error))
+            return false;
+        return SetCellValue(excelSheet, excelCell, value, format, out error);
+    }
+
+    /// <summary>
+    /// Set a TimeOnly value in the cell.
+    /// If the cell does not exist, it will be created.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <param name="value"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, TimeOnly value, string format, out ExcelError error)
+    {
+        string colName = ExcelUtils.GetColumnName(colIdx);
+        if (!CreateCell(excelSheet, colName, (uint)rowIdx, out ExcelCell excelCell, out error))
+            return false;
+        return SetCellValue(excelSheet, excelCell, value, format, out error);
+    }
+
+    /// <summary>
     /// Set a double value in the cell.
     /// If the cell does not exist, it will be created.
     /// </summary>
@@ -710,6 +804,42 @@ public class ExcelProcessor
         return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId, out error);
     }
 
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, DateOnly value, string format, out ExcelError error)
+    {
+        error = null;
+        uint formatId;
+
+        // get (built-in or custom) or create the format (custom)
+        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId, out error))
+            return false;
+
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId, out error);
+    }
+
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, DateTime value, string format, out ExcelError error)
+    {
+        error = null;
+        uint formatId;
+
+        // get (built-in or custom) or create the format (custom)
+        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId, out error))
+            return false;
+
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId, out error);
+    }
+
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, TimeOnly value, string format, out ExcelError error)
+    {
+        error = null;
+        uint formatId;
+
+        // get (built-in or custom) or create the format (custom)
+        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId, out error))
+            return false;
+
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId, out error);
+    }
+
     public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, string value, out ExcelError error)
     {
         return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, null, out error);
@@ -724,6 +854,21 @@ public class ExcelProcessor
     {
         return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, null, out error);
     }
+
+    //public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, DateOnly value, string format, out ExcelError error)
+    //{
+    //    return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, format, out error);
+    //}
+
+    //public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, DateTime value, out ExcelError error)
+    //{
+    //    return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, null, out error);
+    //}
+
+    //public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, TimeOnly value, out ExcelError error)
+    //{
+    //    return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, null, out error);
+    //}
 
     /// <summary>
     /// Set a string value in the existing cell.
@@ -849,7 +994,6 @@ public class ExcelProcessor
     /// Set cell value as double.
     /// Keep some aprt of the style: border, color, font...
     /// but clear the number format -> style/CellFormat/NumberingFormat
-    /// TODO: to remove or rework.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
@@ -886,6 +1030,86 @@ public class ExcelProcessor
         _styleMgr.UpdateCellStyleNumberFormatId(excelSheet, excelCell, numberFormatId);
 
         return true;
+    }
+
+    /// <summary>
+    /// Set cell value as a date.
+    /// Keep some aprt of the style: border, color, font...
+    /// but clear the number format -> style/CellFormat/NumberingFormat
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="value"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool SetCellValueAndNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, DateOnly value, uint? numberFormatId, out ExcelError error)
+    {
+        error = null;
+
+        // Important: store as number
+        excelCell.Cell.DataType = CellValues.Number;
+
+        // Convert to DateTime (midnight time)
+        DateTime dateTime = value.ToDateTime(TimeOnly.MinValue);
+
+        // Convert to double (OLE Automation date)
+        double oaDate = dateTime.ToOADate();
+        //excelCell.Cell.CellValue = new CellValue(value.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
+        excelCell.Cell.CellValue= new CellValue(oaDate.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
+
+        // remove formula if it's there
+        _styleMgr.RemoveFormula(excelSheet, excelCell);
+
+        // TODO: numberFormatId is mandatory for date
+        if(numberFormatId==null)
+        {
+            error = new ExcelError(ExcelErrorCode.FormatMissingForDate);
+            return false;
+        }
+
+        // no cell format, nothing more to do
+        //if (numberFormatId == null && !_styleMgr.HasCellFormat(excelSheet, excelCell)) return true;
+
+        // the cell contains the expected number format 
+        _styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatIdCell);
+        if (numberFormatIdCell == (numberFormatId ?? 0)) return true;
+
+        // all other style than format (no border, no color,...) are null, clear the style of the cell
+        //if (numberFormatId == null && _styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
+        //{
+        //    // no format to set, all others style part style are null, so clear the style
+        //    excelCell.Cell.StyleIndex = 0;
+        //    return true;
+        //}
+
+        // duplicate the style to update the CellFormat
+        _styleMgr.UpdateCellStyleNumberFormatId(excelSheet, excelCell, numberFormatId);
+
+        return true;
+    }
+
+    /// <summary>
+    /// Set cell value as a date.
+    /// Keep some aprt of the style: border, color, font...
+    /// but clear the number format -> style/CellFormat/NumberingFormat
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="value"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool SetCellValueAndNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, DateTime value, uint? numberFormatId, out ExcelError error)
+    {
+        error = null;
+        // TODO:
+        return false;
+    }
+
+    public bool SetCellValueAndNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, TimeOnly value, uint? numberFormatId, out ExcelError error)
+    {
+        error = null;
+        // TODO:
+        return false;
     }
 
     #endregion

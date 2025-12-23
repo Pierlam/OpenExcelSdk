@@ -27,6 +27,7 @@ public enum ExcelErrorCode
     UnableGetCell,
     UnableGetCellStringValue,    
     UnableSetCellValue,
+    FormatMissingForDate,
 }
 
 public class ExcelError

@@ -257,8 +257,7 @@ public class SetCellValueTests : TestBase
         ExcelCellValueMulti cellValueMulti;
 
         // to check style/CellFormat creation
-        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
-        int count = stylesPart.Stylesheet.CellFormats.Elements().Count();
+        int count = proc.GetCustomNumberFormatsCount(excelSheet);
 
         //--B2: built-in format 2
         proc.SetCellValue(excelSheet, 2, 2, 12.5, "0.00", out error);
@@ -283,8 +282,8 @@ public class SetCellValueTests : TestBase
         Assert.IsTrue(res);
 
         //--only one style must be created
-        int countUpdate = stylesPart.Stylesheet.CellFormats.Elements().Count();
-        //Assert.AreEqual(count + 1, countUpdate);
+        int countUpdate = proc.GetCustomNumberFormatsCount(excelSheet);
+        Assert.AreEqual(count + 2, countUpdate);
 
         //--B2: 12.3
         res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
@@ -353,5 +352,81 @@ public class SetCellValueTests : TestBase
         //Assert.AreEqual(2, (int)cellFormat.NumberFormatId.Value);
         styleMgr.GetCustomNumberFormat(excelSheet, cellFormat.NumberFormatId.Value, out dataFormat);
         Assert.AreEqual("#,##0.00\\ \"€\"", dataFormat);
+    }
+
+    [TestMethod]
+    public void SetCellValueDate()
+    {
+        bool res;
+        ExcelError error;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "SetCellValueDate.xlsx";
+        res = proc.Open(filename, out ExcelFile excelFile, out error);
+        Assert.IsTrue(res);
+
+        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+        Assert.IsTrue(res);
+
+        ExcelCell cell;
+        ExcelCellValueMulti cellValueMulti;
+
+        // to check style/CellFormat creation
+        int count = proc.GetCustomNumberFormatsCount(excelSheet);
+
+        //--B2: 10/12/2025
+        res= proc.SetCellValue(excelSheet, 2, 2, new DateOnly(2025,10,12), "d/m/yyyy", out error);
+        Assert.IsTrue(res);
+
+        //--B3: 07/05/2019
+        res = proc.SetCellValue(excelSheet, 2, 3, new DateOnly(2019, 05, 07), "d/m/yyyy", out error);
+        Assert.IsTrue(res);
+
+        //--B4: 15/11/2020 14:30
+        res = proc.SetCellValue(excelSheet, 2, 4, new DateTime(2020, 11, 15,14,30,0), "d/m/yyyy h:mm", out error);
+        Assert.IsTrue(res);
+
+
+        // save the changes
+        res = proc.Close(excelFile, out error);
+
+
+        //==>check the excel content
+        res = proc.Open(filename, out excelFile, out error);
+        Assert.IsTrue(res);
+        res = proc.GetSheetAt(excelFile, 0, out excelSheet, out error);
+        Assert.IsTrue(res);
+
+        //--only one style must be created
+        int countUpdate = proc.GetCustomNumberFormatsCount(excelSheet);
+        //Assert.AreEqual(count + 1, countUpdate);
+
+        //--B2:
+        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.DateOnly, cellValueMulti.CellType);
+        Assert.AreEqual(new DateOnly(2025, 10, 12), cellValueMulti.DateOnlyValue);
+
+        // check the style and the number format
+        Assert.IsNotNull(cell.Cell.StyleIndex);
+        var cellFormat = proc.GetCellFormat(excelSheet, cell);
+        Assert.IsNotNull(cellFormat.ApplyNumberFormat);
+        Assert.AreEqual(14, (int)cellFormat.NumberFormatId.Value);
+
+        //--B3:
+        res = proc.GetCellAt(excelSheet, 2, 3, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.DateOnly, cellValueMulti.CellType);
+        Assert.AreEqual(new DateOnly(2019, 05, 07), cellValueMulti.DateOnlyValue);
+        // check the style and the number format
+        Assert.IsNotNull(cell.Cell.StyleIndex);
+        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        Assert.IsNotNull(cellFormat.ApplyNumberFormat);
+        Assert.AreEqual(14, (int)cellFormat.NumberFormatId.Value);
+
     }
 }
