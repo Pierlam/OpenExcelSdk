@@ -26,8 +26,14 @@ public class ExcelSheet
     /// </summary>
     public Sheet Sheet { get; set; }
 
+    /// <summary>
+    /// OpenXml Worksheet object.
+    /// </summary>
     public Worksheet Worksheet { get; set; }
 
+    /// <summary>
+    /// OpenXml Rows object.
+    /// </summary>
     public IEnumerable<Row> Rows { get; set; }
 
 }

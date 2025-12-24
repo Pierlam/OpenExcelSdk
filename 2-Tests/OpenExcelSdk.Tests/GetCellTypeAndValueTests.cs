@@ -1,4 +1,5 @@
-﻿using OpenExcelSdk.System;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using OpenExcelSdk.System;
 using OpenExcelSdk.Tests._50_Common;
 using System;
 using System.Collections.Generic;
@@ -112,7 +113,7 @@ public class GetCellTypeAndValueTests : TestBase
         res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
         Assert.IsTrue(res);
         Assert.AreEqual(ExcelCellType.Integer, cellValueMulti.CellType);
-        Assert.AreEqual(12, cellValueMulti.IntValue);
+        Assert.AreEqual(12, cellValueMulti.IntegerValue);
 
         //--B3: double
         res = proc.GetCellAt(excelSheet, 2, 3, out cell, out error);
@@ -179,8 +180,11 @@ public class GetCellTypeAndValueTests : TestBase
 
         ExcelCell cell;
         ExcelCellValueMulti cellValueMulti;
+        CellFormat cellFormat;
+        string dataFormat;
+        StyleMgr styleMgr = new StyleMgr();
 
-        //--B2: date
+        //--B2: date 07/12/2019
         res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
         Assert.IsTrue(res);
         res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
@@ -188,11 +192,58 @@ public class GetCellTypeAndValueTests : TestBase
         Assert.AreEqual(ExcelCellType.DateOnly, cellValueMulti.CellType);
         Assert.AreEqual(new DateOnly(2019, 12, 7), cellValueMulti.DateOnlyValue);
 
-        //--B3: datetime: 15/09/2021 12:30
+        // check the style and the number format
+        Assert.IsNotNull(cell.Cell.StyleIndex);
+        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        Assert.IsNotNull(cellFormat.ApplyNumberFormat);
+        // 14: built-in format: dd/MM/yyyy
+        Assert.AreEqual(14, (int)cellFormat.NumberFormatId.Value);
+
+        //--B3: datetime: 15/09/2021 12:30:45  displayed: 15/09/2021 12:30  sec are not diplayed
+        res = proc.GetCellAt(excelSheet, 2, 3, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.DateTime, cellValueMulti.CellType);
+        Assert.AreEqual(new DateTime(2021, 09, 15,12,30,45), cellValueMulti.DateTimeValue);
+
+        // check the style and the number format
+        Assert.IsNotNull(cell.Cell.StyleIndex);
+        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        Assert.IsNotNull(cellFormat.ApplyNumberFormat);
+        // 22: built-in format: dd/MM/yyyy HH:mm
+        Assert.AreEqual(22, (int)cellFormat.NumberFormatId.Value);
 
         //--B4: time: 09:34:56
+        res = proc.GetCellAt(excelSheet, 2, 4, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.TimeOnly, cellValueMulti.CellType);
+        Assert.AreEqual(new TimeOnly(09,34,56), cellValueMulti.TimeOnlyValue);
+        // check the style and the number format
+        Assert.IsNotNull(cell.Cell.StyleIndex);
+        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        Assert.IsNotNull(cellFormat.ApplyNumberFormat);
+        // 21: built-in format: HH:mm:ss
+        Assert.AreEqual(21, (int)cellFormat.NumberFormatId.Value);
 
-        // TODO
+
+        //--B5: datetime, custom format: "dd/mm/yyyy\\ hh:mm:ss" -> 10/12/2025 12:34:56
+        res = proc.GetCellAt(excelSheet, 2, 5, out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.AreEqual(ExcelCellType.DateTime, cellValueMulti.CellType);
+        Assert.AreEqual(new DateTime(2025, 12, 10,12,34,56), cellValueMulti.DateTimeValue);
+        // check the style and the number format
+        Assert.IsNotNull(cell.Cell.StyleIndex);
+        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        Assert.IsNotNull(cellFormat.ApplyNumberFormat);
+        //// custom format, >164
+        Assert.AreEqual(165, (int)cellFormat.NumberFormatId.Value);
+        styleMgr.GetCustomNumberFormat(excelSheet, cellFormat.NumberFormatId.Value, out dataFormat);
+        Assert.AreEqual("dd/mm/yyyy\\ hh:mm:ss", dataFormat);
     }
 
     /// <summary>

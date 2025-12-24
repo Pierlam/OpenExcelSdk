@@ -1,8 +1,12 @@
-﻿using OpenExcelSdk.System;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
+using OpenExcelSdk.System;
 using OpenExcelSdk.Tests._50_Common;
 
 namespace OpenExcelSdk.Tests;
 
+/// <summary>
+/// Open/Create Excel file tests.
+/// </summary>
 [TestClass]
 public sealed class ExcelFileTests :TestBase
 {
@@ -57,4 +61,74 @@ public sealed class ExcelFileTests :TestBase
         Assert.IsTrue(res);
         Assert.IsNull(error);
     }
+
+    [TestMethod]
+    public void OpenEmptyExcel()
+    {
+        bool res;
+        ExcelError error;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "empty.xlsx";
+        res = proc.Open(filename, out ExcelFile excelFile, out error);
+        Assert.IsTrue(res);
+        Assert.IsNull(error);
+
+        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+        Assert.IsTrue(res);
+        Assert.IsNull(error);
+
+        res = proc.GetRowAt(excelSheet, 0, out ExcelRow row, out error);
+        Assert.IsTrue(res);
+        // no row, not an error
+        Assert.IsNull(error);
+        Assert.IsNull(row);
+
+        int lastRowIdx = proc.GetLastRowIndex(excelSheet);
+        Assert.AreEqual(0, lastRowIdx);
+
+        ExcelCell cell;
+
+        // try to get a cell that does not exist -> should works
+        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
+        Assert.IsTrue(res);
+        Assert.IsNull(cell);
+
+
+        res = proc.Close(excelFile, out error);
+        Assert.IsTrue(res);
+        Assert.IsNull(error);
+    }
+
+    [TestMethod]
+    public void GetSheetByName()
+    {
+        bool res;
+        ExcelError error;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "hasManySheets.xlsx";
+        res = proc.Open(filename, out ExcelFile excelFile, out error);
+        Assert.IsTrue(res);
+        Assert.IsNull(error);
+
+        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+        Assert.IsTrue(res);
+        Assert.IsNull(error);
+
+        res = proc.GetSheetByName(excelFile, "Feuil1", out excelSheet, out error);
+        Assert.IsTrue(res);
+        Assert.IsNull(error);
+        Assert.AreEqual("Feuil1", excelSheet.Sheet.Name.Value);
+
+        res = proc.GetSheetByName(excelFile, "DoesNotExists", out excelSheet, out error);
+        Assert.IsFalse(res);
+        Assert.IsNull(error);
+
+        res = proc.Close(excelFile, out error);
+        Assert.IsTrue(res);
+        Assert.IsNull(error);
+    }
+
+
 }

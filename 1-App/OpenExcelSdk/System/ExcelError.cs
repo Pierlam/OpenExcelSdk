@@ -19,14 +19,21 @@ public enum ExcelErrorCode
     FileNotFound,
     UnableOpenFile,
     UnableCloseFile,
+    
+    UnableGetSheet,
 
     IndexWrong,
     IndexMustBePositive,
     TypeWrong,
 
     UnableGetCell,
+    UnableGetRow,
+
     UnableGetCellStringValue,    
     UnableSetCellValue,
+    FormatMissingForDate,
+
+    UnableRemoveCell
 }
 
 public class ExcelError

@@ -27,6 +27,9 @@ public class ExcelFile
     /// </summary>
     public SpreadsheetDocument SpreadsheetDocument { get; set; }
 
+    /// <summary>
+    /// OpenXml Worksheet object.
+    /// </summary>
     public WorkbookPart WorkbookPart { get; set; }
 
 }

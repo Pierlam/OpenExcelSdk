@@ -23,4 +23,14 @@ public class ExcelCell
     /// Open Xml cell object.
     /// </summary>
     public  Cell Cell { get; set; }
+
+
+    /// <summary>
+    /// Format of the cell.
+    /// OpenXml CellFormat object.
+    /// Not null only if the cell has a style. (Cell.StyleIndex).
+    /// The data is in the Styles part of the Excel file: excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart
+    /// </summary>
+    public CellFormat? CellFormat { get; set; } = null;
+    
 }
