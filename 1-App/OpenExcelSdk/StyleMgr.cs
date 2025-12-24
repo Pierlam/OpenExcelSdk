@@ -27,9 +27,6 @@ public class StyleMgr
     /// <returns></returns>
     public bool UpdateCellStyleNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, uint? numberFormatId)
     {
-        // the cell has no style
-        //if (excelCell.Cell.StyleIndex == null) return true;
-
         var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
 
         CellFormat? currCellFormat = null;

@@ -168,23 +168,65 @@ public class ExcelProcessor
             return false;
         }
 
-        Sheet? sheet = excelFile.WorkbookPart?.Workbook?.GetFirstChild<Sheets>()?.Elements<Sheet>()?.ElementAt<Sheet>(index);
-
-        if (sheet == null)
+        try
         {
-            error = new ExcelError(ExcelErrorCode.IndexWrong);
+            Sheet? sheet = excelFile.WorkbookPart?.Workbook?.GetFirstChild<Sheets>()?.Elements<Sheet>()?.ElementAt<Sheet>(index);
+
+            if (sheet == null)
+            {
+                error = new ExcelError(ExcelErrorCode.IndexWrong);
+                return false;
+            }
+
+            excelSheet = new ExcelSheet(excelFile, sheet);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            error = new ExcelError(ExcelErrorCode.UnableGetSheet, ex);
+            excelSheet = null;
+            return false;
+        }
+    }
+
+    public bool GetSheetByName(ExcelFile excelFile, string sheetName, out ExcelSheet excelSheet, out ExcelError error)
+    {
+        error = null;
+        excelSheet = null;
+
+        if (string.IsNullOrWhiteSpace(sheetName))
+        {
+            error = new ExcelError(ExcelErrorCode.ValueNull);
             return false;
         }
 
-        excelSheet = new ExcelSheet(excelFile, sheet);
-        return true;
+        try
+        {
+            // Get the Sheets collection
+            var sheets = excelFile.WorkbookPart.Workbook.Sheets.Elements<Sheet>();
+
+            // Find the sheet with the matching name
+            var sheet = sheets.FirstOrDefault(s => s.Name != null && s.Name.Value.Equals(sheetName, StringComparison.OrdinalIgnoreCase));
+            if (sheet == null)
+                // no sheet with this name, not an error
+                return false;
+
+            excelSheet = new ExcelSheet(excelFile, sheet);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            error = new ExcelError(ExcelErrorCode.UnableGetSheet, ex);
+            excelSheet = null;
+            return false;
+        }
     }
 
-    //public bool GetSheetByName(ExcelFileOXml excelFile, string sheetName index, out ExcelSheetOXml excelSheetOXml, out OXmlError error)
-    //IEnumerable<Sheet>? sheets = excelFile.WorkbookPart?.Workbook?.GetFirstChild<Sheets>()?.Elements<Sheet>()?.Where(s => s.Name is not null && s.Name == sheetName);
 
     /// <summary>
     /// Get a row from the sheet  by index base0.
+    /// If the row doest not exists, it's not an error.
+    /// Error occurs only if the access to the row fails.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="rowIndex"></param>
@@ -195,19 +237,28 @@ public class ExcelProcessor
     {
         excelRow = null;
         error = null;
-        //WorksheetPart worksheetPart = (WorksheetPart)excelSheet.ExcelFile.WorkbookPart.GetPartById(excelSheet.Sheet.Id);
 
-        var rows = excelSheet.Worksheet.Descendants<Row>();
-        if (!rows.Any()) return false;
-
-        if (rowIndex < 0 || rowIndex > rows.Count())
+        try
         {
-            error = new ExcelError(ExcelErrorCode.IndexWrong);
+            var rows = excelSheet.Worksheet.Descendants<Row>();
+            if (!rows.Any())
+                // row doest not exists, it's not an error
+                return true;
+
+            if (rowIndex < 0 || rowIndex > rows.Count())
+            {
+                error = new ExcelError(ExcelErrorCode.IndexWrong);
+                return false;
+            }
+            Row row = rows.ElementAt(rowIndex);
+            excelRow = new ExcelRow(row);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            error = new ExcelError(ExcelErrorCode.UnableGetRow, ex);
             return false;
         }
-        Row row = rows.ElementAt(rowIndex);
-        excelRow = new ExcelRow(row);
-        return true;
     }
 
     /// <summary>
@@ -556,7 +607,6 @@ public class ExcelProcessor
 
     #endregion
 
-
     #region Create sheet, row ,cell
 
     /// <summary>
@@ -636,6 +686,55 @@ public class ExcelProcessor
             return true;
         }
     }
+
+
+    #endregion
+
+    #region Delete cell
+
+    /// <summary>
+    /// Delete a cell in the sheet by col and row index, base1.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool RemoveCell(ExcelSheet excelSheet, int colIdx, int rowIdx, out ExcelError error)
+    {
+        string colName = ExcelUtils.GetColumnName(colIdx);
+        return RemoveCell(excelSheet, ExcelUtils.ConvertAddress(colIdx, rowIdx), out error);
+    }
+
+    /// <summary>
+    /// Delete a cell in the sheet by the address name. exp: A1
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="cellAddress"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool RemoveCell(ExcelSheet excelSheet, string cellAddress, out ExcelError error)
+    {
+        error = null;
+        if (!GetCellAt(excelSheet, cellAddress, out ExcelCell excelCell, out error))
+            return false;
+        if (excelCell == null || excelCell.Cell == null)
+        {
+            // no cell at this address, not an error
+            return true;
+        }
+        try
+        {
+            excelCell.Cell.Remove();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            error = new ExcelError(ExcelErrorCode.UnableRemoveCell, ex);
+            return false;
+        }
+    }
+
 
 
     #endregion
@@ -1156,7 +1255,7 @@ public class ExcelProcessor
 
     #endregion
 
-    #region privates methods
+    #region Private methods
 
     bool GetCellStringValue(ExcelSheet excelSheet, ExcelCell excelCell, out bool isTheCase, out ExcelCellValueMulti excelCellValueMulti, out ExcelError error)
     {
