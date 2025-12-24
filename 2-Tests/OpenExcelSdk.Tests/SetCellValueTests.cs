@@ -386,6 +386,22 @@ public class SetCellValueTests : TestBase
         res = proc.SetCellValue(excelSheet, 2, 4, new DateTime(2020, 11, 15,14,30,0), "d/m/yyyy h:mm", out error);
         Assert.IsTrue(res);
 
+        //--B5: 02/08/2017
+        res = proc.SetCellValue(excelSheet, 2, 5, new DateOnly(2017, 08, 02), "d/m/yyyy", out error);
+        Assert.IsTrue(res);
+
+        //--B6: 12/01/1987 11:23:45
+        res = proc.SetCellValue(excelSheet, 2, 6, new DateTime(1987, 01, 12, 11,23,45), "dd/mm/yyyy\\ hh:mm:ss", out error);
+        Assert.IsTrue(res);
+
+        //--B7: 10:34:56
+        res = proc.SetCellValue(excelSheet, 2, 7, new TimeOnly(10,34,56), "hh:mm:ss", out error);
+        Assert.IsTrue(res);
+
+        //ici(); 08:12:45
+
+
+
 
         // save the changes
         res = proc.Close(excelFile, out error);
@@ -427,6 +443,8 @@ public class SetCellValueTests : TestBase
         cellFormat = proc.GetCellFormat(excelSheet, cell);
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
         Assert.AreEqual(14, (int)cellFormat.NumberFormatId.Value);
+
+        //--B4: 15/11/2020 14:30
 
     }
 }

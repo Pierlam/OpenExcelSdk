@@ -1054,33 +1054,21 @@ public class ExcelProcessor
 
         // Convert to double (OLE Automation date)
         double oaDate = dateTime.ToOADate();
-        //excelCell.Cell.CellValue = new CellValue(value.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
         excelCell.Cell.CellValue= new CellValue(oaDate.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
 
         // remove formula if it's there
         _styleMgr.RemoveFormula(excelSheet, excelCell);
 
-        // TODO: numberFormatId is mandatory for date
+        // numberFormatId is mandatory for date
         if(numberFormatId==null)
         {
             error = new ExcelError(ExcelErrorCode.FormatMissingForDate);
             return false;
         }
 
-        // no cell format, nothing more to do
-        //if (numberFormatId == null && !_styleMgr.HasCellFormat(excelSheet, excelCell)) return true;
-
         // the cell contains the expected number format 
         _styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatIdCell);
         if (numberFormatIdCell == (numberFormatId ?? 0)) return true;
-
-        // all other style than format (no border, no color,...) are null, clear the style of the cell
-        //if (numberFormatId == null && _styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
-        //{
-        //    // no format to set, all others style part style are null, so clear the style
-        //    excelCell.Cell.StyleIndex = 0;
-        //    return true;
-        //}
 
         // duplicate the style to update the CellFormat
         _styleMgr.UpdateCellStyleNumberFormatId(excelSheet, excelCell, numberFormatId);
@@ -1101,15 +1089,69 @@ public class ExcelProcessor
     public bool SetCellValueAndNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, DateTime value, uint? numberFormatId, out ExcelError error)
     {
         error = null;
-        // TODO:
-        return false;
+
+        // Important: store as number
+        excelCell.Cell.DataType = CellValues.Number;
+
+        // Convert to double (OLE Automation date)
+        double oaDate = value.ToOADate();
+        excelCell.Cell.CellValue = new CellValue(oaDate.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
+
+        // remove formula if it's there
+        _styleMgr.RemoveFormula(excelSheet, excelCell);
+
+        // numberFormatId is mandatory for date
+        if (numberFormatId == null)
+        {
+            error = new ExcelError(ExcelErrorCode.FormatMissingForDate);
+            return false;
+        }
+
+        // the cell contains the expected number format 
+        _styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatIdCell);
+        if (numberFormatIdCell == (numberFormatId ?? 0)) return true;
+
+        // duplicate the style to update the CellFormat
+        _styleMgr.UpdateCellStyleNumberFormatId(excelSheet, excelCell, numberFormatId);
+
+        return true;
     }
 
     public bool SetCellValueAndNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, TimeOnly value, uint? numberFormatId, out ExcelError error)
     {
         error = null;
-        // TODO:
-        return false;
+
+        // Important: store as number
+        excelCell.Cell.DataType = CellValues.Number;
+
+        // set the hour, minute, second and millisecond
+        DateTime dateTime = new DateTime(2025, 1, 1, value.Hour, value.Minute, value.Second, value.Millisecond);
+
+        double oaDate = dateTime.ToOADate();
+        // get the fractional part only
+        oaDate = oaDate - Math.Truncate(oaDate);
+
+        // Convert to double (OLE Automation date)
+        excelCell.Cell.CellValue = new CellValue(oaDate.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
+
+        // remove formula if it's there
+        _styleMgr.RemoveFormula(excelSheet, excelCell);
+
+        // numberFormatId is mandatory for date
+        if (numberFormatId == null)
+        {
+            error = new ExcelError(ExcelErrorCode.FormatMissingForDate);
+            return false;
+        }
+
+        // the cell contains the expected number format 
+        _styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatIdCell);
+        if (numberFormatIdCell == (numberFormatId ?? 0)) return true;
+
+        // duplicate the style to update the CellFormat
+        _styleMgr.UpdateCellStyleNumberFormatId(excelSheet, excelCell, numberFormatId);
+
+        return true;
     }
 
     #endregion
