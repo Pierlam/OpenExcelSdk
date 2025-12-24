@@ -145,7 +145,13 @@ string filename = @".\Files\data.xlsx";
 res=proc.CreateExcelFile(filename, out ExcelFile excelFile, out error);
 ```
 
-## Style/CellFormat
+## Style/CellFormat/NumbergingFormat
+
+Cell formating tak an an important place when read or write cell value.
+
+Manage cell value formatting for number, date and currency is always a nightmare.
+
+The library hide this complexity to the user so you have just to set a value and a format.
 
 Creation of a style/CellFormat is managed as better as possible.
 The max number of custom style is high but limited.
