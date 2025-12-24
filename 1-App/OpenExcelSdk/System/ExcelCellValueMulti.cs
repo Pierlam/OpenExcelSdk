@@ -59,23 +59,46 @@ public class ExcelCellValueMulti
     public ExcelCellType CellType { get; set; }= ExcelCellType.Undefined;
 
     /// <summary>
+    /// part of the style/CellFormat.
     /// Used for DateTime, TimeSpan, DateOnly, TimeOnly formats. 
     /// and also currency, percentage,... In this case, type is Double.
     /// </summary>
     public string? DataFormat { get; set; } = null;
 
+    /// <summary>
+    /// Set if the type of the cell value is a string.
+    /// </summary>
     public string? StringValue { get; set; } = null;
 
+    /// <summary>
+    /// Set if the type of the cell value is an integer.
+    /// </summary>
     public int? IntegerValue { get; set; } = null;
 
+    /// <summary>
+    /// Set if the type of the cell value is a double.
+    /// </summary>
     public double? DoubleValue { get; set; } = null;
-    
+
+    /// <summary>
+    /// Set if the type of the cell value is a boolean.
+    /// NOT-IMPLEMEMTED
+    /// </summary>
     public bool? BooleanValue { get; set; } = null;
 
+    /// <summary>
+    /// Set if the type of the cell value is a DateOnly.
+    /// </summary>
     public DateOnly? DateOnlyValue { get; set; }= null;
 
+    /// <summary>
+    /// Set if the type of the cell value is a DateTime.
+    /// </summary>
     public DateTime? DateTimeValue { get; set; } = null;
 
+    /// <summary>
+    /// Set if the type of the cell value is a TimeOnly.
+    /// </summary>
     public TimeOnly? TimeOnlyValue { get; set; } = null;
 
     //public TimeSpan? TimeSpanValue { get; set; }

@@ -8,7 +8,7 @@ The only dependency is OpenXML SDK, the official Microsoft library to work with 
 The last available version 3.3.0 is used.
 
 This Microsoft library is not easy to use, so OpenExcelSdk propose a simple way to use Excel rows and cells values.
-Main use cases are to get/read or set a type, format and value into a new cell or an existing one.  
+Main use cases are to get/read or set a type, define a format and set a value into a new cell or an existing one.  
 
 
 # A quick example
@@ -62,6 +62,22 @@ Take a look on ExcelProcessor main class which have many methods.
 Manage basic type are: string, integer, double, DateOnly, DateTime and TimeOnly.
 Set a value to a cell is possible for each of these types.
 
+## Get a sheet
+
+After creating of opening an excel file, the next action is to get a sheet.
+There are 2 ways to get a sheet.
+
+```
+//-case1: get the first sheet of the excel file
+proc.GetFirstSheet(excelFile, out ExcelSheet excelSheet, out error);
+
+//-case 2: Get a sheet at an index, starting from 0
+proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+
+//-case 3: Get a sheet by the name
+proc.GetSheetByName(excelFile, "Sheet1", out ExcelSheet excelSheet, out error);
+```
+
 
 ## Read cell value, type and format
 
@@ -72,12 +88,13 @@ proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
 proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
 
 // check: cellValueMulti.CellType, contains the type of the cell value.
+// then get the value from cellValueMulti property: StringValue, IntegerValue, DoubleValue, DateOnlyValue,...
 ```
 
 
 ## Set cell value
 
-If the cell does not exists, it will be created before set the value.
+If the cell does not exists, it will be created before setting the value.
 
 ```
 // set a double value into cell B2
@@ -86,6 +103,8 @@ proc.SetCellValue(excelSheet, 2, 2, 12.5, out error);
 ```
 
 ## Set cell format and value 
+
+When setting a value, it's possible to define the format (display format).
 
 ```
 // set a double value and format it with 2 decimals, e.g.: 12,30
@@ -103,7 +122,7 @@ If you set a value (string, int or double) without format in a existing cell, th
 
 ```
 // set a double value and format it with 2 decimals, e.g.: 12,30
-proc.SetCellValue(excelSheet, 2, 2, 12.5, Definitions.NumFmtNumberTwoDec2, out error);
+proc.SetCellValue(excelSheet, 2, 2, 12.3, Definitions.NumFmtNumberTwoDec2, out error);
 ```
 
 If you need another style/CellFormat, these links could you:
@@ -147,20 +166,48 @@ res=proc.CreateExcelFile(filename, out ExcelFile excelFile, out error);
 
 ## Style/CellFormat/NumbergingFormat
 
-Cell formating tak an an important place when read or write cell value.
+Cell formating take an an important place when read or write cell value.
 
-Manage cell value formatting for number, date and currency is always a nightmare.
+In fact, manage cell value formatting for number, date and currency is always a nightmare.
 
 The library hide this complexity to the user so you have just to set a value and a format.
 
 Creation of a style/CellFormat is managed as better as possible.
 The max number of custom style is high but limited.
 
-When a new style is required, if an existing style match, it is used in place of creating a new one.
+Style/CellFormat are defined in the scope of a sheet, not on all the excel file.
+
+When a new style is required, if an existing style match the new requested one, it is used in place of creating a new one.
+
+
+```
+// get the number of custom (user-defined) existing style/CellFormat/NumberingFormat
+int count= proc.GetCustomNumberFormatsCount(excelSheet);
+
+```
 
 ## What is managed and not
 
 OpenXM SDK is a big library to manage Excel, Word and Power-Point documents.
-This library OpenExcelSdk is focus only on Excel documents.
+OpenExcelSdk is focus only on Excel documents.
 
 The library have many functions on cell but there is several functionalities which are not managed such as: Alignment Border, Fill, Font and Protection.  
+
+
+## Contact 
+
+Have a comment to do? A question to ask? A request ?
+
+Don't hesitate to send me an email: 
+
+pierlam-project@outlook.com
+
+## Style/CellFormat Resources 
+
+ECMA-376, Second Edition, Part 1 - Fundamentals And Markup Language Reference section 18.8.30 page 1786:
+https://www.ecma-international.org/publications-and-standards/standards/ecma-376/
+
+
+https://stackoverflow.com/questions/36670768/openxml-cell-datetype-is-null
+
+https://stackoverflow.com/questions/4655565/reading-dates-from-openxml-excel-files
