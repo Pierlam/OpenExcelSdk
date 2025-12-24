@@ -213,7 +213,7 @@ int count= proc.GetCustomNumberFormatsCount(excelSheet);
 
 ## What is not managed
 
-The library have many functions on cell but there is several functionalities which are not managed such as: Alignment Border, Fill, Font and Protection.  
+The library have many functions on cell but there are several functionalities which are not managed such as: Alignment Border, Fill, Font and Protection.  
 
 
 ## Contact 
