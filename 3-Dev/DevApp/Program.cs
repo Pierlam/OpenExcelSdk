@@ -44,6 +44,9 @@ Console.WriteLine("=> OpenExcelSdk DevApp:");
 
 //ConvertDouble();
 
-DevCloneStyle();
+//DevCloneStyle();
+
+
+CellReader.ReadCellFormats();
 
 Console.WriteLine("=> Ok, Ends." );

@@ -1,12 +1,15 @@
 # What is OpenExcelSdk ?
 
-OpenExcelSdk is a open-source backend .NET library to use Excel (xlsx) very easily.
+OpenExcelSdk is an open-source backend .NET library to use Excel (xlsx) very easily.
 
 It's written in C#/NET8.
 
 The only dependency is OpenXML SDK, the official Microsoft library to work with Excel files.
+The last available version 3.3.0 is used.
 
 This Microsoft library is not easy to use, so OpenExcelSdk propose a simple way to use Excel rows and cells values.
+Main use cases are to get/read or set a type, format and value into a new cell or an existing one.  
+
 
 # A quick example
 
@@ -45,8 +48,66 @@ if(cellValueMulti.CellType == ExcelCellType.String)
 } 
 ```
 
+# Package available on Nuget
+OpenExcelSdk library is packaged as a nuget ready to use:
 
-# Others functions
+https://www.nuget.org/packages/OpenExcelSdk
+
+# Main functions
+
+There are many available functions to get sheet, by index or by name, to read and write cell value type and format.
+
+Take a look on ExcelProcessor main class which have many methods.
+
+Manage basic type are: string, integer, double, DateOnly, DateTime and TimeOnly.
+Set a value to a cell is possible for each of these types.
+
+
+## Read cell value, type and format
+
+```
+// read B2 cell
+proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
+// get the type, the format and the value
+proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+
+// check: cellValueMulti.CellType, contains the type of the cell value.
+```
+
+
+## Set cell value
+
+If the cell does not exists, it will be created before set the value.
+
+```
+// set a double value into cell B2
+proc.SetCellValue(excelSheet, 2, 2, 12.5, out error);
+
+```
+
+## Set cell format and value 
+
+```
+// set a double value and format it with 2 decimals, e.g.: 12,30
+proc.SetCellValue(excelSheet, 2, 2, 12.5, "0.00", out error);
+
+// set a date with a standard format
+proc.SetCellValue(excelSheet, 2, 2, new DateOnly(2025,10,12), "d/m/yyyy", out error);
+```
+
+You can use predefined format, take a look in Definitions class.
+Yo can format the display of the value for number, date and currency.
+
+For date and currency the format is mandatory.
+If you set a value (string, int or double) without format in a existing cell, the defined format of the cell is used as much as possible.
+
+```
+// set a double value and format it with 2 decimals, e.g.: 12,30
+proc.SetCellValue(excelSheet, 2, 2, 12.5, Definitions.NumFmtNumberTwoDec2, out error);
+```
+
+If you need another style/CellFormat, these links could you:
+
 
 ## Get row/last row index
 
@@ -84,4 +145,16 @@ string filename = @".\Files\data.xlsx";
 res=proc.CreateExcelFile(filename, out ExcelFile excelFile, out error);
 ```
 
+## Style/CellFormat
 
+Creation of a style/CellFormat is managed as better as possible.
+The max number of custom style is high but limited.
+
+When a new style is required, if an existing style match, it is used in place of creating a new one.
+
+## What is managed and not
+
+OpenXM SDK is a big library to manage Excel, Word and Power-Point documents.
+This library OpenExcelSdk is focus only on Excel documents.
+
+The library have many functions on cell but there is several functionalities which are not managed such as: Alignment Border, Fill, Font and Protection.  

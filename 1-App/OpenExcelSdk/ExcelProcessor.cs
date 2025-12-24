@@ -144,7 +144,7 @@ public class ExcelProcessor
     }
 
     /// <summary>
-    /// Get the sheet of the excel file by index base0.
+    /// Get a sheet of the excel file by index base0.
     /// </summary>
     /// <param name="excelFile"></param>
     /// <param name="index"></param>
@@ -189,6 +189,14 @@ public class ExcelProcessor
         }
     }
 
+    /// <summary>
+    /// Get a sheet of the excel file by the name.
+    /// </summary>
+    /// <param name="excelFile"></param>
+    /// <param name="index"></param>
+    /// <param name="excelSheet"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
     public bool GetSheetByName(ExcelFile excelFile, string sheetName, out ExcelSheet excelSheet, out ExcelError error)
     {
         error = null;
@@ -394,6 +402,12 @@ public class ExcelProcessor
         return string.Empty;
     }
 
+    /// <summary>
+    /// Get the value of the cell as a double.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <returns></returns>
     public double GetCellValueAsDouble(ExcelSheet excelSheet, ExcelCell excelCell)
     {
         bool res = GetCellTypeAndValue(excelSheet, excelCell, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError);

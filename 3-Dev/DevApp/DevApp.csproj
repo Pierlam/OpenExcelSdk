@@ -12,6 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Files\CellFormats.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Files\DevCloneStyle.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
