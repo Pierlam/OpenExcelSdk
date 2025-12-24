@@ -9,11 +9,11 @@
     <Title>OpenExcelSdk - Backend library to work easily with Excel content</Title>
     <Authors>Pierlam</Authors>
     <Company></Company>
-    <Description>Backend library to work easily with Excel content: get row, get cell type and value, ...</Description>
+    <Description>Backend library to work easily with Excel content: get row, get cell type, value and format, ...</Description>
     <PackageProjectUrl>https://github.com/Pierlam/OpenExcelSdk</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Pierlam/OpenExcelSdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-	<PackageTags>excel dotnet csharp sheet row col cell numberingformat format</PackageTags>
+	<PackageTags>excel SpreadSheet SpreadSheetsML sheet row col cell numberingformat format csharp net8</PackageTags>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>

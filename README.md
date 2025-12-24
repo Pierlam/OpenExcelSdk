@@ -211,7 +211,7 @@ int count= proc.GetCustomNumberFormatsCount(excelSheet);
 
 ```
 
-## What is managed and not
+## What is not managed
 
 The library have many functions on cell but there is several functionalities which are not managed such as: Alignment Border, Fill, Font and Protection.  
 
@@ -224,7 +224,9 @@ Don't hesitate to send me an email:
 
 pierlam-project@outlook.com
 
-## Style/CellFormat Resources 
+## Resources 
+
+### Style/CellFormat
 
 ECMA-376, Second Edition, Part 1 - Fundamentals And Markup Language Reference section 18.8.30 page 1786:
 https://www.ecma-international.org/publications-and-standards/standards/ecma-376/
@@ -234,3 +236,11 @@ https://stackoverflow.com/questions/36670768/openxml-cell-datetype-is-null
 
 Another Stackoverflow article on cellFormat list:
 https://stackoverflow.com/questions/4655565/reading-dates-from-openxml-excel-files
+
+### OpenXml SDK
+
+The official web site: 
+https://learn.microsoft.com/en-us/office/open-xml/open-xml-sdk
+
+SpreadSheets, source code samples:
+https://learn.microsoft.com/en-us/office/open-xml/spreadsheet/overview
