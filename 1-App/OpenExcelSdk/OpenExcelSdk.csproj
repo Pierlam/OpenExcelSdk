@@ -16,6 +16,7 @@
 	<PackageTags>excel SpreadSheet SpreadSheetsML sheet row col cell numberingformat format csharp net8</PackageTags>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

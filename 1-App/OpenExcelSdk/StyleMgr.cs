@@ -107,7 +107,7 @@ public class StyleMgr
     }
 
     /// <summary>
-    /// Get the NumberFormatID (built-in or custom) or create a format (custom).
+    /// Get the NumberFormatID (built-in or custom) or create a new format (custom).
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="format"></param>
@@ -132,6 +132,15 @@ public class StyleMgr
         return true;
     }
 
+    /// <summary>
+    /// Get the numbering format id of the cell.
+    /// This information is present in a CellFormat object.
+    /// Exists if the cell has a styleIndex.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="numFmtId"></param>
+    /// <returns></returns>
     public bool GetCellNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, out uint numFmtId)
     {
         numFmtId = 0;
