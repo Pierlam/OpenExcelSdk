@@ -20,6 +20,8 @@ namespace OpenExcelSdk;
 /// </summary>
 public class Definitions
 {
+    public const string DefaultFirstSheetName = "Sheet1";
+
     /// <summary>
     /// Numbering format for Integer (e.g., 1234)
     /// Built-in format id: 1

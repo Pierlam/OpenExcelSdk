@@ -25,10 +25,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="10-Files\hasManySheets.xlsx">
+    <None Update="10-Files\CreateSheet.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="10-Files\SetCellValueEmpty.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="10-Files\empty.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="10-Files\hasManySheets.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="10-Files\GetCellTypeNullEmpty.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="10-Files\GetCellTypeAndValueCustom.xlsx">

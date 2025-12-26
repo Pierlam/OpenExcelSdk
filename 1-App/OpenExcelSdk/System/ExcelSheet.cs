@@ -19,7 +19,20 @@ public class ExcelSheet
         Rows = worksheetPart.Worksheet.Descendants<Row>();
     }
 
+    /// <summary>
+    /// The excel file hsoting the sheet.
+    /// </summary>
     public ExcelFile ExcelFile { get; set; }
+
+    /// <summary>
+    /// Index of the sheet, first one index is 0.
+    /// </summary>
+    public int Index { get; set; }
+
+    /// <summary>
+    /// Name of the sheet.
+    /// </summary>
+    public string Name { get; set; }
 
     /// <summary>
     /// OpenXml Sheet object.

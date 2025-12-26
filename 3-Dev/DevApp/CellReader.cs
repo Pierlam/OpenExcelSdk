@@ -10,6 +10,33 @@ using System.Threading.Tasks;
 namespace DevApp;
 internal class CellReader
 {
+    public static void CheckFilePb()
+    {
+        ExcelError error;
+        bool res;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = @".\Files\datLinesThenACellBlankOk.xlsx";
+        proc.Open(filename, out ExcelFile excelFile, out error);
+        proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+
+        ExcelCell cell;
+        ExcelCellValueMulti cellValueMulti;
+        CellFormat cellFormat;
+        string dataFormat;
+        StyleMgr styleMgr = new StyleMgr();
+
+        //--A5: 
+        res = proc.GetCellAt(excelSheet, "A5", out cell, out error);
+        //var cellValueType = proc.GetCellType(excelSheet, cell);
+        proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+
+        if(cellValueMulti.CellType== ExcelCellType.String)
+        { }
+
+        proc.Close(excelFile, out error);
+    }
+
     public static void ReadCellFormats()
     {
         ExcelError error;

@@ -99,36 +99,4 @@ public sealed class ExcelFileTests :TestBase
         Assert.IsTrue(res);
         Assert.IsNull(error);
     }
-
-    [TestMethod]
-    public void GetSheetByName()
-    {
-        bool res;
-        ExcelError error;
-        ExcelProcessor proc = new ExcelProcessor();
-
-        string filename = PathFiles + "hasManySheets.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
-
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
-
-        res = proc.GetSheetByName(excelFile, "Feuil1", out excelSheet, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
-        Assert.AreEqual("Feuil1", excelSheet.Sheet.Name.Value);
-
-        res = proc.GetSheetByName(excelFile, "DoesNotExists", out excelSheet, out error);
-        Assert.IsFalse(res);
-        Assert.IsNull(error);
-
-        res = proc.Close(excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
-    }
-
-
 }

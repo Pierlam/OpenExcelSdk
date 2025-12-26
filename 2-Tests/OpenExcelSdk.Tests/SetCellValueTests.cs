@@ -375,23 +375,23 @@ public class SetCellValueTests : TestBase
         int count = proc.GetCustomNumberFormatsCount(excelSheet);
 
         //--B2: 10/12/2025
-        res= proc.SetCellValue(excelSheet, 2, 2, new DateOnly(2025,10,12), "d/m/yyyy", out error);
+        res = proc.SetCellValue(excelSheet, "B2", new DateOnly(2025,10,12), "d/m/yyyy", out error);
         Assert.IsTrue(res);
 
         //--B3: 07/05/2019
-        res = proc.SetCellValue(excelSheet, 2, 3, new DateOnly(2019, 05, 07), "d/m/yyyy", out error);
+        res = proc.SetCellValue(excelSheet, "B3", new DateOnly(2019, 05, 07), "d/m/yyyy", out error);
         Assert.IsTrue(res);
 
         //--B4: 15/11/2020 14:30
-        res = proc.SetCellValue(excelSheet, 2, 4, new DateTime(2020, 11, 15,14,30,0), "d/m/yyyy h:mm", out error);
+        res = proc.SetCellValue(excelSheet, "B4", new DateTime(2020, 11, 15,14,30,0), "d/m/yyyy h:mm", out error);
         Assert.IsTrue(res);
 
         //--B5: 02/08/2017
-        res = proc.SetCellValue(excelSheet, 2, 5, new DateOnly(2017, 08, 02), "d/m/yyyy", out error);
+        res = proc.SetCellValue(excelSheet, "B5", new DateOnly(2017, 08, 02), "d/m/yyyy", out error);
         Assert.IsTrue(res);
 
         //--B6: 12/01/1987 11:23:45
-        res = proc.SetCellValue(excelSheet, 2, 6, new DateTime(1987, 01, 12, 11,23,45), "dd/mm/yyyy\\ hh:mm:ss", out error);
+        res = proc.SetCellValue(excelSheet, "B6", new DateTime(1987, 01, 12, 11,23,45), "dd/mm/yyyy\\ hh:mm:ss", out error);
         Assert.IsTrue(res);
 
         //--B7: 10:34:56
@@ -418,7 +418,7 @@ public class SetCellValueTests : TestBase
         //Assert.AreEqual(count + 1, countUpdate);
 
         //--B2:
-        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
+        res = proc.GetCellAt(excelSheet, "B2", out cell, out error);
         Assert.IsTrue(res);
         res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
         Assert.IsTrue(res);
@@ -446,5 +446,58 @@ public class SetCellValueTests : TestBase
 
         //--B4: 15/11/2020 14:30
 
+    }
+
+    [TestMethod]
+    public void SetCellValueEmpty()
+    {
+        bool res;
+        ExcelError error;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "SetCellValueEmpty.xlsx";
+        res = proc.Open(filename, out ExcelFile excelFile, out error);
+        Assert.IsTrue(res);
+
+        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+        Assert.IsTrue(res);
+
+        ExcelCell cell;
+        ExcelCellValueMulti cellValueMulti;
+
+        //--B2: number
+        res = proc.SetCellValueEmpty(excelSheet, 2, 2, out error);
+        Assert.IsTrue(res);
+
+        //--B3: date
+        res = proc.SetCellValueEmpty(excelSheet, 2, 3, out error);
+        Assert.IsTrue(res);
+
+        // save the changes
+        res = proc.Close(excelFile, out error);
+
+
+        //==>check the excel content
+        res = proc.Open(filename, out excelFile, out error);
+        Assert.IsTrue(res);
+        res = proc.GetSheetAt(excelFile, 0, out excelSheet, out error);
+        Assert.IsTrue(res);
+
+        //--B2: number, empty
+        res = proc.GetCellAt(excelSheet, "B2", out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.IsTrue(cellValueMulti.IsEmpty);
+        // not able to define the type
+        Assert.AreEqual(ExcelCellType.Undefined, cellValueMulti.CellType);
+
+        //--B3: date, bgcolor, empty
+        res = proc.GetCellAt(excelSheet, "B3", out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.IsTrue(cellValueMulti.IsEmpty);
+        Assert.AreEqual(ExcelCellType.DateOnly, cellValueMulti.CellType);
     }
 }

@@ -19,7 +19,8 @@ public enum ExcelErrorCode
     FileNotFound,
     UnableOpenFile,
     UnableCloseFile,
-    
+
+    UnableCreateSheet,
     UnableGetSheet,
 
     IndexWrong,

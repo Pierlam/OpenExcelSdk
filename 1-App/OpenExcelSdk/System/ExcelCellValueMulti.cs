@@ -56,7 +56,17 @@ public class ExcelCellValueMulti
         TimeOnlyValue = value;
     }
 
+    /// <summary>
+    /// type of the value of cell.
+    /// The cell value can be empty.
+    /// </summary>
     public ExcelCellType CellType { get; set; }= ExcelCellType.Undefined;
+
+    /// <summary>
+    /// Return true if the value of the cell is empty/blank.
+    /// Type can be defined, or not, it will be Undefined in this case.
+    /// </summary>
+    public bool IsEmpty { get; set; } = false;
 
     /// <summary>
     /// part of the style/CellFormat.

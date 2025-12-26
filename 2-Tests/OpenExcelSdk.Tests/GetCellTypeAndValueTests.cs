@@ -189,6 +189,7 @@ public class GetCellTypeAndValueTests : TestBase
         Assert.IsTrue(res);
         res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
         Assert.IsTrue(res);
+        Assert.IsFalse(cellValueMulti.IsEmpty);
         Assert.AreEqual(ExcelCellType.DateOnly, cellValueMulti.CellType);
         Assert.AreEqual(new DateOnly(2019, 12, 7), cellValueMulti.DateOnlyValue);
 
@@ -274,4 +275,39 @@ public class GetCellTypeAndValueTests : TestBase
         Assert.AreEqual(ExcelCellType.DateTime, cellValueMulti.CellType);
         Assert.AreEqual(new DateTime(2025, 09, 27, 12, 34, 56), cellValueMulti.DateTimeValue);
     }
+
+    [TestMethod]
+    public void GetCellTypeNullEmpty()
+    {
+        bool res;
+        ExcelError error;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "GetCellTypeNullEmpty.xlsx";
+        res = proc.Open(filename, out ExcelFile excelFile, out error);
+        Assert.IsTrue(res);
+
+        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+        Assert.IsTrue(res);
+
+        ExcelCell cell;
+        ExcelCellValueMulti cellValueMulti;
+
+        //--B2: number, empty
+        res = proc.GetCellAt(excelSheet, "B2", out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.IsTrue(cellValueMulti.IsEmpty);
+        Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
+
+        //--B3: date, bgcolor, empty
+        res = proc.GetCellAt(excelSheet, "B3", out cell, out error);
+        Assert.IsTrue(res);
+        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        Assert.IsTrue(res);
+        Assert.IsTrue(cellValueMulti.IsEmpty);
+        Assert.AreEqual(ExcelCellType.DateOnly, cellValueMulti.CellType);
+    }
+
 }
