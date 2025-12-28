@@ -4,7 +4,6 @@ namespace OpenExcelSdk;
 
 /// <summary>
 /// Represents an excel file.
-/// OexExcelFile
 /// </summary>
 public class ExcelFile
 {
@@ -15,6 +14,9 @@ public class ExcelFile
         WorkbookPart = spreadsheetDocument?.WorkbookPart;
     }
 
+    /// <summary>
+    /// Excel filename without path and extension.
+    /// </summary>
     public string Filename { get; set; }
 
     /// <summary>

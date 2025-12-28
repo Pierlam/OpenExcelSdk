@@ -9,7 +9,7 @@
     <Title>OpenExcelSdk - Backend library to work easily with Excel content</Title>
     <Authors>Pierlam</Authors>
     <Company></Company>
-    <Description>Backend library to work easily with Excel content: get row, get cell type, value and format, ...</Description>
+    <Description>Backend library to work easily with Excel content: get row, get/set cell type, value and format, ...</Description>
     <PackageProjectUrl>https://github.com/Pierlam/OpenExcelSdk</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Pierlam/OpenExcelSdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>

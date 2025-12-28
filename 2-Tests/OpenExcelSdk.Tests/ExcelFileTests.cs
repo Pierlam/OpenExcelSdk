@@ -61,6 +61,20 @@ public sealed class ExcelFileTests : TestBase
     }
 
     [TestMethod]
+    public void OpenExcelNotExistsErr()
+    {
+        bool res;
+        ExcelError error;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "notexists.xlsx";
+        res = proc.Open(filename, out ExcelFile excelFile, out error);
+        Assert.IsFalse(res);
+        Assert.IsNotNull(error);
+        Assert.AreEqual(ExcelErrorCode.FileNotFound, error.ErrorCode);
+    }
+
+    [TestMethod]
     public void OpenEmptyExcel()
     {
         bool res;

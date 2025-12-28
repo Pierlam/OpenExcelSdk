@@ -1,5 +1,9 @@
 ﻿namespace OpenExcelSdk;
 
+
+/// <summary>
+/// Excel error code.
+/// </summary>
 public enum ExcelErrorCode
 {
     NoError,
@@ -8,9 +12,10 @@ public enum ExcelErrorCode
     ValueNull,
     FileNull,
 
+    FileNotFound,
+
     UnableCreateFile,
     FileAlreadyExists,
-    FileNotFound,
     UnableOpenFile,
     UnableCloseFile,
 
@@ -31,6 +36,9 @@ public enum ExcelErrorCode
     UnableRemoveCell
 }
 
+/// <summary>
+/// Excel error object.
+/// </summary>
 public class ExcelError
 {
     public ExcelError(ExcelErrorCode errorCode)

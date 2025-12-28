@@ -3,6 +3,9 @@ using DocumentFormat.OpenXml.Spreadsheet;
 
 namespace OpenExcelSdk;
 
+/// <summary>
+/// An Excel sheet.
+/// </summary>
 public class ExcelSheet
 {
     public ExcelSheet(ExcelFile excelFile, Sheet sheet)

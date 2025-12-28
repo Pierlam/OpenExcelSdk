@@ -10,7 +10,7 @@ namespace OpenExcelSdk;
 /// Open/close, create excel file.
 /// Get/Create sheet. Get/Create cell.
 /// Get/set cell value.
-/// and more.
+/// and more...
 /// </summary>
 public class ExcelProcessor
 {
@@ -18,10 +18,23 @@ public class ExcelProcessor
 
     #region Open/Close Create Excel file
 
+    /// <summary>
+    /// Open an existing Excel file.
+    /// </summary>
+    /// <param name="fileName"></param>
+    /// <param name="excelFile"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
     public bool Open(string fileName, out ExcelFile excelFile, out ExcelError error)
     {
         excelFile = null;
         error = null;
+
+        if(!File.Exists(fileName))
+        {
+            error = new ExcelError(ExcelErrorCode.FileNotFound);
+            return false;
+        }
 
         try
         {
@@ -37,13 +50,19 @@ public class ExcelProcessor
         }
     }
 
+    /// <summary>
+    /// Close an open excel file.
+    /// </summary>
+    /// <param name="excelFile"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
     public bool Close(ExcelFile excelFile, out ExcelError error)
     {
         error = null;
         try
         {
-            // TODO: add try-catch
             excelFile.SpreadsheetDocument.Dispose();
+            excelFile.SpreadsheetDocument = null;
             return true;
         }
         catch (Exception ex)
@@ -464,6 +483,7 @@ public class ExcelProcessor
 
     /// <summary>
     /// Get the value of the cell as a double.
+    /// The type of the cell should match!
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
@@ -501,6 +521,13 @@ public class ExcelProcessor
         return 0;
     }
 
+    /// <summary>
+    /// Get the cell value as a date.
+    /// The type of the cell should match!
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <returns></returns>
     public DateOnly GetCellValueAsDateOnly(ExcelSheet excelSheet, ExcelCell excelCell)
     {
         bool res = GetCellTypeAndValue(excelSheet, excelCell, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError);
@@ -521,7 +548,7 @@ public class ExcelProcessor
 
     /// <summary>
     /// Get the type of cell value.
-    /// GetCellTypeOfValue
+    /// If the cell is empty/blank, in some cases the type will be Undefined.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
@@ -534,7 +561,7 @@ public class ExcelProcessor
     }
 
     /// <summary>
-    /// Geth the type, the value and the data format of cell.
+    /// Get the type, the value and the data format of the cell.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
@@ -801,10 +828,11 @@ public class ExcelProcessor
 
     #endregion Create sheet, row ,cell
 
-    #region Delete cell
+    #region Remove cell
 
     /// <summary>
-    /// Delete a cell in the sheet by col and row index, base1.
+    /// Remove a cell in the sheet by col and row index, start at index 1.
+    /// If there is not cell at the address, no eror will occur.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="colIdx"></param>
@@ -818,7 +846,8 @@ public class ExcelProcessor
     }
 
     /// <summary>
-    /// Delete a cell in the sheet by the address name. exp: A1
+    /// Remove a cell in the sheet by the address name. exp: A1
+    /// If there is not cell at the address, no eror will occur.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="cellAddress"></param>
@@ -852,7 +881,7 @@ public class ExcelProcessor
 
     /// <summary>
     /// Empty/Clear a cell value.
-    /// Keep the formating.
+    /// Keep the format: Alignement colors, border, ...
     /// If the cell contains a formula, remove it.
     /// It the cell is null, do nothing.
     /// </summary>
