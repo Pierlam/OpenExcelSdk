@@ -123,11 +123,11 @@ if(excelCellValueMulti.IsEmpty) ...
 
 ```
 // read B9 cell which not exists
-proc.GetCellAt(excelSheet, "B9"2, 9", out cell, out error);
+bool res= proc.GetCellAt(excelSheet, "B9"2, 9", out cell, out excelError);
 
-// the cell is null, not an error
+// the cell is null, not an error, res is true and excelError is null
 if(cell==null)
-{ }
+{ // do something }
 ```
 
 
@@ -147,6 +147,11 @@ proc.SetCellValue(excelSheet, 3, 10, 12.5, out error);
 ## Set cell format and value 
 
 When setting a value, it's possible to define the format (display format).
+You can format the display of the value for number, date and currency.
+
+For date and currency the format is mandatory.
+
+Example, format the display of a number:
 
 ```
 // set a double value and format it with 2 decimals, e.g.: 12,30
@@ -156,11 +161,8 @@ proc.SetCellValue(excelSheet, "B9", 12.5, "0.00", out error);
 proc.SetCellValue(excelSheet, "D12", new DateOnly(2025,10,12), "d/m/yyyy", out error);
 ```
 
-You can use predefined format, take a look in Definitions class.
-Yo can format the display of the value for number, date and currency.
+You can use one of some predefined format declared in the class Definitions.cs.
 
-For date and currency the format is mandatory.
-If you set a value (string, int or double) without format in a existing cell, the defined format of the cell is used as much as possible.
 
 ```
 // set a double value and format it with 2 decimals, e.g.: 12,30
@@ -172,7 +174,7 @@ proc.SetCellValue(excelSheet, "B5", 12.3, Definitions.NumFmtNumberTwoDec2, out e
 proc.SetCellValue(excelSheet, "C4", new DateOnly(2025,12,28), Definitions.NumFmtDayMonthYear14, out error);
 ```
 
-If you need another style/CellFormat, these links could you:
+If you set a value (string, int or double) without format in a existing cell, the defined format of the cell is used as much as possible.
 
 
 ## Get row/last row index
@@ -224,12 +226,18 @@ res=proc.CreateExcelFile(filename, "MySheet", out ExcelFile excelFile, out error
 
 Cell formating take an important place when read or write cell value.
 
+Technically, Excel has two kind of format, built-in and custom.
+built-in are only identified by dedicated id, from 0 to 163.
+
+Custom format are defined by a string which represents the format.
+
 Manage cell value formatting for number, date and currency is a nightmare.
 
 The library hide this complexity to the user so you have just to set a value and a format.
 
 Creation of a style/CellFormat is managed as better as possible.
 The max number of custom style is high but limited.
+
 
 Style/CellFormat are defined in the scope of a sheet, not on all the excel file.
 
