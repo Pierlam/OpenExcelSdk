@@ -238,6 +238,7 @@ The library hide this complexity to the user so you have just to set a value and
 Creation of a style/CellFormat is managed as better as possible.
 The max number of custom style is high but limited.
 
+
 Style/CellFormat are defined in the scope of a sheet, not on all the excel file.
 
 When a new style is required, if an existing style match the new requested one, it is used in place of creating a new one.
