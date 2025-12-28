@@ -5,17 +5,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <Title>OpenExcelSdk - Backend library to work easily with Excel content</Title>
     <Authors>Pierlam</Authors>
     <Company></Company>
-    <Description>Backend library to work easily with Excel content: get row, get cell type, value and format, ...</Description>
+    <Description>Backend library to work easily with Excel content: get row, get/set cell type, value and format, ...</Description>
     <PackageProjectUrl>https://github.com/Pierlam/OpenExcelSdk</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Pierlam/OpenExcelSdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
 	<PackageTags>excel SpreadSheet SpreadSheetsML sheet row col cell numberingformat format csharp net8</PackageTags>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
+	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	<GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,15 +1,9 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace OpenExcelSdk.System;
+namespace OpenExcelSdk;
 
 /// <summary>
 /// Represents an excel file.
-/// OexExcelFile
 /// </summary>
 public class ExcelFile
 {
@@ -20,6 +14,9 @@ public class ExcelFile
         WorkbookPart = spreadsheetDocument?.WorkbookPart;
     }
 
+    /// <summary>
+    /// Excel filename without path and extension.
+    /// </summary>
     public string Filename { get; set; }
 
     /// <summary>
@@ -31,5 +28,4 @@ public class ExcelFile
     /// OpenXml Worksheet object.
     /// </summary>
     public WorkbookPart WorkbookPart { get; set; }
-
 }

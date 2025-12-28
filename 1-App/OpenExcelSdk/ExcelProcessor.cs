@@ -1,29 +1,40 @@
 ﻿using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Drawing.Charts;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using DocumentFormat.OpenXml.VariantTypes;
-using OpenExcelSdk.System;
-using System;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using NumberingFormat = DocumentFormat.OpenXml.Spreadsheet.NumberingFormat;
 using Text = DocumentFormat.OpenXml.Spreadsheet.Text;
 
 namespace OpenExcelSdk;
 
 /// <summary>
 /// Main class to process Excel files.
+/// Open/close, create excel file.
+/// Get/Create sheet. Get/Create cell.
+/// Get/set cell value.
+/// and more...
 /// </summary>
 public class ExcelProcessor
 {
-    StyleMgr _styleMgr = new StyleMgr();
+    private StyleMgr _styleMgr = new StyleMgr();
 
     #region Open/Close Create Excel file
+
+    /// <summary>
+    /// Open an existing Excel file.
+    /// </summary>
+    /// <param name="fileName"></param>
+    /// <param name="excelFile"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
     public bool Open(string fileName, out ExcelFile excelFile, out ExcelError error)
     {
         excelFile = null;
         error = null;
+
+        if(!File.Exists(fileName))
+        {
+            error = new ExcelError(ExcelErrorCode.FileNotFound);
+            return false;
+        }
 
         try
         {
@@ -31,7 +42,6 @@ public class ExcelProcessor
             SpreadsheetDocument document = SpreadsheetDocument.Open(fileName, true);
             excelFile = new ExcelFile(fileName, document);
             return true;
-
         }
         catch (Exception ex)
         {
@@ -40,13 +50,19 @@ public class ExcelProcessor
         }
     }
 
+    /// <summary>
+    /// Close an open excel file.
+    /// </summary>
+    /// <param name="excelFile"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
     public bool Close(ExcelFile excelFile, out ExcelError error)
     {
         error = null;
         try
         {
-            // TODO: add try-catch
             excelFile.SpreadsheetDocument.Dispose();
+            excelFile.SpreadsheetDocument = null;
             return true;
         }
         catch (Exception ex)
@@ -67,14 +83,14 @@ public class ExcelProcessor
     /// <returns></returns>
     public bool CreateExcelFile(string fileName, out ExcelFile excelFile, out ExcelError error)
     {
-        return CreateExcelFile(fileName, "Sheet", out excelFile, out error);
+        return CreateExcelFile(fileName, Definitions.DefaultFirstSheetName, out excelFile, out error);
     }
 
     /// <summary>
     /// Create a new excel file with one sheet. Provide the sheet name.
     /// The filename should not exists.
     /// exp: "C:\Files\MyExcel.xlsx"
-    /// 
+    ///
     /// https://learn.microsoft.com/en-us/office/open-xml/spreadsheet/structure-of-a-spreadsheetml-document?tabs=cs
     /// </summary>
     /// <param name="fileName"></param>
@@ -126,7 +142,69 @@ public class ExcelProcessor
             return false;
         }
     }
-    #endregion
+
+    /// <summary>
+    /// Create a new sheet in the Excel file.
+    /// Provide the sheet name, should be unique.
+    /// The sheet will be added after the last existing one.
+    /// </summary>
+    /// <param name="excelFile"></param>
+    /// <param name="sheetName"></param>
+    /// <param name="excelSheet"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool CreateSheet(ExcelFile excelFile, string sheetName, out ExcelSheet excelSheet, out ExcelError error)
+    {
+        excelSheet = null;
+        error = null;
+
+        if (string.IsNullOrWhiteSpace(sheetName))
+        {
+            error = new ExcelError(ExcelErrorCode.UnableCreateSheet);
+            return false;
+        }
+
+        if (excelFile.WorkbookPart.Workbook == null)
+            // Add Sheets to the Workbook.
+            excelFile.WorkbookPart.Workbook.AppendChild(new Sheets());
+
+        var listSheets = excelFile.WorkbookPart.Workbook.Sheets.Elements<Sheet>();
+
+        // Find the sheet with the matching name
+        var sheet = listSheets.FirstOrDefault(s => s.Name != null && s.Name.Value.Equals(sheetName, StringComparison.InvariantCultureIgnoreCase));
+        if (sheet != null)
+        {
+            // a sheet with the same already exists
+            error = new ExcelError(ExcelErrorCode.UnableCreateSheet);
+            return false;
+        }
+
+        // get the last id
+        uint sheetId = 1;
+        Sheets sheets = excelFile.WorkbookPart.Workbook.Sheets;
+        if (sheets.Elements<Sheet>().Any())
+        {
+            sheetId = sheets.Elements<Sheet>().Select(s => s.SheetId.Value).Max() + 1;
+        }
+
+        // Add a WorksheetPart to the WorkbookPart
+        WorksheetPart worksheetPart = excelFile.WorkbookPart.AddNewPart<WorksheetPart>();
+        worksheetPart.Worksheet = new Worksheet(new SheetData());
+
+        // Get the relationship ID of the worksheetPart from the workbookPart
+        string relId = excelFile.WorkbookPart.GetIdOfPart(worksheetPart);
+
+        // Append a new worksheet and associate it with the workbook.
+        sheet = new Sheet() { Id = relId, SheetId = sheetId, Name = sheetName };
+        sheets.Append(sheet);
+
+        excelSheet = new ExcelSheet(excelFile, sheet);
+        excelSheet.Index = (int)sheetId;
+        excelSheet.Name = sheet.Name;
+        return true;
+    }
+
+    #endregion Open/Close Create Excel file
 
     #region Get sheet, row ,cell
 
@@ -179,6 +257,8 @@ public class ExcelProcessor
             }
 
             excelSheet = new ExcelSheet(excelFile, sheet);
+            excelSheet.Index = index;
+            excelSheet.Name = sheet.Name;
             return true;
         }
         catch (Exception ex)
@@ -229,7 +309,6 @@ public class ExcelProcessor
             return false;
         }
     }
-
 
     /// <summary>
     /// Get a row from the sheet  by index base0.
@@ -293,7 +372,7 @@ public class ExcelProcessor
     public int GetCustomNumberFormatsCount(ExcelSheet excelSheet)
     {
         var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
-        if(stylesPart == null)
+        if (stylesPart == null)
             return 0;
         if (stylesPart.Stylesheet == null)
             return 0;
@@ -301,7 +380,7 @@ public class ExcelProcessor
         return stylesPart.Stylesheet.CellFormats.Elements().Count();
     }
 
-    #endregion
+    #endregion Get sheet, row ,cell
 
     #region Get Cell, CellValue, CellType
 
@@ -316,13 +395,13 @@ public class ExcelProcessor
     /// <returns></returns>
     public bool GetCellAt(ExcelSheet excelSheet, int colIdx, int rowIdx, out ExcelCell excelCell, out ExcelError excelError)
     {
-        // convert the col and the rox to an excel address    
+        // convert the col and the rox to an excel address
         return GetCellAt(excelSheet, ExcelUtils.ConvertAddress(colIdx, rowIdx), out excelCell, out excelError);
     }
 
     /// <summary>
     /// Get a cell in the sheet by the address name. exp: A1
-    /// 
+    ///
     /// If the cell does not exists, return a  null ExcelCell without error.
     /// If the access to the cell fails, then return an error.
     /// https://learn.microsoft.com/en-us/office/open-xml/spreadsheet/how-to-retrieve-the-values-of-cells-in-a-spreadsheet?tabs=cs-0%2Ccs-2%2Ccs-3%2Ccs-4%2Ccs-5%2Ccs-6%2Ccs-7%2Ccs-8%2Ccs-9%2Ccs-10%2Ccs-11%2Ccs
@@ -336,7 +415,7 @@ public class ExcelProcessor
         excelCell = null;
         excelError = null;
 
-        if(excelSheet == null)
+        if (excelSheet == null)
         {
             excelError = new ExcelError(ExcelErrorCode.ObjectNull);
             return false;
@@ -353,7 +432,7 @@ public class ExcelProcessor
 
             // get the style of the cell
             excelCell.CellFormat = GetCellFormat(excelSheet, excelCell);
-            if (excelCell.Cell.StyleIndex!=null)
+            if (excelCell.Cell.StyleIndex != null)
             {
                 var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
                 var cellFormat = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
@@ -379,10 +458,10 @@ public class ExcelProcessor
     public string GetCellValueAsString(ExcelSheet excelSheet, ExcelCell excelCell)
     {
         bool res = GetCellTypeAndValue(excelSheet, excelCell, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError);
-        if(!res)
+        if (!res)
             return string.Empty;
 
-        if (excelCellValueMulti.CellType== ExcelCellType.String) 
+        if (excelCellValueMulti.CellType == ExcelCellType.String)
             return excelCellValueMulti.StringValue;
 
         if (excelCellValueMulti.CellType == ExcelCellType.Integer)
@@ -404,6 +483,7 @@ public class ExcelProcessor
 
     /// <summary>
     /// Get the value of the cell as a double.
+    /// The type of the cell should match!
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
@@ -427,16 +507,27 @@ public class ExcelProcessor
             return excelCellValueMulti.DateTimeValue.Value.ToOADate();
 
         if (excelCellValueMulti.CellType == ExcelCellType.DateOnly)
-            // not possible, so return zero
-            return 0;
+        {
+            DateTime dt = excelCellValueMulti.DateOnlyValue.Value.ToDateTime(TimeOnly.MinValue);
+            return dt.ToOADate();
+        }
 
         if (excelCellValueMulti.CellType == ExcelCellType.TimeOnly)
-            // not possible, so return zero
-            return 0;
+        {
+            TimeSpan ts = excelCellValueMulti.TimeOnlyValue.Value.ToTimeSpan();
+            return ts.TotalMicroseconds;
+        }
 
         return 0;
     }
 
+    /// <summary>
+    /// Get the cell value as a date.
+    /// The type of the cell should match!
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <returns></returns>
     public DateOnly GetCellValueAsDateOnly(ExcelSheet excelSheet, ExcelCell excelCell)
     {
         bool res = GetCellTypeAndValue(excelSheet, excelCell, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError);
@@ -457,27 +548,54 @@ public class ExcelProcessor
 
     /// <summary>
     /// Get the type of cell value.
-    /// GetCellTypeOfValue
+    /// If the cell is empty/blank, in some cases the type will be Undefined.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
     /// <returns></returns>
     public ExcelCellType GetCellType(ExcelSheet excelSheet, ExcelCell excelCell)
     {
-        bool res= GetCellTypeAndValue(excelSheet, excelCell, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError);
-        if(res)return excelCellValueMulti.CellType;
+        bool res = GetCellTypeAndValue(excelSheet, excelCell, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError);
+        if (res) return excelCellValueMulti.CellType;
         return ExcelCellType.Error;
     }
 
+    /// <summary>
+    /// Get the type, the value and the data format of the cell.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="excelCellValueMulti"></param>
+    /// <param name="excelError"></param>
+    /// <returns></returns>
+    public bool GetCellTypeAndValue(ExcelSheet excelSheet, string addressName, out ExcelCell excelCell, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
+    {
+        excelCell = null;
+        excelCellValueMulti = null;
+        excelError = null;
+        bool res = GetCellAt(excelSheet, addressName, out excelCell, out excelError);
+        if (!res) return false;
+
+        return GetCellTypeAndValue(excelSheet, excelCell, out excelCellValueMulti, out excelError);
+    }
+
+    /// <summary>
+    /// Geth the type, the value and the data format of cell.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="excelCellValueMulti"></param>
+    /// <param name="excelError"></param>
+    /// <returns></returns>
     public bool GetCellTypeAndValue(ExcelSheet excelSheet, int colIdx, int rowIdx, out ExcelCell excelCell, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
-    { 
+    {
         excelCell = null;
         excelCellValueMulti = null;
         excelError = null;
         bool res = GetCellAt(excelSheet, colIdx, rowIdx, out excelCell, out excelError);
         if (!res) return false;
 
-        return GetCellTypeAndValue(excelSheet, excelCell, out  excelCellValueMulti, out excelError);
+        return GetCellTypeAndValue(excelSheet, excelCell, out excelCellValueMulti, out excelError);
     }
 
     /// <summary>
@@ -502,7 +620,7 @@ public class ExcelProcessor
         // no cell, is null, not an error
         if (excelCell.Cell == null)
         {
-            excelCellValueMulti= new ExcelCellValueMulti();
+            excelCellValueMulti = new ExcelCellValueMulti();
             return true;
         }
 
@@ -527,20 +645,28 @@ public class ExcelProcessor
         // is it a built-in format?
         if (BuiltInNumberFormatMgr.GetFormatAndType(numFmtId, out string dataFormat, out ExcelCellType cellType))
         {
+            if (string.IsNullOrEmpty(value))
+            {
+                excelCellValueMulti = new ExcelCellValueMulti();
+                excelCellValueMulti.CellType = cellType;
+                excelCellValueMulti.IsEmpty = true;
+                return true;
+            }
+
             if (cellType == ExcelCellType.Integer)
-                return CreateValueInteger(value, dataFormat, out excelCellValueMulti, out excelError);
+                return ValueBuilder.CreateValueInteger(value, dataFormat, out excelCellValueMulti, out excelError);
 
             if (cellType == ExcelCellType.Double)
-                return CreateValueDouble(value, dataFormat, out excelCellValueMulti, out excelError);
+                return ValueBuilder.CreateValueDouble(value, dataFormat, out excelCellValueMulti, out excelError);
 
             if (cellType == ExcelCellType.DateOnly)
-                return CreateValueDateOnly(value, dataFormat, out excelCellValueMulti, out excelError);
+                return ValueBuilder.CreateValueDateOnly(value, dataFormat, out excelCellValueMulti, out excelError);
 
             if (cellType == ExcelCellType.DateTime)
-                return CreateValueDateTime(value, dataFormat, out excelCellValueMulti, out excelError);
+                return ValueBuilder.CreateValueDateTime(value, dataFormat, out excelCellValueMulti, out excelError);
 
             if (cellType == ExcelCellType.TimeOnly)
-                return CreateValueTimeOnly(value, dataFormat, out excelCellValueMulti, out excelError);
+                return ValueBuilder.CreateValueTimeOnly(value, dataFormat, out excelCellValueMulti, out excelError);
 
             excelError = new ExcelError(ExcelErrorCode.TypeWrong);
             return false;
@@ -552,35 +678,34 @@ public class ExcelProcessor
             // then determine the type from the data format: date, number,...
             cellType = GetCellType(dataFormat);
 
-            if(cellType == ExcelCellType.DateTime)
-                return CreateValueDateTime(value, dataFormat, out excelCellValueMulti, out excelError);
+            if (cellType == ExcelCellType.DateTime)
+                return ValueBuilder.CreateValueDateTime(value, dataFormat, out excelCellValueMulti, out excelError);
 
             if (cellType == ExcelCellType.DateOnly)
-                return CreateValueDateOnly(value, dataFormat, out excelCellValueMulti, out excelError);
+                return ValueBuilder.CreateValueDateOnly(value, dataFormat, out excelCellValueMulti, out excelError);
 
             if (cellType == ExcelCellType.TimeOnly)
-                return CreateValueTimeOnly(value, dataFormat, out excelCellValueMulti, out excelError);
+                return ValueBuilder.CreateValueTimeOnly(value, dataFormat, out excelCellValueMulti, out excelError);
 
             if (cellType == ExcelCellType.Double)
-                return CreateValueDouble(value, dataFormat, out excelCellValueMulti, out excelError);
+                return ValueBuilder.CreateValueDouble(value, dataFormat, out excelCellValueMulti, out excelError);
 
             if (cellType == ExcelCellType.Integer)
-                return CreateValueDouble(value, dataFormat, out excelCellValueMulti, out excelError);
+                return ValueBuilder.CreateValueDouble(value, dataFormat, out excelCellValueMulti, out excelError);
 
             excelError = new ExcelError(ExcelErrorCode.TypeWrong);
             return false;
         }
 
-        // get the cell value as string
-        string cellValue = excelCell.Cell.InnerText;
-        if (cellValue == string.Empty)
+        if (value == string.Empty)
         {
             excelCellValueMulti = new ExcelCellValueMulti();
+            excelCellValueMulti.IsEmpty = true;
             return true;
         }
 
         // is it an int?
-        bool res = int.TryParse(cellValue, out valInt);
+        bool res = int.TryParse(value, out valInt);
         if (res)
         {
             excelCellValueMulti = new ExcelCellValueMulti(valInt);
@@ -589,8 +714,8 @@ public class ExcelProcessor
         }
 
         // is it a double?  cultureInfo prb: replace . by ,
-        cellValue = cellValue.Replace('.', ',');
-        res = double.TryParse(cellValue, out valDouble);
+        value = value.Replace('.', ',');
+        res = double.TryParse(value, out valDouble);
         if (res)
         {
             excelCellValueMulti = new ExcelCellValueMulti(valDouble);
@@ -619,13 +744,13 @@ public class ExcelProcessor
         return (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
     }
 
-    #endregion
+    #endregion Get Cell, CellValue, CellType
 
     #region Create sheet, row ,cell
 
     /// <summary>
-    /// Given a column name, a row index, and a WorksheetPart, inserts a cell into the worksheet. 
-    /// If the cell already exists, returns it. 
+    /// Given a column name, a row index, and a WorksheetPart, inserts a cell into the worksheet.
+    /// If the cell already exists, returns it.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="colIdx"></param>
@@ -640,8 +765,8 @@ public class ExcelProcessor
     }
 
     /// <summary>
-    /// Given a column name, a row index, and a WorksheetPart, inserts a cell into the worksheet. 
-    /// If the cell already exists, returns it. 
+    /// Given a column name, a row index, and a WorksheetPart, inserts a cell into the worksheet.
+    /// If the cell already exists, returns it.
     /// Exp: "A", 1 for cell A1.
     /// </summary>
     /// <param name="excelSheet"></param>
@@ -672,7 +797,7 @@ public class ExcelProcessor
             sheetData.Append(row);
         }
 
-        // If there is not a cell with the specified column name, insert one.  
+        // If there is not a cell with the specified column name, insert one.
         if (row.Elements<Cell>().Where(c => c.CellReference is not null && c.CellReference.Value == columnName + rowIndex).Count() > 0)
         {
             Cell cell = row.Elements<Cell>().Where(c => c.CellReference is not null && c.CellReference.Value == cellReference).First();
@@ -701,13 +826,13 @@ public class ExcelProcessor
         }
     }
 
+    #endregion Create sheet, row ,cell
 
-    #endregion
-
-    #region Delete cell
+    #region Remove cell
 
     /// <summary>
-    /// Delete a cell in the sheet by col and row index, base1.
+    /// Remove a cell in the sheet by col and row index, start at index 1.
+    /// If there is not cell at the address, no eror will occur.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="colIdx"></param>
@@ -721,7 +846,8 @@ public class ExcelProcessor
     }
 
     /// <summary>
-    /// Delete a cell in the sheet by the address name. exp: A1
+    /// Remove a cell in the sheet by the address name. exp: A1
+    /// If there is not cell at the address, no eror will occur.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="cellAddress"></param>
@@ -749,11 +875,149 @@ public class ExcelProcessor
         }
     }
 
-
-
-    #endregion
+    #endregion Delete cell
 
     #region Set cell value
+
+    /// <summary>
+    /// Empty/Clear a cell value.
+    /// Keep the format: Alignement colors, border, ...
+    /// If the cell contains a formula, remove it.
+    /// It the cell is null, do nothing.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool SetCellValueEmpty(ExcelSheet excelSheet, string addressName, out ExcelError error)
+    {
+        if (!GetCellAt(excelSheet, addressName, out ExcelCell excelCell, out error))
+            return false;
+
+        if (excelCell == null || excelCell.Cell == null) return true;
+
+        excelCell.Cell.CellValue = new CellValue(string.Empty);
+
+        // remove formula if it's there
+        _styleMgr.RemoveFormula(excelSheet, excelCell);
+        return true;
+    }
+
+    /// <summary>
+    /// Set a string value in the cell.
+    /// If the cell does not exist, it will be created.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <param name="value"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool SetCellValue(ExcelSheet excelSheet, string addressName, string value, out ExcelError error)
+    {
+        return SetCellValue(excelSheet, ExcelUtils.GetColIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, out error);
+    }
+
+    /// <summary>
+    /// Set an int value in the cell.
+    /// If the cell does not exist, it will be created.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <param name="value"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool SetCellValue(ExcelSheet excelSheet, string addressName, int value, out ExcelError error)
+    {
+        return SetCellValue(excelSheet, ExcelUtils.GetColIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, out error);
+    }
+
+    /// <summary>
+    /// Set a double value in the cell.
+    /// If the cell does not exist, it will be created.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <param name="value"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool SetCellValue(ExcelSheet excelSheet, string addressName, double value, out ExcelError error)
+    {
+        return SetCellValue(excelSheet, ExcelUtils.GetColIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, out error);
+    }
+
+    /// <summary>
+    /// Set a DateOnly value in the cell.
+    /// If the cell does not exist, it will be created.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <param name="value"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool SetCellValue(ExcelSheet excelSheet, string addressName, DateTime value, string format, out ExcelError error)
+    {
+        return SetCellValue(excelSheet, ExcelUtils.GetColIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, format, out error);
+    }
+
+    /// <summary>
+    /// Set a TimeOnly value in the cell.
+    /// If the cell does not exist, it will be created.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <param name="value"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool SetCellValue(ExcelSheet excelSheet, string addressName, TimeOnly value, string format, out ExcelError error)
+    {
+        return SetCellValue(excelSheet, ExcelUtils.GetColIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, format, out error);
+    }
+
+    /// <summary>
+    /// Set a DateOnly value in the cell.
+    /// If the cell does not exist, it will be created.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <param name="value"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool SetCellValue(ExcelSheet excelSheet, string addressName, DateOnly value, string format, out ExcelError error)
+    {
+        return SetCellValue(excelSheet, ExcelUtils.GetColIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, format, out error);
+    }
+
+    /// <summary>
+    /// Empty/Clear a cell value.
+    /// Keep the formating.
+    /// If the cell contains a formula, remove it.
+    /// It the cell is null, do nothing.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool SetCellValueEmpty(ExcelSheet excelSheet, int colIdx, int rowIdx, out ExcelError error)
+    {
+        if (!GetCellAt(excelSheet, colIdx, rowIdx, out ExcelCell excelCell, out error))
+            return false;
+
+        if (excelCell == null || excelCell.Cell == null) return true;
+
+        excelCell.Cell.CellValue = new CellValue(string.Empty);
+
+        // remove formula if it's there
+        _styleMgr.RemoveFormula(excelSheet, excelCell);
+        return true;
+    }
 
     /// <summary>
     /// Set a string value in the cell.
@@ -768,7 +1032,7 @@ public class ExcelProcessor
     public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, string value, out ExcelError error)
     {
         string colName = ExcelUtils.GetColumnName(colIdx);
-        if(!CreateCell(excelSheet, colName, (uint)rowIdx, out ExcelCell excelCell, out error))
+        if (!CreateCell(excelSheet, colName, (uint)rowIdx, out ExcelCell excelCell, out error))
             return false;
         return SetCellValue(excelSheet, excelCell, value, out error);
     }
@@ -911,7 +1175,7 @@ public class ExcelProcessor
         uint formatId;
 
         // get (built-in or custom) or create the format (custom)
-        if(!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId, out error))
+        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId, out error))
             return false;
 
         return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId, out error);
@@ -1049,7 +1313,7 @@ public class ExcelProcessor
     /// <param name="value"></param>
     /// <param name="error"></param>
     /// <returns></returns>
-    public bool SetCellValueAndNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, string value, uint? numberFormatId,  out ExcelError error)
+    public bool SetCellValueAndNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, string value, uint? numberFormatId, out ExcelError error)
     {
         error = null;
 
@@ -1079,7 +1343,7 @@ public class ExcelProcessor
             // no cell format, nothing more to do
             if (numberFormatId == null && !_styleMgr.HasCellFormat(excelSheet, excelCell)) return true;
 
-            // the cell contains the expected number format 
+            // the cell contains the expected number format
             _styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatIdCell);
             if (numberFormatIdCell == (numberFormatId ?? 0)) return true;
 
@@ -1125,14 +1389,14 @@ public class ExcelProcessor
         _styleMgr.RemoveFormula(excelSheet, excelCell);
 
         // no cell format, nothing more to do
-        if (numberFormatId==null && !_styleMgr.HasCellFormat(excelSheet, excelCell)) return true;
+        if (numberFormatId == null && !_styleMgr.HasCellFormat(excelSheet, excelCell)) return true;
 
-        // the cell contains the expected number format 
+        // the cell contains the expected number format
         _styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatIdCell);
-        if(numberFormatIdCell == (numberFormatId ?? 0)) return true;
+        if (numberFormatIdCell == (numberFormatId ?? 0)) return true;
 
         // all other style than format (no border, no color,...) are null, clear the style of the cell
-        if (numberFormatId ==null && _styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
+        if (numberFormatId == null && _styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
         {
             // no format to set, all others style part style are null, so clear the style
             excelCell.Cell.StyleIndex = 0;
@@ -1167,19 +1431,19 @@ public class ExcelProcessor
 
         // Convert to double (OLE Automation date)
         double oaDate = dateTime.ToOADate();
-        excelCell.Cell.CellValue= new CellValue(oaDate.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
+        excelCell.Cell.CellValue = new CellValue(oaDate.ToString(global::System.Globalization.CultureInfo.InvariantCulture));
 
         // remove formula if it's there
         _styleMgr.RemoveFormula(excelSheet, excelCell);
 
         // numberFormatId is mandatory for date
-        if(numberFormatId==null)
+        if (numberFormatId == null)
         {
             error = new ExcelError(ExcelErrorCode.FormatMissingForDate);
             return false;
         }
 
-        // the cell contains the expected number format 
+        // the cell contains the expected number format
         _styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatIdCell);
         if (numberFormatIdCell == (numberFormatId ?? 0)) return true;
 
@@ -1220,7 +1484,7 @@ public class ExcelProcessor
             return false;
         }
 
-        // the cell contains the expected number format 
+        // the cell contains the expected number format
         _styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatIdCell);
         if (numberFormatIdCell == (numberFormatId ?? 0)) return true;
 
@@ -1257,7 +1521,7 @@ public class ExcelProcessor
             return false;
         }
 
-        // the cell contains the expected number format 
+        // the cell contains the expected number format
         _styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatIdCell);
         if (numberFormatIdCell == (numberFormatId ?? 0)) return true;
 
@@ -1267,11 +1531,11 @@ public class ExcelProcessor
         return true;
     }
 
-    #endregion
+    #endregion Set cell value
 
     #region Private methods
 
-    bool GetCellStringValue(ExcelSheet excelSheet, ExcelCell excelCell, out bool isTheCase, out ExcelCellValueMulti excelCellValueMulti, out ExcelError error)
+    private bool GetCellStringValue(ExcelSheet excelSheet, ExcelCell excelCell, out bool isTheCase, out ExcelCellValueMulti excelCellValueMulti, out ExcelError error)
     {
         isTheCase = false;
         excelCellValueMulti = null;
@@ -1318,7 +1582,7 @@ public class ExcelProcessor
         return true;
     }
 
-    bool GetSharedStringValue(ExcelSheet excelSheet, ExcelCell excelCell, out string stringValue)
+    private bool GetSharedStringValue(ExcelSheet excelSheet, ExcelCell excelCell, out string stringValue)
     {
         stringValue = string.Empty;
 
@@ -1327,8 +1591,8 @@ public class ExcelProcessor
         // For shared strings, look up the value in the shared strings table.
         var stringTable = excelSheet.ExcelFile.WorkbookPart.GetPartsOfType<SharedStringTablePart>().FirstOrDefault();
 
-        // If the shared string table is missing, something is wrong. 
-        // Return the index that is in the cell. 
+        // If the shared string table is missing, something is wrong.
+        // Return the index that is in the cell.
         // Otherwise, look up the correct text in the table.
         if (stringTable is not null)
         {
@@ -1353,7 +1617,7 @@ public class ExcelProcessor
     }
 
     /// <summary>
-    /// Given text and a SharedStringTablePart, creates a SharedStringItem with the specified text 
+    /// Given text and a SharedStringTablePart, creates a SharedStringItem with the specified text
     ///  and inserts it into the SharedStringTablePart. If the item already exists, returns its index.
     /// </summary>
     /// <param name="text"></param>
@@ -1381,107 +1645,6 @@ public class ExcelProcessor
         return i;
     }
 
-    static bool CreateValueInteger(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
-    {
-        bool res = int.TryParse(value, out int valInt);
-        if (!res)
-        {
-            excelError = new ExcelError(ExcelErrorCode.TypeWrong);
-            excelCellValueMulti = null;
-            return false;
-        }
-        excelError = null;
-        excelCellValueMulti = new ExcelCellValueMulti(valInt);
-        return true;
-    }
-
-    static bool CreateValueDouble(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
-    {
-        // cultureInfo prb: replace . by ,
-        value = value.Replace('.', ',');
-        bool res = double.TryParse(value, out double valDouble);
-        if (!res)
-        {
-            excelError = new ExcelError(ExcelErrorCode.TypeWrong);
-            excelCellValueMulti = null;
-            return false;
-        }
-        excelError = null;
-        excelCellValueMulti = new ExcelCellValueMulti(valDouble);
-        return true;
-    }
-
-    static bool CreateValueDateOnly(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
-    {
-        excelError = null;
-
-        try
-        {
-            value = value.Replace('.', ',');
-            double valDouble = double.Parse(value);
-
-            // convert the value to date
-            DateTime dateTime = DateTime.FromOADate(valDouble);
-            DateOnly dateOnly = DateOnly.FromDateTime(dateTime);
-            excelCellValueMulti = new ExcelCellValueMulti(dateOnly);
-            excelCellValueMulti.DataFormat = dataFormat;
-            return true;
-        }
-        catch (Exception ex)
-        {
-            excelError = new ExcelError(ExcelErrorCode.TypeWrong, ex);
-            excelCellValueMulti = null;
-            return false;
-        }
-    }
-
-    static bool CreateValueDateTime(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
-    {
-        excelError = null;
-
-        try
-        {
-            value = value.Replace('.', ',');
-            double valDouble = double.Parse(value);
-
-            // convert the value to date
-            DateTime dateTime = DateTime.FromOADate(valDouble);
-            excelCellValueMulti = new ExcelCellValueMulti(dateTime);
-            excelCellValueMulti.DataFormat = dataFormat;
-            return true;
-        }
-        catch (Exception ex)
-        {
-            excelError = new ExcelError(ExcelErrorCode.TypeWrong, ex);
-            excelCellValueMulti = null;
-            return false;
-        }
-    }
-
-    static bool CreateValueTimeOnly(string value, string dataFormat, out ExcelCellValueMulti excelCellValueMulti, out ExcelError excelError)
-    {
-        excelError = null;
-
-        try
-        {
-            value = value.Replace('.', ',');
-            double valDouble = double.Parse(value);
-
-            // convert the value to date
-            DateTime dateTime = DateTime.FromOADate(valDouble);
-            TimeOnly timeOnly = TimeOnly.FromDateTime(dateTime);
-            excelCellValueMulti = new ExcelCellValueMulti(timeOnly);
-            excelCellValueMulti.DataFormat = dataFormat;
-            return true;
-        }
-        catch (Exception ex)
-        {
-            excelError = new ExcelError(ExcelErrorCode.TypeWrong, ex);
-            excelCellValueMulti = null;
-            return false;
-        }
-    }
-
     /// <summary>
     /// Get the type of cell from the data format.
     /// exp:
@@ -1489,9 +1652,9 @@ public class ExcelProcessor
     /// </summary>
     /// <param name="dataFormat"></param>
     /// <returns></returns>
-    static ExcelCellType GetCellType(string dataFormat)
+    private static ExcelCellType GetCellType(string dataFormat)
     {
-        if((dataFormat.Contains("y") || dataFormat.Contains("d")) && dataFormat.Contains("h"))
+        if ((dataFormat.Contains("y") || dataFormat.Contains("d")) && dataFormat.Contains("h"))
             return ExcelCellType.DateTime;
 
         if (dataFormat.Contains("y"))
@@ -1505,6 +1668,6 @@ public class ExcelProcessor
 
         return ExcelCellType.Undefined;
     }
-    #endregion
-}
 
+    #endregion Private methods
+}

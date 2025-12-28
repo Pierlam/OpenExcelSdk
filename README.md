@@ -2,7 +2,7 @@
 
 OpenExcelSdk is an open-source backend .NET library to use Excel (xlsx) very easily.
 
-It's written in C#/NET8.
+It's written in C#/NET8 with VS2026. The code is covered by 18 unit tests to ensure the non-regression of incoming evolutions.
 
 The only dependency is OpenXML SDK, the official Microsoft library to work with Excel files.
 The last available version 3.3.0 is used.
@@ -14,8 +14,11 @@ This Microsoft library is not easy to use, so OpenExcelSdk propose a simple way 
 Main use cases are to get/read or set a type, define a format and set a value into a new cell or an existing one.  
 
 OpenExcelSdk is a kind of wrapper around OpenXML SDK library.
+
 OpenExcelSdk offers light and basic framework, main classes are : ExcelFile, ExcelSheet, ExcelRow, ExcelCell.
+
 OpenXML SDK classes are always available in each of these classes: SpreadsheetDocument, Sheet, WorkbookPart, Sheet, Row, Cell, ...
+
 
 
 # A quick example
@@ -40,8 +43,8 @@ res = proc.Open(filename, out ExcelFile excelFile, out error);
 // get the first sheet of the excel file
 proc.GetFirstSheet(excelFile, out ExcelSheet excelSheet, out error);
 
-// get cell at B7 (A is 1, B is 2)
-proc.GetCellAt(excelSheet, 2, 7, out ExcelCell cell, out error);
+// get cell at B7, if the cell doesn't exists, cell is null, not an error 
+proc.GetCellAt(excelSheet, "B7", out ExcelCell cell, out error);
 
 // get the type and the value of cell
 proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
@@ -65,6 +68,10 @@ Github source repository:
 
 https://github.com/Pierlam/OpenExcelSdk/
 
+Github wiki:
+
+https://github.com/Pierlam/OpenExcelSdk/wiki
+
 
 # Main functions
 
@@ -77,8 +84,8 @@ Set a value to a cell is possible for each of these types.
 
 ## Get a sheet
 
-After creating of opening an excel file, the next action is to get a sheet.
-There are 2 ways to get a sheet.
+After creating or opening an excel file, the next action is to get a sheet.
+There are 3 ways to get a sheet.
 
 ```
 //-case1: get the first sheet of the excel file
@@ -92,16 +99,23 @@ proc.GetSheetByName(excelFile, "Sheet1", out ExcelSheet excelSheet, out error);
 ```
 
 
-## Read cell value, type and format
+## Get cell value, type and format
 
 ```
 // read B4 cell
-proc.GetCellAt(excelSheet, 2, 4, out cell, out error);
-// get the type, the format and the value
-proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+proc.GetCellAt(excelSheet, "B4", out ExcelCell excelCell, out error);
 
-// check: cellValueMulti.CellType, contains the type of the cell value.
-// then get the value from cellValueMulti property: StringValue, IntegerValue, DoubleValue, DateOnlyValue,...
+// or like this:  proc.GetCellAt(excelSheet, 2,4, out ExcelCell excelCell, out error);
+
+// get the type, the format and the value
+proc.GetCellTypeAndValue(excelSheet, excelCell, out ExcelCellValueMulti excelCellValueMulti, out error);
+
+// check: excelCellValueMulti.CellType, contains the type of the cell value.
+// then get the value from cellValueMulti property: StringValue, IntegerValue, DoubleValue, DateOnlyValue and TimeOnly
+
+// the cell value can be empty/Blank, in some cases the type will be undefined
+if(excelCellValueMulti.IsEmpty) ...
+
 ```
 
 
@@ -109,9 +123,9 @@ proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
 
 ```
 // read B9 cell which not exists
-proc.GetCellAt(excelSheet, 2, 9, out cell, out error);
+proc.GetCellAt(excelSheet, "B9"2, 9", out cell, out error);
 
-// no error, the cell is null
+// the cell is null, not an error
 if(cell==null)
 { }
 ```
@@ -119,10 +133,13 @@ if(cell==null)
 
 ## Set cell value
 
-If the cell does not exists, it will be created before setting the value.
+If the cell does not exists, it will be created before setting the value. If the cell contains a formula, it will be revoved.
 
 ```
 // set a double value into cell C10
+proc.SetCellValue(excelSheet, "C10", 12.5, out error);
+
+// or 
 proc.SetCellValue(excelSheet, 3, 10, 12.5, out error);
 
 ```
@@ -133,10 +150,10 @@ When setting a value, it's possible to define the format (display format).
 
 ```
 // set a double value and format it with 2 decimals, e.g.: 12,30
-proc.SetCellValue(excelSheet, 2, 9, 12.5, "0.00", out error);
+proc.SetCellValue(excelSheet, "B9", 12.5, "0.00", out error);
 
 // set a date with a standard format
-proc.SetCellValue(excelSheet, 8, 12, new DateOnly(2025,10,12), "d/m/yyyy", out error);
+proc.SetCellValue(excelSheet, "D12", new DateOnly(2025,10,12), "d/m/yyyy", out error);
 ```
 
 You can use predefined format, take a look in Definitions class.
@@ -147,7 +164,12 @@ If you set a value (string, int or double) without format in a existing cell, th
 
 ```
 // set a double value and format it with 2 decimals, e.g.: 12,30
-proc.SetCellValue(excelSheet, 2, 5, 12.3, Definitions.NumFmtNumberTwoDec2, out error);
+// Definitions.NumFmtNumberTwoDec2= "0.00"
+proc.SetCellValue(excelSheet, "B5", 12.3, Definitions.NumFmtNumberTwoDec2, out error);
+
+// set a formated date
+// Definitions.NumFmtDayMonthYear14= "d/m/yyyy"
+proc.SetCellValue(excelSheet, "C4", new DateOnly(2025,12,28), Definitions.NumFmtDayMonthYear14, out error);
 ```
 
 If you need another style/CellFormat, these links could you:
@@ -162,14 +184,18 @@ ExcelError error;
 bool res;
 ExcelProcessor proc = new ExcelProcessor();
 
+// open an existing excel file
 string filename = @".\Files\data.xlsx";
 proc.Open(filename, out ExcelFile excelFile, out error);
+
+// get the first sheet
 proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
 
+// get the index of the last row containing cells
 int lastRowIdx = proc.GetLastRowIndex(excelSheet);
 Console.WriteLine("last row idx: " + lastRowIdx);
 
-// get row at index 0, the first one
+// get the row at index 0, the first one
 res = proc.GetRowAt(excelSheet, 0, out ExcelRow row, out error);
 if (!res)
 	Console.WriteLine("ERROR, unable to read the row");
@@ -178,22 +204,27 @@ if (!res)
 
 ## Create an excel file
 
-The code create an excel file with one sheet.
+The code below will create an excel file with one sheet. 
 
 ```
 bool res;
 ExcelError error;
 ExcelProcessor proc = new ExcelProcessor();
 
+// create an excel with one sheet, the name will: Sheet1
 string filename = @".\Files\data.xlsx";
 res=proc.CreateExcelFile(filename, out ExcelFile excelFile, out error);
+
+// or set your sheet name 
+res=proc.CreateExcelFile(filename, "MySheet", out ExcelFile excelFile, out error);
+
 ```
 
 ## Style/CellFormat/NumbergingFormat
 
 Cell formating take an important place when read or write cell value.
 
-In fact, manage cell value formatting for number, date and currency is always a nightmare.
+Manage cell value formatting for number, date and currency is a nightmare.
 
 The library hide this complexity to the user so you have just to set a value and a format.
 
@@ -213,7 +244,9 @@ int count= proc.GetCustomNumberFormatsCount(excelSheet);
 
 ## What is not managed
 
-The library have many functions on cell but there is several functionalities which are not managed such as: Alignment Border, Fill, Font and Protection.  
+The library offers many functions on cell but there are several functionalities which are not managed such as: Alignment Border, Fill, Font and Protection.  
+
+But the background and foreground color (Fill) get/set will be the next feature implemented. 
 
 
 ## Contact 

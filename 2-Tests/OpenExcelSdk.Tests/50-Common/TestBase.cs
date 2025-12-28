@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OpenExcelSdk.Tests._50_Common;
+﻿namespace OpenExcelSdk.Tests._50_Common;
 
 public class TestBase
 {
@@ -12,5 +6,4 @@ public class TestBase
     /// Path where excel files are saved.
     /// </summary>
     public string PathFiles = @".\10-Files\";
-
 }

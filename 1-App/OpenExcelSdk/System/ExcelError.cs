@@ -1,11 +1,9 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace OpenExcelSdk;
 
-namespace OpenExcelSdk.System;
+
+/// <summary>
+/// Excel error code.
+/// </summary>
 public enum ExcelErrorCode
 {
     NoError,
@@ -14,12 +12,14 @@ public enum ExcelErrorCode
     ValueNull,
     FileNull,
 
+    FileNotFound,
+
     UnableCreateFile,
     FileAlreadyExists,
-    FileNotFound,
     UnableOpenFile,
     UnableCloseFile,
-    
+
+    UnableCreateSheet,
     UnableGetSheet,
 
     IndexWrong,
@@ -29,19 +29,23 @@ public enum ExcelErrorCode
     UnableGetCell,
     UnableGetRow,
 
-    UnableGetCellStringValue,    
+    UnableGetCellStringValue,
     UnableSetCellValue,
     FormatMissingForDate,
 
     UnableRemoveCell
 }
 
+/// <summary>
+/// Excel error object.
+/// </summary>
 public class ExcelError
 {
     public ExcelError(ExcelErrorCode errorCode)
     {
         ErrorCode = errorCode;
     }
+
     public ExcelError(ExcelErrorCode errorCode, Exception exception)
     {
         ErrorCode = errorCode;

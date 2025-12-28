@@ -1,13 +1,11 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace OpenExcelSdk.System;
+namespace OpenExcelSdk;
 
+/// <summary>
+/// An Excel sheet.
+/// </summary>
 public class ExcelSheet
 {
     public ExcelSheet(ExcelFile excelFile, Sheet sheet)
@@ -19,7 +17,20 @@ public class ExcelSheet
         Rows = worksheetPart.Worksheet.Descendants<Row>();
     }
 
+    /// <summary>
+    /// The excel file hsoting the sheet.
+    /// </summary>
     public ExcelFile ExcelFile { get; set; }
+
+    /// <summary>
+    /// Index of the sheet, first one index is 0.
+    /// </summary>
+    public int Index { get; set; }
+
+    /// <summary>
+    /// Name of the sheet.
+    /// </summary>
+    public string Name { get; set; }
 
     /// <summary>
     /// OpenXml Sheet object.
@@ -35,5 +46,4 @@ public class ExcelSheet
     /// OpenXml Rows object.
     /// </summary>
     public IEnumerable<Row> Rows { get; set; }
-
 }

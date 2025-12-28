@@ -1,8 +1,5 @@
 ﻿using DevApp;
-using DocumentFormat.OpenXml.Math;
-using DocumentFormat.OpenXml.Spreadsheet;
 using OpenExcelSdk;
-using OpenExcelSdk.System;
 
 void DevCloneStyle()
 {
@@ -23,7 +20,6 @@ void DevCloneStyle()
     //if (!res) return;
     //proc.Close(excelFile, out error);
 
-
     // save the changes
     res = proc.Close(excelFile, out error);
 }
@@ -35,7 +31,6 @@ void ConvertDouble()
 
     //string value = "45927,524";
     double valDouble = double.Parse(value);
-
 }
 
 Console.WriteLine("=> OpenExcelSdk DevApp:");
@@ -46,7 +41,8 @@ Console.WriteLine("=> OpenExcelSdk DevApp:");
 
 //DevCloneStyle();
 
-
 CellReader.ReadCellFormats();
 
-Console.WriteLine("=> Ok, Ends." );
+//CellReader.CheckFilePb();
+
+Console.WriteLine("=> Ok, Ends.");

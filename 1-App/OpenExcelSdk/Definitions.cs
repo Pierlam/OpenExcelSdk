@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OpenExcelSdk;
+﻿namespace OpenExcelSdk;
 
 /// <summary>
 /// Some general definitions.
-/// 
+///
 /// ---
 /// cell numbering format Help:
 /// https://stackoverflow.com/questions/36670768/openxml-cell-datetype-is-null
 /// https://stackoverflow.com/questions/4655565/reading-dates-from-openxml-excel-files
-/// 
+///
 /// ECMA-376, Second Edition, Part 1 - Fundamentals And Markup Language Reference section 18.8.30 page 1786:
 /// https://www.ecma-international.org/publications-and-standards/standards/ecma-376/
 ///
 /// </summary>
 public class Definitions
 {
+    public const string DefaultFirstSheetName = "Sheet1";
+
     /// <summary>
     /// Numbering format for Integer (e.g., 1234)
     /// Built-in format id: 1
@@ -78,5 +74,5 @@ public class Definitions
     /// Numbering format for Euro currency with 2 decimal places (e.g., 1.234,56 €)
     /// Custom format.
     /// </summary>
-    public const string NumFmtEuroTwoDec= "#,##0.00\\ \"€\"";
+    public const string NumFmtEuroTwoDec = "#,##0.00\\ \"€\"";
 }

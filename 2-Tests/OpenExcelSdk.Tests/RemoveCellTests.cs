@@ -1,10 +1,4 @@
-﻿using OpenExcelSdk.System;
-using OpenExcelSdk.Tests._50_Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using OpenExcelSdk.Tests._50_Common;
 
 namespace OpenExcelSdk.Tests;
 
@@ -29,24 +23,23 @@ public class RemoveCellTests : TestBase
         ExcelCellValueMulti cellValueMulti;
 
         //--B2: already null!
-        res=proc.RemoveCell(excelSheet, "B2", out error);
+        res = proc.RemoveCell(excelSheet, "B2", out error);
         Assert.IsTrue(res);
 
-        //--B3: 
+        //--B3:
         res = proc.RemoveCell(excelSheet, "B3", out error);
         Assert.IsTrue(res);
 
-        //--B4: 
-        res = proc.RemoveCell(excelSheet, 2,4, out error);
+        //--B4:
+        res = proc.RemoveCell(excelSheet, 2, 4, out error);
         Assert.IsTrue(res);
 
-        //--B5: 
+        //--B5:
         res = proc.RemoveCell(excelSheet, 2, 5, out error);
         Assert.IsTrue(res);
 
         // save the changes
         res = proc.Close(excelFile, out error);
-
 
         //==>check the excel content
         res = proc.Open(filename, out excelFile, out error);

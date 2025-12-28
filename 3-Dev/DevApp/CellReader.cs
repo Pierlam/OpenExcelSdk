@@ -1,15 +1,37 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
 using OpenExcelSdk;
-using OpenExcelSdk.System;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DevApp;
+
 internal class CellReader
 {
+    public static void CheckFilePb()
+    {
+        ExcelError error;
+        bool res;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = @".\Files\datLinesThenACellBlankOk.xlsx";
+        proc.Open(filename, out ExcelFile excelFile, out error);
+        proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+
+        ExcelCell cell;
+        ExcelCellValueMulti cellValueMulti;
+        CellFormat cellFormat;
+        string dataFormat;
+        StyleMgr styleMgr = new StyleMgr();
+
+        //--A5:
+        res = proc.GetCellAt(excelSheet, "A5", out cell, out error);
+        //var cellValueType = proc.GetCellType(excelSheet, cell);
+        proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+
+        if (cellValueMulti.CellType == ExcelCellType.String)
+        { }
+
+        proc.Close(excelFile, out error);
+    }
+
     public static void ReadCellFormats()
     {
         ExcelError error;
@@ -26,16 +48,55 @@ internal class CellReader
         string dataFormat;
         StyleMgr styleMgr = new StyleMgr();
 
-        //--A1: 
-        res = proc.GetCellAt(excelSheet, 1, 1, out cell, out error);
+        //--B2: int, border
+        res = proc.GetCellAt(excelSheet, "B2", out cell, out error);
         var cellValueType = proc.GetCellType(excelSheet, cell);
         proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
-
         cellFormat = proc.GetCellFormat(excelSheet, cell);
-        // 21: built-in format: HH:mm:ss
-        int fmtId= (int)cellFormat.NumberFormatId.Value;
+        //cellFormat.BorderId
 
+        //--B4: int, bgcolor
+        // B5: red: #FF0000 // ARGB: FF + FF0000
 
+        res = proc.GetCellAt(excelSheet, "B5", out cell, out error);
+        cellValueType = proc.GetCellType(excelSheet, cell);
+        proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        if (cellFormat != null && cellFormat.BorderId != null)
+        {
+            uint fillId = cellFormat.FillId.Value;
+            DocumentFormat.OpenXml.Spreadsheet.Fill fill = excelFile.WorkbookPart.WorkbookStylesPart.Stylesheet.Fills.ElementAt((int)fillId) as DocumentFormat.OpenXml.Spreadsheet.Fill;
+
+            if (fill?.PatternFill?.BackgroundColor != null)
+            {
+                DocumentFormat.OpenXml.Spreadsheet.ForegroundColor fgColor = fill.PatternFill.ForegroundColor;
+
+                // 2 cases: direct color or theme color
+
+                if (fgColor.Rgb != null)
+                {
+                    // std yellow: "FFFFFF00"/ #FFFF00
+                    Console.WriteLine($"RGB Color: {fgColor.Rgb}");
+                }
+
+                if (fgColor.Theme != null)
+                {
+                    Console.WriteLine("Fill color is theme-based or not set.");
+                    int themeIndex = (int)fgColor.Theme.Value;
+                    double tint = fgColor.Tint != null ? fgColor.Tint.Value : 0;
+
+                    string rgb = styleMgr.GetThemeColor(excelFile.WorkbookPart, themeIndex, tint);
+
+                    // "#70AD47"  for B4 cell
+                    Console.WriteLine($"RGB Color: {rgb}");
+                }
+            }
+
+            if (fill?.PatternFill?.ForegroundColor != null)
+            {
+                // text color
+            }
+        }
     }
 
     public static void Read()
@@ -62,10 +123,7 @@ internal class CellReader
         var cellValueType = proc.GetCellType(excelSheet, cell);
         string val = proc.GetCellValueAsString(excelSheet, cell);
 
-
-
         if (!proc.Close(excelFile, out error))
             Console.WriteLine("ERROR, Unable to close the Excel file.");
-
     }
 }
