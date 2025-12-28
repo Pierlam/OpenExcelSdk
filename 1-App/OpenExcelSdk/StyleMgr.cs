@@ -5,9 +5,11 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using OpenExcelSdk.System;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Color = DocumentFormat.OpenXml.Spreadsheet.Color;
 
 namespace OpenExcelSdk;
 public class StyleMgr
@@ -353,6 +355,100 @@ public class StyleMgr
             excelSheet.ExcelFile.WorkbookPart.DeletePart(calculationChainPart);
 
         return true;
+    }
+
+    /// <summary>
+    /// Resolve theme color to RGB
+    /// </summary>
+    /// <param name="wbPart"></param>
+    /// <param name="themeIndex"></param>
+    /// <param name="tint"></param>
+    /// <returns></returns>
+    public string GetThemeColor(WorkbookPart wbPart, int themeIndex, double tint)
+    {
+        // Default to black if anything fails
+        string defaultColor = "#000000";
+
+        try
+        {
+            if (wbPart.ThemePart == null)
+                return defaultColor;
+
+            var clrScheme = wbPart.ThemePart.Theme.ThemeElements?.ColorScheme;
+            if (clrScheme == null)
+                return defaultColor;
+
+            // Get base hex color from theme index
+            string hexColor = themeIndex switch
+            {
+                0 => GetHexFromSchemeColor(clrScheme.Light1Color),
+                1 => GetHexFromSchemeColor(clrScheme.Dark1Color),
+                2 => GetHexFromSchemeColor(clrScheme.Light2Color),
+                3 => GetHexFromSchemeColor(clrScheme.Dark2Color),
+                4 => GetHexFromSchemeColor(clrScheme.Accent1Color),
+                5 => GetHexFromSchemeColor(clrScheme.Accent2Color),
+                6 => GetHexFromSchemeColor(clrScheme.Accent3Color),
+                7 => GetHexFromSchemeColor(clrScheme.Accent4Color),
+                8 => GetHexFromSchemeColor(clrScheme.Accent5Color),
+                9 => GetHexFromSchemeColor(clrScheme.Accent6Color),
+                _ => null
+            };
+
+            if (string.IsNullOrEmpty(hexColor))
+                return defaultColor;
+
+            // Apply tint if needed
+            var baseColor = global::System.Drawing.ColorTranslator.FromHtml("#" + hexColor);
+            var tinted = ApplyTint(baseColor, tint);
+            return global::System.Drawing.ColorTranslator.ToHtml(tinted);
+        }
+        catch
+        {
+            return defaultColor;
+        }
+    }
+
+
+    // Extracts hex from either RgbColorModelHex or SystemColor
+    static string GetHexFromSchemeColor(DocumentFormat.OpenXml.Drawing.Color2Type colorType)
+    {
+        if (colorType == null) return null;
+
+        if (colorType.RgbColorModelHex?.Val != null)
+            return colorType.RgbColorModelHex.Val.Value;
+
+        if (colorType.SystemColor?.LastColor != null)
+            return colorType.SystemColor.LastColor.Value;
+
+        return null;
+    }
+
+    // Excel tint/shade algorithm
+    static global::System.Drawing.Color ApplyTint(global::System.Drawing.Color color, double tint)
+    {
+        double r = color.R / 255.0;
+        double g = color.G / 255.0;
+        double b = color.B / 255.0;
+
+        if (tint < 0)
+        {
+            r *= 1.0 + tint;
+            g *= 1.0 + tint;
+            b *= 1.0 + tint;
+        }
+        else
+        {
+            r = (1.0 - r) * tint + r;
+            g = (1.0 - g) * tint + g;
+            b = (1.0 - b) * tint + b;
+        }
+
+        return global::System.Drawing.Color.FromArgb(
+            color.A,
+            (int)Math.Round(r * 255),
+            (int)Math.Round(g * 255),
+            (int)Math.Round(b * 255)
+        );
     }
 
 }

@@ -494,12 +494,16 @@ public class ExcelProcessor
             return excelCellValueMulti.DateTimeValue.Value.ToOADate();
 
         if (excelCellValueMulti.CellType == ExcelCellType.DateOnly)
-            // not possible, so return zero
-            return 0;
+        {
+            DateTime dt = excelCellValueMulti.DateOnlyValue.Value.ToDateTime(TimeOnly.MinValue);
+            return dt.ToOADate();
+        }
 
         if (excelCellValueMulti.CellType == ExcelCellType.TimeOnly)
-            // not possible, so return zero
-            return 0;
+        {
+            TimeSpan ts = excelCellValueMulti.TimeOnlyValue.Value.ToTimeSpan();            
+            return ts.TotalMicroseconds;
+        }
 
         return 0;
     }
