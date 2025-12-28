@@ -1,10 +1,4 @@
-﻿using OpenExcelSdk.System;
-using OpenExcelSdk.Tests._50_Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using OpenExcelSdk.Tests._50_Common;
 
 namespace OpenExcelSdk.Tests;
 
@@ -41,7 +35,6 @@ public class SheetTests : TestBase
         Assert.IsNull(error);
     }
 
-
     [TestMethod]
     public void CreateSheet()
     {
@@ -57,14 +50,12 @@ public class SheetTests : TestBase
         res = proc.CreateSheet(excelFile, "mysheet", out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);
 
-        // create sheet by the name is already used 
+        // create sheet by the name is already used
         res = proc.CreateSheet(excelFile, "Sheet1", out excelSheet, out error);
         Assert.IsFalse(res);
-
 
         res = proc.Close(excelFile, out error);
         Assert.IsTrue(res);
         Assert.IsNull(error);
-
     }
 }

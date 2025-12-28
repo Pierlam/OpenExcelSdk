@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace OpenExcelSdk;
 
-namespace OpenExcelSdk;
 public class ExcelUtils
 {
     /// <summary>
@@ -30,12 +25,12 @@ public class ExcelUtils
     /// <returns></returns>
     public static int GetColIndex(string addressName)
     {
-        if(string.IsNullOrWhiteSpace(addressName)) return 0;
+        if (string.IsNullOrWhiteSpace(addressName)) return 0;
         string columnAddress = string.Empty;
-        int i= 0;
-        while(true)
+        int i = 0;
+        while (true)
         {
-            if(i>=addressName.Length) break;
+            if (i >= addressName.Length) break;
 
             if (char.IsLetter(addressName[i]))
             {
@@ -45,8 +40,8 @@ public class ExcelUtils
             }
             break;
         }
-        
-        if(columnAddress == string.Empty) return 0;
+
+        if (columnAddress == string.Empty) return 0;
 
         // convert the col to an int
         int columnNumber = 0;
@@ -56,7 +51,7 @@ public class ExcelUtils
         }
 
         return columnNumber;
-    } 
+    }
 
     /// <summary>
     /// Get the row value from a cell address.
@@ -77,13 +72,13 @@ public class ExcelUtils
             }
             break;
         }
-        string rowStr=string.Empty;
+        string rowStr = string.Empty;
         while (true)
         {
             if (i >= addressName.Length) break;
             if (char.IsDigit(addressName[i]))
             {
-                rowStr+= addressName[i];
+                rowStr += addressName[i];
                 i++;
                 continue;
             }
@@ -91,7 +86,7 @@ public class ExcelUtils
         }
 
         int row = 0;
-        if(!int.TryParse(rowStr, out row)) return 0;
+        if (!int.TryParse(rowStr, out row)) return 0;
         return row;
     }
 
@@ -127,5 +122,4 @@ public class ExcelUtils
 
         return true;
     }
-
 }

@@ -1,11 +1,5 @@
-﻿using OpenExcelSdk.System;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace OpenExcelSdk;
 
-namespace OpenExcelSdk;
 public class BuiltInNumberFormatMgr
 {
     /// <summary>
@@ -20,7 +14,7 @@ public class BuiltInNumberFormatMgr
         if (string.IsNullOrEmpty(format))
             return false;
 
-        if(format=="0")
+        if (format == "0")
         {
             formatId = 1;
             return true;
@@ -124,7 +118,6 @@ public class BuiltInNumberFormatMgr
         // 39 = '#,##0.00;(#,##0.00)'          ou "#,##0.00_);(#,##0.00)"
         // 40 = '#,##0.00;[Red](#,##0.00)'     ou  "#,##0.00_);[Red]"
 
-
         if (format == "_(\"$\"* #,##0.00_);_(\"$\"* \\(#,##0.00\\);_(\"$\"* \"-\"??_);_(@_)")
         {
             formatId = 44;
@@ -137,7 +130,6 @@ public class BuiltInNumberFormatMgr
         // 48 = '##0.0E+0'
         // 49 = '@'
 
-
         // 50 = '[$-404]e/m/d'
         // 55 = 'yyyy/mm/dd'
         // 57 = '[$-404]e/m/d'
@@ -148,7 +140,7 @@ public class BuiltInNumberFormatMgr
         // 67 = 't0%'
         // 68 = 't0.00%'
         // 69 = 't# ?/?'
-        // 70 = 't# ??/??'          
+        // 70 = 't# ??/??'
 
         return false;
     }
@@ -163,7 +155,7 @@ public class BuiltInNumberFormatMgr
     public static bool GetFormatAndType(uint numFmtId, out string numberFormat, out ExcelCellType cellType)
     {
         numberFormat = string.Empty;
-        cellType= ExcelCellType.Undefined;
+        cellType = ExcelCellType.Undefined;
 
         // General, can be string or number
         if (numFmtId == 0)
@@ -330,7 +322,6 @@ public class BuiltInNumberFormatMgr
         // 39 = '#,##0.00;(#,##0.00)'          ou "#,##0.00_);(#,##0.00)"
         // 40 = '#,##0.00;[Red](#,##0.00)'     ou  "#,##0.00_);[Red]"
 
-
         // 44 = '_("$"* #,##0.00_);_("$"* \(#,##0.00\);_("$"* "-"??_);_(@_)'  -> currency with 2 decimals
         if (numFmtId == 44)
         {
@@ -345,7 +336,6 @@ public class BuiltInNumberFormatMgr
         // 48 = '##0.0E+0'
         // 49 = '@'
 
-
         // 50 = '[$-404]e/m/d'
         // 55 = 'yyyy/mm/dd'
         // 57 = '[$-404]e/m/d'
@@ -356,8 +346,7 @@ public class BuiltInNumberFormatMgr
         // 67 = 't0%'
         // 68 = 't0.00%'
         // 69 = 't# ?/?'
-        // 70 = 't# ??/??'          
-
+        // 70 = 't# ??/??'
 
         // not a built-in data format
         numberFormat = string.Empty;

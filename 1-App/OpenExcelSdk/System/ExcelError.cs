@@ -1,11 +1,5 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace OpenExcelSdk;
 
-namespace OpenExcelSdk.System;
 public enum ExcelErrorCode
 {
     NoError,
@@ -30,7 +24,7 @@ public enum ExcelErrorCode
     UnableGetCell,
     UnableGetRow,
 
-    UnableGetCellStringValue,    
+    UnableGetCellStringValue,
     UnableSetCellValue,
     FormatMissingForDate,
 
@@ -43,6 +37,7 @@ public class ExcelError
     {
         ErrorCode = errorCode;
     }
+
     public ExcelError(ExcelErrorCode errorCode, Exception exception)
     {
         ErrorCode = errorCode;

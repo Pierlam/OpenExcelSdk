@@ -1,15 +1,8 @@
-﻿using DocumentFormat.OpenXml.Drawing;
-using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
 using OpenExcelSdk;
-using OpenExcelSdk.System;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DevApp;
+
 internal class CellReader
 {
     public static void CheckFilePb()
@@ -28,12 +21,12 @@ internal class CellReader
         string dataFormat;
         StyleMgr styleMgr = new StyleMgr();
 
-        //--A5: 
+        //--A5:
         res = proc.GetCellAt(excelSheet, "A5", out cell, out error);
         //var cellValueType = proc.GetCellType(excelSheet, cell);
         proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
 
-        if(cellValueMulti.CellType== ExcelCellType.String)
+        if (cellValueMulti.CellType == ExcelCellType.String)
         { }
 
         proc.Close(excelFile, out error);
@@ -55,7 +48,7 @@ internal class CellReader
         string dataFormat;
         StyleMgr styleMgr = new StyleMgr();
 
-        //--B2: int, border 
+        //--B2: int, border
         res = proc.GetCellAt(excelSheet, "B2", out cell, out error);
         var cellValueType = proc.GetCellType(excelSheet, cell);
         proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
@@ -69,7 +62,7 @@ internal class CellReader
         cellValueType = proc.GetCellType(excelSheet, cell);
         proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
         cellFormat = proc.GetCellFormat(excelSheet, cell);
-        if(cellFormat !=null && cellFormat.BorderId !=null)
+        if (cellFormat != null && cellFormat.BorderId != null)
         {
             uint fillId = cellFormat.FillId.Value;
             DocumentFormat.OpenXml.Spreadsheet.Fill fill = excelFile.WorkbookPart.WorkbookStylesPart.Stylesheet.Fills.ElementAt((int)fillId) as DocumentFormat.OpenXml.Spreadsheet.Fill;
@@ -99,7 +92,7 @@ internal class CellReader
                 }
             }
 
-            if (fill?.PatternFill?.ForegroundColor!= null)
+            if (fill?.PatternFill?.ForegroundColor != null)
             {
                 // text color
             }
@@ -130,10 +123,7 @@ internal class CellReader
         var cellValueType = proc.GetCellType(excelSheet, cell);
         string val = proc.GetCellValueAsString(excelSheet, cell);
 
-
-
         if (!proc.Close(excelFile, out error))
             Console.WriteLine("ERROR, Unable to close the Excel file.");
-
     }
 }

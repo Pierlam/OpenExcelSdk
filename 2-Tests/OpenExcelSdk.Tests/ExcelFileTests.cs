@@ -1,6 +1,4 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using OpenExcelSdk.System;
-using OpenExcelSdk.Tests._50_Common;
+﻿using OpenExcelSdk.Tests._50_Common;
 
 namespace OpenExcelSdk.Tests;
 
@@ -8,7 +6,7 @@ namespace OpenExcelSdk.Tests;
 /// Open/Create Excel file tests.
 /// </summary>
 [TestClass]
-public sealed class ExcelFileTests :TestBase
+public sealed class ExcelFileTests : TestBase
 {
     [TestMethod]
     public void CreateExcelOk()
@@ -23,7 +21,7 @@ public sealed class ExcelFileTests :TestBase
         if (File.Exists(filename))
             File.Delete(filename);
 
-        res=proc.CreateExcelFile(filename, out ExcelFile excelFile, out error);
+        res = proc.CreateExcelFile(filename, out ExcelFile excelFile, out error);
         Assert.IsTrue(res);
         Assert.IsNull(error);
 
@@ -41,12 +39,12 @@ public sealed class ExcelFileTests :TestBase
         ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
-        string filename = PathFiles+ "data3rows.xlsx";
-        res=proc.Open(filename, out ExcelFile excelFile, out error);
+        string filename = PathFiles + "data3rows.xlsx";
+        res = proc.Open(filename, out ExcelFile excelFile, out error);
         Assert.IsTrue(res);
         Assert.IsNull(error);
 
-        res=proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);
         Assert.IsNull(error);
 
@@ -57,7 +55,7 @@ public sealed class ExcelFileTests :TestBase
         int lastRowIdx = proc.GetLastRowIndex(excelSheet);
         Assert.AreEqual(3, lastRowIdx);
 
-        res= proc.Close(excelFile, out error);
+        res = proc.Close(excelFile, out error);
         Assert.IsTrue(res);
         Assert.IsNull(error);
     }
@@ -93,7 +91,6 @@ public sealed class ExcelFileTests :TestBase
         res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
         Assert.IsTrue(res);
         Assert.IsNull(cell);
-
 
         res = proc.Close(excelFile, out error);
         Assert.IsTrue(res);

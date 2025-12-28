@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OpenExcelSdk.System;
-
+﻿namespace OpenExcelSdk;
 
 /// <summary>
 /// Excel cell that can hold multiple values/types.
@@ -60,7 +53,7 @@ public class ExcelCellValueMulti
     /// type of the value of cell.
     /// The cell value can be empty.
     /// </summary>
-    public ExcelCellType CellType { get; set; }= ExcelCellType.Undefined;
+    public ExcelCellType CellType { get; set; } = ExcelCellType.Undefined;
 
     /// <summary>
     /// Return true if the value of the cell is empty/blank.
@@ -70,7 +63,7 @@ public class ExcelCellValueMulti
 
     /// <summary>
     /// part of the style/CellFormat.
-    /// Used for DateTime, TimeSpan, DateOnly, TimeOnly formats. 
+    /// Used for DateTime, TimeSpan, DateOnly, TimeOnly formats.
     /// and also currency, percentage,... In this case, type is Double.
     /// </summary>
     public string? DataFormat { get; set; } = null;
@@ -99,7 +92,7 @@ public class ExcelCellValueMulti
     /// <summary>
     /// Set if the type of the cell value is a DateOnly.
     /// </summary>
-    public DateOnly? DateOnlyValue { get; set; }= null;
+    public DateOnly? DateOnlyValue { get; set; } = null;
 
     /// <summary>
     /// Set if the type of the cell value is a DateTime.

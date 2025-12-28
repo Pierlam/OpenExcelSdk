@@ -1,24 +1,20 @@
 ﻿using DocumentFormat.OpenXml;
-using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using OpenExcelSdk.System;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Color = DocumentFormat.OpenXml.Spreadsheet.Color;
 
 namespace OpenExcelSdk;
+
+/// <summary>
+/// Manage cell style, CellFormat.
+/// Number format, color,...
+/// </summary>
 public class StyleMgr
 {
     /// <summary>
     /// last id of custom format created.
     /// min=164
     /// </summary>
-    uint _customFormatIdMax = 0;
+    private uint _customFormatIdMax = 0;
 
     /// <summary>
     /// Create a new style to update numberFormatId, in Cellformat.
@@ -55,7 +51,7 @@ public class StyleMgr
 
         if (excelCell.Cell.StyleIndex != null)
         {
-            // get the style of cell 
+            // get the style of cell
             currCellFormat = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
 
             // same style/cellFormat already exists?
@@ -67,23 +63,24 @@ public class StyleMgr
                 return true;
             }
             alignment = currCellFormat.Alignment;
-            applyAlignement= currCellFormat.ApplyAlignment;
-            applyBorder= currCellFormat.ApplyBorder;
+            applyAlignement = currCellFormat.ApplyAlignment;
+            applyBorder = currCellFormat.ApplyBorder;
             applyFill = currCellFormat.ApplyFill;
             applyFont = currCellFormat.ApplyFont;
-            applyProtection= currCellFormat.ApplyProtection;
-            borderId= currCellFormat.BorderId;
-            fillId= currCellFormat.FillId;
-            fontId= currCellFormat.FontId;
-            protection= currCellFormat.Protection;
+            applyProtection = currCellFormat.ApplyProtection;
+            borderId = currCellFormat.BorderId;
+            fillId = currCellFormat.FillId;
+            fontId = currCellFormat.FontId;
+            protection = currCellFormat.Protection;
         }
 
         // need to create a new style
-        cellFormat = new CellFormat { 
+        cellFormat = new CellFormat
+        {
             Alignment = alignment,
             ApplyAlignment = applyAlignement,
             ApplyBorder = applyBorder,
-            ApplyFill =  applyFill,
+            ApplyFill = applyFill,
             ApplyFont = applyFont,
             // apply a value or null
             ApplyNumberFormat = applyNumberFormat,
@@ -104,7 +101,7 @@ public class StyleMgr
 
         // get the index and set to cell
         int count = stylesPart.Stylesheet.CellFormats.Elements().Count();
-        excelCell.Cell.StyleIndex= (uint)(count - 1);
+        excelCell.Cell.StyleIndex = (uint)(count - 1);
         return true;
     }
 
@@ -128,7 +125,7 @@ public class StyleMgr
             {
                 // create a new custom format
                 if (!CreateCustomNumberFormat(excelSheet, format, out formatId, out error))
-                    return false;                
+                    return false;
             }
         }
         return true;
@@ -197,7 +194,7 @@ public class StyleMgr
         var cellFormat = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
 
         // all others styles are null
-        if(cellFormat.ApplyAlignment == null && cellFormat.ApplyBorder== null && cellFormat.ApplyFill == null && 
+        if (cellFormat.ApplyAlignment == null && cellFormat.ApplyBorder == null && cellFormat.ApplyFill == null &&
             cellFormat.ApplyFont == null && cellFormat.ApplyProtection == null) return true;
 
         return false;
@@ -212,23 +209,23 @@ public class StyleMgr
     public CellFormat? FindCellFormatWithNumberFormatId(WorkbookStylesPart stylesPart, CellFormat cellFormat, uint? numberFormatId, out int index)
     {
         index = 0;
-        if (cellFormat==null) return null;
-        if(stylesPart.Stylesheet==null) return null;
+        if (cellFormat == null) return null;
+        if (stylesPart.Stylesheet == null) return null;
 
-        UInt32Value? numFmtId = null; 
-        if(numberFormatId!=null) numFmtId= (uint)numberFormatId;
+        UInt32Value? numFmtId = null;
+        if (numberFormatId != null) numFmtId = (uint)numberFormatId;
 
         // scan each cell format
-        for (int i=0; i<stylesPart.Stylesheet.CellFormats.Elements().Count(); i++)
+        for (int i = 0; i < stylesPart.Stylesheet.CellFormats.Elements().Count(); i++)
         {
             index = i;
             var cellFormatFound = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt(i);
-            if(cellFormatFound.Alignment== cellFormat.Alignment &&
-                cellFormatFound.BorderId== cellFormat.BorderId &&
+            if (cellFormatFound.Alignment == cellFormat.Alignment &&
+                cellFormatFound.BorderId == cellFormat.BorderId &&
                 cellFormatFound.FillId == cellFormat.FillId &&
                 cellFormatFound.Protection == cellFormat.Protection &&
                 cellFormatFound.FontId == cellFormat.FontId &&
-                cellFormatFound.NumberFormatId== numFmtId)
+                cellFormatFound.NumberFormatId == numFmtId)
                 return cellFormatFound;
         }
         return null;
@@ -265,14 +262,14 @@ public class StyleMgr
 
         uint customFormatId = _customFormatIdMax;
 
-        // create a new custom format 
+        // create a new custom format
         stylesPart.Stylesheet.NumberingFormats.Append(new NumberingFormat()
         {
             NumberFormatId = (uint)customFormatId,
             FormatCode = StringValue.FromString(format)
         });
         stylesPart.Stylesheet.Save();
-        formatId= (uint)customFormatId;
+        formatId = (uint)customFormatId;
         return true;
     }
 
@@ -300,7 +297,7 @@ public class StyleMgr
         }
 
         // Built-in format
-        dataFormat=string.Empty;
+        dataFormat = string.Empty;
         return false;
     }
 
@@ -408,9 +405,8 @@ public class StyleMgr
         }
     }
 
-
     // Extracts hex from either RgbColorModelHex or SystemColor
-    static string GetHexFromSchemeColor(DocumentFormat.OpenXml.Drawing.Color2Type colorType)
+    private static string GetHexFromSchemeColor(DocumentFormat.OpenXml.Drawing.Color2Type colorType)
     {
         if (colorType == null) return null;
 
@@ -424,7 +420,7 @@ public class StyleMgr
     }
 
     // Excel tint/shade algorithm
-    static global::System.Drawing.Color ApplyTint(global::System.Drawing.Color color, double tint)
+    private static global::System.Drawing.Color ApplyTint(global::System.Drawing.Color color, double tint)
     {
         double r = color.R / 255.0;
         double g = color.G / 255.0;
@@ -450,5 +446,4 @@ public class StyleMgr
             (int)Math.Round(b * 255)
         );
     }
-
 }

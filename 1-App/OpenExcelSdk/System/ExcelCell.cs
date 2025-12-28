@@ -1,16 +1,12 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace OpenExcelSdk.System;
+namespace OpenExcelSdk;
+
 public class ExcelCell
 {
     public ExcelCell(ExcelSheet excelSheet, Cell cell)
     {
-        ExcelSheet= excelSheet;
+        ExcelSheet = excelSheet;
         Cell = cell;
     }
 
@@ -22,8 +18,7 @@ public class ExcelCell
     /// <summary>
     /// Open Xml cell object.
     /// </summary>
-    public  Cell Cell { get; set; }
-
+    public Cell Cell { get; set; }
 
     /// <summary>
     /// Format of the cell.
@@ -32,5 +27,4 @@ public class ExcelCell
     /// The data is in the Styles part of the Excel file: excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart
     /// </summary>
     public CellFormat? CellFormat { get; set; } = null;
-    
 }

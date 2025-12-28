@@ -1,13 +1,4 @@
-﻿using DocumentFormat.OpenXml.Packaging;
-using DocumentFormat.OpenXml.Spreadsheet;
-using OpenExcelSdk.System;
-using OpenExcelSdk.Tests._50_Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using OpenExcelSdk.Tests._50_Common;
 
 namespace OpenExcelSdk.Tests;
 
@@ -88,7 +79,6 @@ public class SetCellValueTests : TestBase
         // save the changes
         res = proc.Close(excelFile, out error);
 
-
         //==>check the excel content
         res = proc.Open(filename, out excelFile, out error);
         Assert.IsTrue(res);
@@ -97,8 +87,7 @@ public class SetCellValueTests : TestBase
 
         //--only one style must be created
         int countUpdate = stylesPart.Stylesheet.CellFormats.Elements().Count();
-        Assert.AreEqual(count+1, countUpdate); 
-
+        Assert.AreEqual(count + 1, countUpdate);
 
         //--B2: "Hello World!"
         res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
@@ -211,7 +200,6 @@ public class SetCellValueTests : TestBase
         // save the changes
         res = proc.Close(excelFile, out error);
 
-
         //==>check the excel content
         res = proc.Open(filename, out excelFile, out error);
         Assert.IsTrue(res);
@@ -265,15 +253,14 @@ public class SetCellValueTests : TestBase
         //--B3: datetime custom format,  set 25.8  -> display 25.80, built-in format 2
         proc.SetCellValue(excelSheet, 2, 3, 25.8, "0.00", out error);
 
-        //--B4: currency -> 357.20 
+        //--B4: currency -> 357.20
         proc.SetCellValue(excelSheet, 2, 4, 357.2, "0.000", out error);
 
-        //--B5: string,  -> "#,##0.00\\ \"€\"" 
+        //--B5: string,  -> "#,##0.00\\ \"€\""
         proc.SetCellValue(excelSheet, 2, 5, 1450, "#,##0.00\\ \"€\"", out error);
 
         // save the changes
         res = proc.Close(excelFile, out error);
-
 
         //==>check the excel content
         res = proc.Open(filename, out excelFile, out error);
@@ -300,7 +287,6 @@ public class SetCellValueTests : TestBase
         // numberFormat must be defined, is a built-in format
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
         Assert.AreEqual(2, (int)cellFormat.NumberFormatId.Value);
-
 
         //--B3: datetime custom format,  set 25.8  -> display 25.80, built-in format 2
         res = proc.GetCellAt(excelSheet, 2, 3, out cell, out error);
@@ -330,7 +316,7 @@ public class SetCellValueTests : TestBase
         cellFormat = proc.GetCellFormat(excelSheet, cell);
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
         // TODO:pas possible!! doit etre un custom format!!
-        Assert.IsTrue((int)cellFormat.NumberFormatId.Value>163);
+        Assert.IsTrue((int)cellFormat.NumberFormatId.Value > 163);
         StyleMgr styleMgr = new StyleMgr();
         styleMgr.GetCustomNumberFormat(excelSheet, cellFormat.NumberFormatId.Value, out string dataFormat);
         Assert.AreEqual("0.000", dataFormat);
@@ -375,7 +361,7 @@ public class SetCellValueTests : TestBase
         int count = proc.GetCustomNumberFormatsCount(excelSheet);
 
         //--B2: 10/12/2025
-        res = proc.SetCellValue(excelSheet, "B2", new DateOnly(2025,10,12), "d/m/yyyy", out error);
+        res = proc.SetCellValue(excelSheet, "B2", new DateOnly(2025, 10, 12), "d/m/yyyy", out error);
         Assert.IsTrue(res);
 
         //--B3: 07/05/2019
@@ -383,7 +369,7 @@ public class SetCellValueTests : TestBase
         Assert.IsTrue(res);
 
         //--B4: 15/11/2020 14:30
-        res = proc.SetCellValue(excelSheet, "B4", new DateTime(2020, 11, 15,14,30,0), "d/m/yyyy h:mm", out error);
+        res = proc.SetCellValue(excelSheet, "B4", new DateTime(2020, 11, 15, 14, 30, 0), "d/m/yyyy h:mm", out error);
         Assert.IsTrue(res);
 
         //--B5: 02/08/2017
@@ -391,21 +377,17 @@ public class SetCellValueTests : TestBase
         Assert.IsTrue(res);
 
         //--B6: 12/01/1987 11:23:45
-        res = proc.SetCellValue(excelSheet, "B6", new DateTime(1987, 01, 12, 11,23,45), "dd/mm/yyyy\\ hh:mm:ss", out error);
+        res = proc.SetCellValue(excelSheet, "B6", new DateTime(1987, 01, 12, 11, 23, 45), "dd/mm/yyyy\\ hh:mm:ss", out error);
         Assert.IsTrue(res);
 
         //--B7: 10:34:56
-        res = proc.SetCellValue(excelSheet, 2, 7, new TimeOnly(10,34,56), "hh:mm:ss", out error);
+        res = proc.SetCellValue(excelSheet, 2, 7, new TimeOnly(10, 34, 56), "hh:mm:ss", out error);
         Assert.IsTrue(res);
 
         //ici(); 08:12:45
 
-
-
-
         // save the changes
         res = proc.Close(excelFile, out error);
-
 
         //==>check the excel content
         res = proc.Open(filename, out excelFile, out error);
@@ -445,7 +427,6 @@ public class SetCellValueTests : TestBase
         Assert.AreEqual(14, (int)cellFormat.NumberFormatId.Value);
 
         //--B4: 15/11/2020 14:30
-
     }
 
     [TestMethod]
@@ -475,7 +456,6 @@ public class SetCellValueTests : TestBase
 
         // save the changes
         res = proc.Close(excelFile, out error);
-
 
         //==>check the excel content
         res = proc.Open(filename, out excelFile, out error);
