@@ -124,6 +124,7 @@ public class GetCellTypeAndValueTests : TestBase
         Assert.IsTrue(res);
         Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
         Assert.AreEqual(27.13, cellValueMulti.DoubleValue);
+        Assert.AreEqual("0.00", cellValueMulti.DataFormat);
 
         //--B5: double, number format: 0%, number format id: 9
         res = proc.GetCellAt(excelSheet, 2, 5, out cell, out error);

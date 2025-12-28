@@ -749,6 +749,22 @@ public class ExcelProcessor
     #region Create sheet, row ,cell
 
     /// <summary>
+    /// Given an address name e.g. A3, and a WorksheetPart, inserts a cell into the worksheet.
+    /// If the cell already exists, returns it.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="addressName"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public bool CreateCell(ExcelSheet excelSheet, string addressName, out ExcelCell excelCell, out ExcelError error)
+    {
+        string colName = ExcelUtils.GetColumnName(ExcelUtils.GetColumnIndex(addressName));
+
+        return CreateCell(excelSheet, colName, (uint)ExcelUtils.GetRowIndex(addressName), out excelCell, out error);
+    }
+
+    /// <summary>
     /// Given a column name, a row index, and a WorksheetPart, inserts a cell into the worksheet.
     /// If the cell already exists, returns it.
     /// </summary>
@@ -916,7 +932,7 @@ public class ExcelProcessor
     /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, string addressName, string value, out ExcelError error)
     {
-        return SetCellValue(excelSheet, ExcelUtils.GetColIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, out error);
+        return SetCellValue(excelSheet, ExcelUtils.GetColumnIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, out error);
     }
 
     /// <summary>
@@ -931,7 +947,7 @@ public class ExcelProcessor
     /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, string addressName, int value, out ExcelError error)
     {
-        return SetCellValue(excelSheet, ExcelUtils.GetColIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, out error);
+        return SetCellValue(excelSheet, ExcelUtils.GetColumnIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, out error);
     }
 
     /// <summary>
@@ -946,7 +962,7 @@ public class ExcelProcessor
     /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, string addressName, double value, out ExcelError error)
     {
-        return SetCellValue(excelSheet, ExcelUtils.GetColIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, out error);
+        return SetCellValue(excelSheet, ExcelUtils.GetColumnIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, out error);
     }
 
     /// <summary>
@@ -961,7 +977,7 @@ public class ExcelProcessor
     /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, string addressName, DateTime value, string format, out ExcelError error)
     {
-        return SetCellValue(excelSheet, ExcelUtils.GetColIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, format, out error);
+        return SetCellValue(excelSheet, ExcelUtils.GetColumnIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, format, out error);
     }
 
     /// <summary>
@@ -976,7 +992,7 @@ public class ExcelProcessor
     /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, string addressName, TimeOnly value, string format, out ExcelError error)
     {
-        return SetCellValue(excelSheet, ExcelUtils.GetColIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, format, out error);
+        return SetCellValue(excelSheet, ExcelUtils.GetColumnIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, format, out error);
     }
 
     /// <summary>
@@ -991,7 +1007,7 @@ public class ExcelProcessor
     /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, string addressName, DateOnly value, string format, out ExcelError error)
     {
-        return SetCellValue(excelSheet, ExcelUtils.GetColIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, format, out error);
+        return SetCellValue(excelSheet, ExcelUtils.GetColumnIndex(addressName), ExcelUtils.GetRowIndex(addressName), value, format, out error);
     }
 
     /// <summary>

@@ -23,7 +23,7 @@ public class ExcelUtils
     /// </summary>
     /// <param name="addressName"></param>
     /// <returns></returns>
-    public static int GetColIndex(string addressName)
+    public static int GetColumnIndex(string addressName)
     {
         if (string.IsNullOrWhiteSpace(addressName)) return 0;
         string columnAddress = string.Empty;

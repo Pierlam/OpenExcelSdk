@@ -13,6 +13,7 @@ public class ValueBuilder
         }
         excelError = null;
         excelCellValueMulti = new ExcelCellValueMulti(valInt);
+        excelCellValueMulti.DataFormat = dataFormat;
         return true;
     }
 
@@ -29,6 +30,7 @@ public class ValueBuilder
         }
         excelError = null;
         excelCellValueMulti = new ExcelCellValueMulti(valDouble);
+        excelCellValueMulti.DataFormat = dataFormat;
         return true;
     }
 
