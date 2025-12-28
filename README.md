@@ -123,11 +123,11 @@ if(excelCellValueMulti.IsEmpty) ...
 
 ```
 // read B9 cell which not exists
-proc.GetCellAt(excelSheet, "B9"2, 9", out cell, out error);
+bool res= proc.GetCellAt(excelSheet, "B9"2, 9", out cell, out excelError);
 
-// the cell is null, not an error
+// the cell is null, not an error, res is true and excelError is null
 if(cell==null)
-{ }
+{ // do something }
 ```
 
 
