@@ -29,7 +29,13 @@ public class ExcelProcessor: ExcelProcessorBase
         excelFile = null;
         error = null;
 
-        if(!File.Exists(fileName))
+        if(string.IsNullOrWhiteSpace(fileName))
+        {
+            error = new ExcelError(ExcelErrorCode.FilenameNull);
+            return false;
+        }
+
+        if (!File.Exists(fileName))
         {
             error = new ExcelError(ExcelErrorCode.FileNotFound);
             return false;
@@ -242,7 +248,7 @@ public class ExcelProcessor: ExcelProcessorBase
 
         if (excelFile == null)
         {
-            error = new ExcelError(ExcelErrorCode.FileNull);
+            error = new ExcelError(ExcelErrorCode.FilenameNull);
             return false;
         }
 

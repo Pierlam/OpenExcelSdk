@@ -10,7 +10,7 @@ public enum ExcelErrorCode
 
     ObjectNull,
     ValueNull,
-    FileNull,
+    FilenameNull,
 
     FileNotFound,
 

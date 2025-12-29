@@ -41,8 +41,10 @@ Console.WriteLine("=> OpenExcelSdk DevApp:");
 
 //DevCloneStyle();
 
-CellReader.ReadCellFormats();
+//CellReader.ReadCellFormats();
 
 //CellReader.CheckFilePb();
+
+EasierWay.TestFctLight();
 
 Console.WriteLine("=> Ok, Ends.");
