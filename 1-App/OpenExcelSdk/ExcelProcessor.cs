@@ -632,7 +632,7 @@ public class ExcelProcessor
         if (isTheCase) return true;
 
         // get the number format id
-        if (!_styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numFmtId))
+        if (!_styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatId))
         {
             excelError = new ExcelError(ExcelErrorCode.TypeWrong);
             return false;
@@ -643,58 +643,18 @@ public class ExcelProcessor
         int valInt;
 
         // is it a built-in format?
-        if (BuiltInNumberFormatMgr.GetFormatAndType(numFmtId, out string dataFormat, out ExcelCellType cellType))
+        if (BuiltInNumberFormatMgr.GetFormatAndType(numberFormatId, out string numberFormat, out ExcelCellType cellType))
         {
-            if (string.IsNullOrEmpty(value))
-            {
-                excelCellValueMulti = new ExcelCellValueMulti();
-                excelCellValueMulti.CellType = cellType;
-                excelCellValueMulti.IsEmpty = true;
-                return true;
-            }
-
-            if (cellType == ExcelCellType.Integer)
-                return ValueBuilder.CreateValueInteger(value, dataFormat, out excelCellValueMulti, out excelError);
-
-            if (cellType == ExcelCellType.Double)
-                return ValueBuilder.CreateValueDouble(value, dataFormat, out excelCellValueMulti, out excelError);
-
-            if (cellType == ExcelCellType.DateOnly)
-                return ValueBuilder.CreateValueDateOnly(value, dataFormat, out excelCellValueMulti, out excelError);
-
-            if (cellType == ExcelCellType.DateTime)
-                return ValueBuilder.CreateValueDateTime(value, dataFormat, out excelCellValueMulti, out excelError);
-
-            if (cellType == ExcelCellType.TimeOnly)
-                return ValueBuilder.CreateValueTimeOnly(value, dataFormat, out excelCellValueMulti, out excelError);
-
-            excelError = new ExcelError(ExcelErrorCode.TypeWrong);
-            return false;
+            return ValueBuilder.CreateValue(excelCell, cellType, value, (int)numberFormatId, numberFormat, out excelCellValueMulti, out excelError);
         }
 
         // Try to get custom format if exists
-        if (_styleMgr.GetCustomNumberFormat(excelSheet, numFmtId, out dataFormat))
+        if (_styleMgr.GetCustomNumberFormat(excelSheet, numberFormatId, out numberFormat))
         {
             // then determine the type from the data format: date, number,...
-            cellType = GetCellType(dataFormat);
+            cellType = GetCellType(numberFormat);
 
-            if (cellType == ExcelCellType.DateTime)
-                return ValueBuilder.CreateValueDateTime(value, dataFormat, out excelCellValueMulti, out excelError);
-
-            if (cellType == ExcelCellType.DateOnly)
-                return ValueBuilder.CreateValueDateOnly(value, dataFormat, out excelCellValueMulti, out excelError);
-
-            if (cellType == ExcelCellType.TimeOnly)
-                return ValueBuilder.CreateValueTimeOnly(value, dataFormat, out excelCellValueMulti, out excelError);
-
-            if (cellType == ExcelCellType.Double)
-                return ValueBuilder.CreateValueDouble(value, dataFormat, out excelCellValueMulti, out excelError);
-
-            if (cellType == ExcelCellType.Integer)
-                return ValueBuilder.CreateValueDouble(value, dataFormat, out excelCellValueMulti, out excelError);
-
-            excelError = new ExcelError(ExcelErrorCode.TypeWrong);
-            return false;
+            return ValueBuilder.CreateValue(excelCell, cellType, value, (int)numberFormatId, numberFormat, out excelCellValueMulti, out excelError);
         }
 
         if (value == string.Empty)
@@ -709,6 +669,7 @@ public class ExcelProcessor
         if (res)
         {
             excelCellValueMulti = new ExcelCellValueMulti(valInt);
+            excelCellValueMulti.Formula = excelCell.Cell?.CellFormula?.Text;
             isTheCase = true;
             return true;
         }
@@ -719,6 +680,7 @@ public class ExcelProcessor
         if (res)
         {
             excelCellValueMulti = new ExcelCellValueMulti(valDouble);
+            excelCellValueMulti.Formula = excelCell.Cell?.CellFormula?.Text;
             isTheCase = true;
             return true;
         }
@@ -1558,6 +1520,7 @@ public class ExcelProcessor
         error = null;
         string cellValue;
 
+
         if (excelCell.Cell.DataType == null) return true;
 
         if (excelCell.Cell.DataType.Value == CellValues.SharedString)
@@ -1568,6 +1531,7 @@ public class ExcelProcessor
                 return false;
             }
             excelCellValueMulti = new ExcelCellValueMulti(cellValue);
+            excelCellValueMulti.Formula = excelCell.Cell.CellFormula?.Text;
             isTheCase = true;
             return true;
         }
@@ -1581,6 +1545,7 @@ public class ExcelProcessor
                 return false;
             }
             excelCellValueMulti = new ExcelCellValueMulti(cellValue);
+            excelCellValueMulti.Formula = excelCell.Cell.CellFormula?.Text;
             isTheCase = true;
             return true;
         }
@@ -1590,6 +1555,7 @@ public class ExcelProcessor
             string value = excelCell.Cell.InnerText;
             if (value == null) value = string.Empty;
             excelCellValueMulti = new ExcelCellValueMulti(value);
+            excelCellValueMulti.Formula = excelCell.Cell.CellFormula?.Text;
             isTheCase = true;
             return true;
         }

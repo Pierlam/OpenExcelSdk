@@ -66,7 +66,18 @@ public class ExcelCellValueMulti
     /// Used for DateTime, TimeSpan, DateOnly, TimeOnly formats.
     /// and also currency, percentage,... In this case, type is Double.
     /// </summary>
-    public string? DataFormat { get; set; } = null;
+    public string? NumberFormat { get; set; } = null;
+
+    /// <summary>
+    /// part of the style/CellFormat.
+    /// Number format id, if it exists. if not the default value is -1.
+    /// </summary>
+    public int NumberFormatId { get; set; } = -1;
+
+    /// <summary>
+    /// Set if the cell contains a formula.
+    /// </summary>
+    public string? Formula { get; set; } = null;   
 
     /// <summary>
     /// Set if the type of the cell value is a string.
