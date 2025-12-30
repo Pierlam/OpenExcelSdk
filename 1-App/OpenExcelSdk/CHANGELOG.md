@@ -11,4 +11,6 @@ All notable changes to this project will be documented in this file.
 
 -Exception messages for each error code defined.
 
--Several Bugs fixed (number format,...)
+-Several Bugs fixed (number format,...).
+
+-18 unit tests, all are green.
