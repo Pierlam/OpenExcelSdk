@@ -214,7 +214,7 @@ ExcelProcessor proc = new ExcelProcessor();
 string filename = @".\Files\data.xlsx";
 ExcelFile excelFile= proc.CreateExcelFile(filename);
 
-// or set your sheet name 
+// or set the name of the first sheet
 ExcelFile excelFile= proc.CreateExcelFile(filename, "MySheet");
 
 ```

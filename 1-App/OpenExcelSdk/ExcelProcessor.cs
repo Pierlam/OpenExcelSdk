@@ -14,7 +14,6 @@ namespace OpenExcelSdk;
 /// </summary>
 public class ExcelProcessor: ExcelProcessorBase
 {
-
     #region Open/Close Create Excel file
 
     /// <summary>
@@ -206,7 +205,7 @@ public class ExcelProcessor: ExcelProcessorBase
     public ExcelSheet GetSheetAt(ExcelFile excelFile, int index)
     {
         if (index < 0)
-            throw ExcelException.Create("GetSheetAt", ExcelErrorCode.IndexMustBePositive);
+            throw ExcelException.Create("GetSheetAt", ExcelErrorCode.IndexMustBePositive, index.ToString());
 
         if (excelFile == null)
             throw ExcelException.Create("GetSheetAt", ExcelErrorCode.FilenameNull);
@@ -216,7 +215,7 @@ public class ExcelProcessor: ExcelProcessorBase
             Sheet? sheet = excelFile.WorkbookPart?.Workbook?.GetFirstChild<Sheets>()?.Elements<Sheet>()?.ElementAt<Sheet>(index);
 
             if (sheet == null)
-                throw ExcelException.Create("GetSheetAt", ExcelErrorCode.IndexWrong);
+                throw ExcelException.Create("GetSheetAt", ExcelErrorCode.IndexWrong, index.ToString());
 
             var excelSheet = new ExcelSheet(excelFile, sheet);
             excelSheet.Index = index;
@@ -316,28 +315,6 @@ public class ExcelProcessor: ExcelProcessorBase
 
     #endregion Get row 
 
-    #region Get infos
-
-    /// <summary>
-    /// Return the count of custom number formats in the excel sheet.
-    /// It's style on cell value, exp: date, currency, percentage,...
-    /// built-in number formats are not counted.
-    /// </summary>
-    /// <param name="excelSheet"></param>
-    /// <returns></returns>
-    public int GetCustomNumberFormatsCount(ExcelSheet excelSheet)
-    {
-        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
-        if (stylesPart == null)
-            return 0;
-        if (stylesPart.Stylesheet == null)
-            return 0;
-
-        return stylesPart.Stylesheet.CellFormats.Elements().Count();
-    }
-
-    #endregion Get row 
-
     #region Get Cell at
 
     /// <summary>
@@ -382,11 +359,6 @@ public class ExcelProcessor: ExcelProcessorBase
 
             // get the style of the cell
             excelCell.CellFormat = GetCellFormat(excelSheet, excelCell);
-            if (excelCell.Cell.StyleIndex != null)
-            {
-                var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
-                var cellFormat = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
-            }
 
             return excelCell;
         }
@@ -399,14 +371,46 @@ public class ExcelProcessor: ExcelProcessorBase
 
     #endregion Get Cell at
 
-    #region Get CellValue
+    #region Get CellType
+
+    /// <summary>
+    /// Get the type of the cell value.
+    /// If the cell is empty/blank, in some cases the type will be Undefined.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <returns></returns>
+    public ExcelCellType GetCellType(ExcelSheet excelSheet, string addressName)
+    {
+        var excelCellValueMulti = GetCellValue(excelSheet, addressName);
+        if (excelCellValueMulti == null) return ExcelCellType.Undefined;
+        return excelCellValueMulti.CellType;
+    }
+
+    /// <summary>
+    /// Get the type of the cell value.
+    /// If the cell is empty/blank, in some cases the type will be Undefined.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <returns></returns>
+    public ExcelCellType GetCellType(ExcelSheet excelSheet, int colIdx, int rowIdx)
+    {
+        var excelCellValueMulti = GetCellValue(excelSheet, colIdx, rowIdx);
+        if (excelCellValueMulti == null) return ExcelCellType.Undefined;
+        return excelCellValueMulti.CellType;
+    }
+
+    #endregion Get CellType
+
+    #region Get CellValue as
 
     //public string GetCellValueAsString(ExcelSheet excelSheet, ExcelCell excelCell)
     //public string GetCellValueAsDouble(ExcelSheet excelSheet, ExcelCell excelCell)
 
-    #endregion Get CellValue
+    #endregion Get CellValue as
 
-    #region Get CellType
+    #region Get CellValue
 
 
     /// <summary>
@@ -441,22 +445,6 @@ public class ExcelProcessor: ExcelProcessorBase
         if (excelCell==null) return null;
 
         return GetCellValue(excelSheet, excelCell);
-    }
-
-    /// <summary>
-    /// Get the style/CellFormat of the cell, if it has one.
-    /// </summary>
-    /// <param name="excelSheet"></param>
-    /// <param name="excelCell"></param>
-    /// <returns></returns>
-    public CellFormat GetCellFormat(ExcelSheet excelSheet, ExcelCell excelCell)
-    {
-        if (excelCell.Cell.StyleIndex == null)
-            // no style, no cell format
-            return null;
-
-        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
-        return (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
     }
 
     #endregion Get CellType

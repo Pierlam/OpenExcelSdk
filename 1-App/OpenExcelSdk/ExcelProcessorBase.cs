@@ -16,7 +16,25 @@ public class ExcelProcessorBase
 {
     protected StyleMgr _styleMgr = new StyleMgr();
 
-    #region Get CellValue
+    #region Get CellType
+
+    /// <summary>
+    /// Get the type of the cell value.
+    /// If the cell is empty/blank, in some cases the type will be Undefined.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <returns></returns>
+    public ExcelCellType GetCellType(ExcelSheet excelSheet, ExcelCell excelCell)
+    {
+        var excelCellValueMulti = GetCellValue(excelSheet, excelCell);
+        if (excelCellValueMulti == null) return ExcelCellType.Undefined;
+        return excelCellValueMulti.CellType;
+    }
+
+    #endregion Get CellType
+
+    #region Get CellValue as 
 
     /// <summary>
     /// Get the value of the cell as a string.
@@ -117,23 +135,9 @@ public class ExcelProcessorBase
         return new DateOnly();
     }
 
-    #endregion Get CellValue
+    #endregion Get CellValue as 
 
-    #region Get CellType
-
-    /// <summary>
-    /// Get the type of the cell value.
-    /// If the cell is empty/blank, in some cases the type will be Undefined.
-    /// </summary>
-    /// <param name="excelSheet"></param>
-    /// <param name="excelCell"></param>
-    /// <returns></returns>
-    public ExcelCellType GetCellType(ExcelSheet excelSheet, ExcelCell excelCell)
-    {
-        var excelCellValueMulti = GetCellValue(excelSheet, excelCell);
-        if (excelCellValueMulti==null) return ExcelCellType.Undefined;
-        return excelCellValueMulti.CellType;
-    }
+    #region Get CellValue
 
     /// <summary>
     /// Geth the value of cell.
@@ -284,7 +288,7 @@ public class ExcelProcessorBase
         return null;
     }
 
-    #endregion Get Cell, CellValue, CellType
+    #endregion CellValue
 
     #region Create cell
 
@@ -310,10 +314,12 @@ public class ExcelProcessorBase
 
         if (sheetData?.Elements<Row>().Where(r => r.RowIndex is not null && r.RowIndex == rowIndex).Count() != 0)
         {
+            // the row exists, get it
             row = sheetData!.Elements<Row>().Where(r => r.RowIndex is not null && r.RowIndex == rowIndex).First();
         }
         else
         {
+            // need a new row
             row = new Row() { RowIndex = rowIndex };
             sheetData.Append(row);
         }
@@ -322,27 +328,29 @@ public class ExcelProcessorBase
         if (row.Elements<Cell>().Where(c => c.CellReference is not null && c.CellReference.Value == columnName + rowIndex).Count() > 0)
         {
             Cell cell = row.Elements<Cell>().Where(c => c.CellReference is not null && c.CellReference.Value == cellReference).First();
-            return new ExcelCell(excelSheet, cell);
+            // the cell at the provided address exists
+            ExcelCell excelCell= new ExcelCell(excelSheet, cell);
+            // get the style of the cell
+            excelCell.CellFormat = GetCellFormat(excelSheet, excelCell);
+            return excelCell;
         }
-        else
+
+        // Cells must be in sequential order according to CellReference. Determine where to insert the new cell.
+        Cell? refCell = null;
+
+        foreach (Cell cell in row.Elements<Cell>())
         {
-            // Cells must be in sequential order according to CellReference. Determine where to insert the new cell.
-            Cell? refCell = null;
-
-            foreach (Cell cell in row.Elements<Cell>())
+            if (string.Compare(cell.CellReference?.Value, cellReference, true) > 0)
             {
-                if (string.Compare(cell.CellReference?.Value, cellReference, true) > 0)
-                {
-                    refCell = cell;
-                    break;
-                }
+                refCell = cell;
+                break;
             }
-
-            Cell newCell = new Cell() { CellReference = cellReference };
-            row.InsertBefore(newCell, refCell);
-
-            return new ExcelCell(excelSheet, newCell);
         }
+
+        Cell newCell = new Cell() { CellReference = cellReference };
+        row.InsertBefore(newCell, refCell);
+
+        return new ExcelCell(excelSheet, newCell);
     }
 
     #endregion Create cell
@@ -638,5 +646,43 @@ public class ExcelProcessorBase
     }
 
     #endregion Set cell value and number format Id
+
+    #region Get something
+
+    /// <summary>
+    /// Get the style/CellFormat of the cell, if it has one.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <returns></returns>
+    public CellFormat GetCellFormat(ExcelSheet excelSheet, ExcelCell excelCell)
+    {
+        if (excelCell.Cell.StyleIndex == null)
+            // no style, no cell format
+            return null;
+
+        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        return (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
+    }
+
+    /// <summary>
+    /// Return the count of custom number formats in the excel sheet.
+    /// It's style on cell value, exp: date, currency, percentage,...
+    /// built-in number formats are not counted.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <returns></returns>
+    public int GetCustomNumberFormatsCount(ExcelSheet excelSheet)
+    {
+        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        if (stylesPart == null)
+            return 0;
+        if (stylesPart.Stylesheet == null)
+            return 0;
+
+        return stylesPart.Stylesheet.CellFormats.Elements().Count();
+    }
+
+    #endregion Get something
 
 }

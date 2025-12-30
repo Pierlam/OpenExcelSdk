@@ -6,10 +6,11 @@
 /// </summary>
 public enum ExcelErrorCode
 {
-    NoError,
+    //NoError,
 
     ObjectNull,
-    ValueNull,
+    //ValueNull,
+
     FilenameNull,
     FileNotFound,
 

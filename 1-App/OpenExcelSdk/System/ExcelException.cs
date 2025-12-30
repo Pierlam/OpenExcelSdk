@@ -11,6 +11,9 @@ namespace OpenExcelSdk;
 /// </summary>
 public class ExcelException :Exception
 {
+    /// <summary>
+    /// the method name where the error occurs.
+    /// </summary>
     public string Action {  get; set; }
 
     public ExcelErrorCode ExcelErrorCode { get; set;  }

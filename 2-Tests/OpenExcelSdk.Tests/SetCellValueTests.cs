@@ -83,7 +83,7 @@ public class SetCellValueTests : TestBase
 
         //--only one style must be created
         int countUpdate = stylesPart.Stylesheet.CellFormats.Elements().Count();
-        Assert.AreEqual(count + 1, countUpdate);
+        Assert.AreEqual(count, countUpdate);
 
         //--B2: "Hello World!"
         cell = proc.GetCellAt(excelSheet, 2, 2);
@@ -139,9 +139,9 @@ public class SetCellValueTests : TestBase
         Assert.IsNotNull(cell.Cell.StyleIndex);
         var cellFormat = proc.GetCellFormat(excelSheet, cell);
 
-        // numberFormat must be null, no more a custom format
+        // numberFormat must be null/0, no more a custom format
         Assert.IsNull(cellFormat.ApplyNumberFormat);
-        Assert.IsNull(cellFormat.NumberFormatId);
+        Assert.AreEqual("0", cellFormat.NumberFormatId);
     }
 
     [TestMethod]
@@ -190,9 +190,9 @@ public class SetCellValueTests : TestBase
         excelFile = proc.OpenExcelFile(filename);
         excelSheet = proc.GetSheetAt(excelFile, 0);
 
-        //--only one style must be created
+        //--no new style created
         int countUpdate = stylesPart.Stylesheet.CellFormats.Elements().Count();
-        Assert.AreEqual(count + 1, countUpdate);
+        Assert.AreEqual(count, countUpdate);
 
         //--B2: 12.5
         cell = proc.GetCellAt(excelSheet, 2, 2);
@@ -230,11 +230,12 @@ public class SetCellValueTests : TestBase
         //--B3: datetime custom format,  set 25.8  -> display 25.80, built-in format 2
         proc.SetCellValue(excelSheet, 2, 3, 25.8, "0.00");
 
-        //--B4: currency -> 357.20
+        //--B4: currency -> 357.200 
         proc.SetCellValue(excelSheet, 2, 4, 357.2, "0.000");
 
-        //--B5: string,  -> "#,##0.00\\ \"€\""
+        //--B5: string,  -> "#,##0.00\\ \"€\""   
         proc.SetCellValue(excelSheet, 2, 5, 1450, "#,##0.00\\ \"€\"");
+
 
         // save the changes
         proc.CloseExcelFile(excelFile);
@@ -243,9 +244,9 @@ public class SetCellValueTests : TestBase
         excelFile = proc.OpenExcelFile(filename);
         excelSheet = proc.GetSheetAt(excelFile, 0);
 
-        //--only one style must be created
+        //--no new style created
         int countUpdate = proc.GetCustomNumberFormatsCount(excelSheet);
-        Assert.AreEqual(count + 2, countUpdate);
+        Assert.AreEqual(count, countUpdate);
 
         //--B2: 12.3
         cell = proc.GetCellAt(excelSheet, 2, 2);
@@ -346,7 +347,7 @@ public class SetCellValueTests : TestBase
         Assert.IsTrue(res);
 
         //--B7: 10:34:56
-        res = proc.SetCellValue(excelSheet, 2, 7, new TimeOnly(10, 34, 56), "hh:mm:ss");
+        res = proc.SetCellValue(excelSheet, "B7", new TimeOnly(10, 34, 56), "hh:mm:ss");
         Assert.IsTrue(res);
 
         //ici(); 08:12:45
@@ -376,7 +377,7 @@ public class SetCellValueTests : TestBase
         Assert.AreEqual(14, (int)cellFormat.NumberFormatId.Value);
 
         //--B3:
-        cell = proc.GetCellAt(excelSheet, 2, 3);
+        cell = proc.GetCellAt(excelSheet, "B3");
         cellValueMulti = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.DateOnly, cellValueMulti.CellType);
         Assert.AreEqual(new DateOnly(2019, 05, 07), cellValueMulti.DateOnlyValue);
@@ -388,6 +389,25 @@ public class SetCellValueTests : TestBase
         Assert.AreEqual(14, cellValueMulti.NumberFormatId);
 
         //--B4: 15/11/2020 14:30
+
+        //--B5:
+
+        //--B6:
+
+        //--B7: 10:34:56
+        cell = proc.GetCellAt(excelSheet, "B7");
+        cellValueMulti = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.TimeOnly, cellValueMulti.CellType);
+        Assert.AreEqual(new TimeOnly(10,34,56), cellValueMulti.TimeOnlyValue);
+        // check the style and the number format
+        Assert.IsNotNull(cell.Cell.StyleIndex);
+        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        // "hh:mm:ss"
+        Assert.AreEqual("1", cellFormat.ApplyNumberFormat);
+        Assert.AreEqual("hh:mm:ss", cellValueMulti.NumberFormat);
+        // custom so >163
+        Assert.IsTrue((int)cellFormat.NumberFormatId.Value>163);
+
     }
 
     [TestMethod]
