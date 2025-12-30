@@ -15,8 +15,7 @@ public class RemoveCellTests : TestBase
         string filename = PathFiles + "RemoveCell.xlsx";
         ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
         ExcelCellValueMulti cellValueMulti;
@@ -42,8 +41,7 @@ public class RemoveCellTests : TestBase
 
         //==>check the excel content
         excelFile = proc.OpenExcelFile(filename);
-        res = proc.GetSheetAt(excelFile, 0, out excelSheet, out error);
-        Assert.IsTrue(res);
+        excelSheet = proc.GetSheetAt(excelFile, 0);
 
         //--B2: null
         res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);

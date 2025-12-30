@@ -13,7 +13,7 @@ internal class CellReader
 
         string filename = @".\Files\datLinesThenACellBlankOk.xlsx";
         ExcelFile excelFile = proc.OpenExcelFile(filename);
-        proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+        ExcelSheet excelSheet= proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
         ExcelCellValueMulti cellValueMulti;
@@ -40,7 +40,7 @@ internal class CellReader
 
         string filename = @".\Files\CellFormats.xlsx";
         ExcelFile excelFile= proc.OpenExcelFile(filename);
-        proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
         ExcelCellValueMulti cellValueMulti;
@@ -107,7 +107,7 @@ internal class CellReader
 
         string filename = @".\Files\data.xlsx";
         ExcelFile excelFile= proc.OpenExcelFile(filename);
-        proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         int lastRowIdx = proc.GetLastRowIndex(excelSheet);
         Console.WriteLine("last row idx: " + lastRowIdx);

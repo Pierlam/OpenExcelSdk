@@ -19,7 +19,7 @@ public class EasierWay
         string filename = @".\Files\CellFormats.xlsx";
         ExcelFile excelFile= proc.OpenExcelFile(filename);
 
-        //ExcelSheet excelSheet= proc.GetSheetAt(excelFile, 0);
+        ExcelSheet excelSheet= proc.GetSheetAt(excelFile, 0);
 
         ////--B2: int, border
         //ExcelCell excelCell = proc.GetCellAt(excelSheet, "B2");

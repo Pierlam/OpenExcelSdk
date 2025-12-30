@@ -9,7 +9,7 @@ void DevCloneStyle()
     string filename = @"Files\DevCloneStyle.xlsx";
 
     ExcelFile excelFile = proc.OpenExcelFile(filename);
-    res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+    ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
     //--B2: dateTime, custom, BgColor, FgCOlor, Border: 09/12/2021 12:30:45
     res = proc.GetCellAt(excelSheet, 2, 2, out ExcelCell excelCell, out error);

@@ -15,8 +15,7 @@ public class SetCellValueTests : TestBase
         string filename = PathFiles + "SetCellValueString.xlsx";
         ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
         ExcelCellValueMulti cellValueMulti;
@@ -80,9 +79,7 @@ public class SetCellValueTests : TestBase
 
         //==>check the excel content
         excelFile = proc.OpenExcelFile(filename);
-        Assert.IsTrue(res);
-        res = proc.GetSheetAt(excelFile, 0, out excelSheet, out error);
-        Assert.IsTrue(res);
+        excelSheet = proc.GetSheetAt(excelFile, 0);
 
         //--only one style must be created
         int countUpdate = stylesPart.Stylesheet.CellFormats.Elements().Count();
@@ -163,8 +160,7 @@ public class SetCellValueTests : TestBase
         string filename = PathFiles + "SetCellValueDouble.xlsx";
         ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
         ExcelCellValueMulti cellValueMulti;
@@ -187,7 +183,6 @@ public class SetCellValueTests : TestBase
 
         //--B6: custom format, 21/08/1900 21:36
         proc.SetCellValue(excelSheet, 2, 6, 234.9, out error);
-        Assert.IsTrue(res);
 
         //--B7:
         proc.SetCellValue(excelSheet, 2, 7, 90.1, out error);
@@ -200,8 +195,7 @@ public class SetCellValueTests : TestBase
 
         //==>check the excel content
         excelFile = proc.OpenExcelFile(filename);
-        res = proc.GetSheetAt(excelFile, 0, out excelSheet, out error);
-        Assert.IsTrue(res);
+        excelSheet = proc.GetSheetAt(excelFile, 0);
 
         //--only one style must be created
         int countUpdate = stylesPart.Stylesheet.CellFormats.Elements().Count();
@@ -234,8 +228,7 @@ public class SetCellValueTests : TestBase
         string filename = PathFiles + "SetCellValueAndFormat.xlsx";
         ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
         ExcelCellValueMulti cellValueMulti;
@@ -260,8 +253,7 @@ public class SetCellValueTests : TestBase
 
         //==>check the excel content
         excelFile = proc.OpenExcelFile(filename);
-        res = proc.GetSheetAt(excelFile, 0, out excelSheet, out error);
-        Assert.IsTrue(res);
+        excelSheet = proc.GetSheetAt(excelFile, 0);
 
         //--only one style must be created
         int countUpdate = proc.GetCustomNumberFormatsCount(excelSheet);
@@ -346,8 +338,7 @@ public class SetCellValueTests : TestBase
         string filename = PathFiles + "SetCellValueDate.xlsx";
         ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
         ExcelCellValueMulti cellValueMulti;
@@ -386,8 +377,7 @@ public class SetCellValueTests : TestBase
 
         //==>check the excel content
         excelFile = proc.OpenExcelFile(filename);
-        res = proc.GetSheetAt(excelFile, 0, out excelSheet, out error);
-        Assert.IsTrue(res);
+        excelSheet = proc.GetSheetAt(excelFile, 0);
 
         //--only one style must be created
         int countUpdate = proc.GetCustomNumberFormatsCount(excelSheet);
@@ -435,8 +425,7 @@ public class SetCellValueTests : TestBase
         string filename = PathFiles + "SetCellValueEmpty.xlsx";
         ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
         ExcelCellValueMulti cellValueMulti;
@@ -455,7 +444,7 @@ public class SetCellValueTests : TestBase
         //==>check the excel content
         excelFile = proc.OpenExcelFile(filename);
         Assert.IsTrue(res);
-        res = proc.GetSheetAt(excelFile, 0, out excelSheet, out error);
+        excelSheet = proc.GetSheetAt(excelFile, 0);
         Assert.IsTrue(res);
 
         //--B2: number, empty

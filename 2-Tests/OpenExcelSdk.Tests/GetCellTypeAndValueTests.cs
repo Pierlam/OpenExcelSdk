@@ -16,8 +16,7 @@ public class GetCellTypeAndValueTests : TestBase
         string filename = PathFiles + "GetCellTypeAndValueSpecial.xlsx";
         ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
         ExcelCellValueMulti cellValueMulti;
@@ -48,8 +47,7 @@ public class GetCellTypeAndValueTests : TestBase
         string filename = PathFiles + "GetCellTypeAndValueString.xlsx";
         ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
         ExcelCellValueMulti cellValueMulti;
@@ -92,8 +90,7 @@ public class GetCellTypeAndValueTests : TestBase
         string filename = PathFiles + "GetCellTypeAndValueNumber.xlsx";
         ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
         ExcelCellValueMulti cellValueMulti;
@@ -165,8 +162,7 @@ public class GetCellTypeAndValueTests : TestBase
         string filename = PathFiles + "GetCellTypeAndValueDate.xlsx";
         ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
         ExcelCellValueMulti cellValueMulti;
@@ -249,8 +245,7 @@ public class GetCellTypeAndValueTests : TestBase
         string filename = PathFiles + "GetCellTypeAndValueCustom.xlsx";
         ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
         ExcelCellValueMulti cellValueMulti;
@@ -274,8 +269,7 @@ public class GetCellTypeAndValueTests : TestBase
         string filename = PathFiles + "GetCellTypeNullEmpty.xlsx";
         ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
         ExcelCellValueMulti cellValueMulti;

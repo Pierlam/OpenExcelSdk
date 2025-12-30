@@ -140,16 +140,10 @@ public class ExcelProcessor: ExcelProcessorBase
     /// <param name="excelSheet"></param>
     /// <param name="error"></param>
     /// <returns></returns>
-    public bool CreateSheet(ExcelFile excelFile, string sheetName, out ExcelSheet excelSheet, out ExcelError error)
+    public ExcelSheet CreateSheet(ExcelFile excelFile, string sheetName)
     {
-        excelSheet = null;
-        error = null;
-
         if (string.IsNullOrWhiteSpace(sheetName))
-        {
-            error = new ExcelError(ExcelErrorCode.UnableCreateSheet);
-            return false;
-        }
+            throw ExcelException.Create("CreateSheet", ExcelErrorCode.SheetnameNull);
 
         if (excelFile.WorkbookPart.Workbook == null)
             // Add Sheets to the Workbook.
@@ -160,11 +154,7 @@ public class ExcelProcessor: ExcelProcessorBase
         // Find the sheet with the matching name
         var sheet = listSheets.FirstOrDefault(s => s.Name != null && s.Name.Value.Equals(sheetName, StringComparison.InvariantCultureIgnoreCase));
         if (sheet != null)
-        {
-            // a sheet with the same already exists
-            error = new ExcelError(ExcelErrorCode.UnableCreateSheet);
-            return false;
-        }
+            throw ExcelException.Create("CreateSheet", ExcelErrorCode.UnableCreateSheet);
 
         // get the last id
         uint sheetId = 1;
@@ -185,10 +175,10 @@ public class ExcelProcessor: ExcelProcessorBase
         sheet = new Sheet() { Id = relId, SheetId = sheetId, Name = sheetName };
         sheets.Append(sheet);
 
-        excelSheet = new ExcelSheet(excelFile, sheet);
+        var excelSheet = new ExcelSheet(excelFile, sheet);
         excelSheet.Index = (int)sheetId;
         excelSheet.Name = sheet.Name;
-        return true;
+        return excelSheet;  
     }
 
 
@@ -200,9 +190,9 @@ public class ExcelProcessor: ExcelProcessorBase
     /// <param name="excelSheet"></param>
     /// <param name="error"></param>
     /// <returns></returns>
-    public bool GetFirstSheet(ExcelFile excelFile, int index, out ExcelSheet excelSheet, out ExcelError error)
+    public ExcelSheet GetFirstSheet(ExcelFile excelFile, int index)
     {
-        return GetSheetAt(excelFile, 0, out excelSheet, out error);
+        return GetSheetAt(excelFile, 0);
     }
 
     /// <summary>
@@ -213,43 +203,29 @@ public class ExcelProcessor: ExcelProcessorBase
     /// <param name="excelSheet"></param>
     /// <param name="error"></param>
     /// <returns></returns>
-    public bool GetSheetAt(ExcelFile excelFile, int index, out ExcelSheet excelSheet, out ExcelError error)
+    public ExcelSheet GetSheetAt(ExcelFile excelFile, int index)
     {
-        excelSheet = null;
-        error = null;
-
         if (index < 0)
-        {
-            error = new ExcelError(ExcelErrorCode.IndexMustBePositive);
-            return false;
-        }
+            throw ExcelException.Create("GetSheetAt", ExcelErrorCode.IndexMustBePositive);
 
         if (excelFile == null)
-        {
-            error = new ExcelError(ExcelErrorCode.FilenameNull);
-            return false;
-        }
+            throw ExcelException.Create("GetSheetAt", ExcelErrorCode.FilenameNull);
 
         try
         {
             Sheet? sheet = excelFile.WorkbookPart?.Workbook?.GetFirstChild<Sheets>()?.Elements<Sheet>()?.ElementAt<Sheet>(index);
 
             if (sheet == null)
-            {
-                error = new ExcelError(ExcelErrorCode.IndexWrong);
-                return false;
-            }
+                throw ExcelException.Create("GetSheetAt", ExcelErrorCode.IndexWrong);
 
-            excelSheet = new ExcelSheet(excelFile, sheet);
+            var excelSheet = new ExcelSheet(excelFile, sheet);
             excelSheet.Index = index;
             excelSheet.Name = sheet.Name;
-            return true;
+            return excelSheet;
         }
         catch (Exception ex)
         {
-            error = new ExcelError(ExcelErrorCode.UnableGetSheet, ex);
-            excelSheet = null;
-            return false;
+            throw ExcelException.Create("GetSheetAt", ExcelErrorCode.UnableGetSheet, index.ToString(), ex);
         }
     }
 
@@ -261,16 +237,10 @@ public class ExcelProcessor: ExcelProcessorBase
     /// <param name="excelSheet"></param>
     /// <param name="error"></param>
     /// <returns></returns>
-    public bool GetSheetByName(ExcelFile excelFile, string sheetName, out ExcelSheet excelSheet, out ExcelError error)
+    public ExcelSheet GetSheetByName(ExcelFile excelFile, string sheetName)
     {
-        error = null;
-        excelSheet = null;
-
         if (string.IsNullOrWhiteSpace(sheetName))
-        {
-            error = new ExcelError(ExcelErrorCode.ValueNull);
-            return false;
-        }
+            throw ExcelException.Create("GetSheetAt", ExcelErrorCode.SheetnameNull);
 
         try
         {
@@ -281,16 +251,17 @@ public class ExcelProcessor: ExcelProcessorBase
             var sheet = sheets.FirstOrDefault(s => s.Name != null && s.Name.Value.Equals(sheetName, StringComparison.OrdinalIgnoreCase));
             if (sheet == null)
                 // no sheet with this name, not an error
-                return false;
+                return null;
 
-            excelSheet = new ExcelSheet(excelFile, sheet);
-            return true;
+            var excelSheet = new ExcelSheet(excelFile, sheet);
+            // excelSheet.Index = index;  TO_IMPLEMENT!
+            excelSheet.Name = sheet.Name;
+
+            return excelSheet;
         }
         catch (Exception ex)
         {
-            error = new ExcelError(ExcelErrorCode.UnableGetSheet, ex);
-            excelSheet = null;
-            return false;
+            throw ExcelException.Create("GetSheetAt", ExcelErrorCode.UnableGetSheet, sheetName, ex);
         }
     }
 

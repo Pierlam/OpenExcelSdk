@@ -36,9 +36,7 @@ public sealed class ExcelFileTests : TestBase
         string filename = PathFiles + "data3rows.xlsx";
         ExcelFile excelFile= proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         res = proc.GetRowAt(excelSheet, 0, out ExcelRow row, out error);
         Assert.IsTrue(res);
@@ -79,9 +77,7 @@ public sealed class ExcelFileTests : TestBase
         string filename = PathFiles + "empty.xlsx";
         ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         res = proc.GetRowAt(excelSheet, 0, out ExcelRow row, out error);
         Assert.IsTrue(res);
