@@ -85,6 +85,7 @@ Set a value to a cell is possible for each of these types.
 
 After creating or opening an excel file, the next action is to get a sheet.
 There are 3 ways to get a sheet.
+First sheet index is 0, like for rows.
 
 ```
 //-case1: get the first sheet of the excel file
@@ -110,7 +111,7 @@ ExcelCell excelCell= proc.GetCellAt(excelSheet, "B4");
 excelCellValue excelCellValue= proc.GetCellValue(excelSheet, excelCell);
 
 // check: excelCellValue.CellType, contains the type of the cell value.
-// then get the value from excelCellValue property: StringValue, IntegerValue, DoubleValue, DateOnlyValue and TimeOnly
+// then get the value from excelCellValue property: StringValue, IntegerValue, DoubleValue, DateOnlyValue and TimeOnlyValue
 
 // the cell value can be empty/Blank, in some cases the type will be undefined
 if(excelCellValue.IsEmpty) ...
@@ -120,9 +121,11 @@ if(excelCellValue.IsEmpty) ...
 
 ## Read unexisting cell 
 
+Reading a cell which not exist jsut return a null value, it's not an error.
+
 ```
 // read B9 cell which not exists
-ExcelCell excelCell= proc.GetCellAt(excelSheet, "B9"2, 9");
+ExcelCell excelCell= proc.GetCellAt(excelSheet, "B9", 9");
 
 // the cell is null, it's not an error
 if(excelCell==null)
@@ -156,7 +159,7 @@ Example, format the display of a number:
 // set a double value and format it with 2 decimals, e.g.: 12,30
 proc.SetCellValue(excelSheet, "B9", 12.5, "0.00");
 
-// set a date with a standard format
+// set a date with a standard format, will display: 12/10/2025
 proc.SetCellValue(excelSheet, "D12", new DateOnly(2025,10,12), "d/m/yyyy");
 ```
 
@@ -179,6 +182,7 @@ If you set a value (string, int or double) without format in a existing cell, th
 ## Get row/last row index
 
 The code below get a the last row index, and also get a row at an index.
+Be careful first row index is 0. First cell column index is 1, first cell row index is 1.
 
 ```
 bool res;
@@ -219,21 +223,21 @@ ExcelFile excelFile= proc.CreateExcelFile(filename, "MySheet");
 
 ```
 
-## Style/CellFormat/NumbergingFormat
+## Style/CellFormat/NumberFormat
 
 Cell formating take an important place when read or write cell value.
 
-Technically, Excel has two kind of format, built-in and custom.
+Technically, Excel has two kind of number format: built-in and custom.
 built-in are only identified by dedicated id, from 0 to 163.
 
-Custom format are defined by a string which represents the format.
+Custom format are defined by a string which represents the number format.
 
 Manage cell value formatting for number, date and currency is a nightmare.
 
 The library hide this complexity to the user so you have just to set a value and a format.
 
 Creation of a style/CellFormat is managed as better as possible.
-The max number of custom style is high but limited.
+The maximum count of custom style is high but limited.
 
 
 Style/CellFormat are defined in the scope of a sheet, not on all the excel file.
