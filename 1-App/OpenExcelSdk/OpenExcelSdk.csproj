@@ -13,7 +13,7 @@
     <PackageProjectUrl>https://github.com/Pierlam/OpenExcelSdk</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Pierlam/OpenExcelSdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-	<PackageTags>excel SpreadSheet SpreadSheetsML sheet row col cell numberingformat format csharp net8</PackageTags>
+	<PackageTags>excel OpenXML SpreadSheet SpreadSheetsML sheet row col cell numberFormat numberFormatId csharp net8</PackageTags>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
 	<PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
