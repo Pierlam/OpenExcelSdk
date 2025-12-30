@@ -9,6 +9,6 @@ All notable changes to this project will be documented in this file.
 
 -ExcelError class removed, replaced by a standard Exception class named ExcelException.
 
--Exception messages for each error code put in place.
+-Exception messages for each error code defined.
 
--Sevral Bugs fixed.
+-Several Bugs fixed (number format,...)
