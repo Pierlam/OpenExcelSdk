@@ -80,7 +80,7 @@ public class ExcelCellValue
     /// <summary>
     /// Set if the cell contains a formula.
     /// </summary>
-    public string? Formula { get; set; } = null;   
+    public string? Formula { get; set; } = null;
 
     /// <summary>
     /// Set if the type of the cell value is a string.

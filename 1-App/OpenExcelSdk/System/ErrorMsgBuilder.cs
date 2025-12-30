@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OpenExcelSdk;
-
+﻿namespace OpenExcelSdk;
 
 /// <summary>
 /// To build error message based on a code, used in exception.
@@ -17,7 +10,7 @@ public class ErrorMsgBuilder
         if (string.IsNullOrWhiteSpace(action)) action = "(fct)";
         if (string.IsNullOrWhiteSpace(param)) param = string.Empty;
 
-        if (errorCode == ExcelErrorCode.FilenameNull) return String.Format("{0}: The filename is null.", action); 
+        if (errorCode == ExcelErrorCode.FilenameNull) return String.Format("{0}: The filename is null.", action);
         if (errorCode == ExcelErrorCode.FileAlreadyExists) return String.Format("{0}: The filename {1} already exists.", action, param);
         if (errorCode == ExcelErrorCode.FileNotFound) return String.Format("{0}: The file {1} is not found.", action, param);
         if (errorCode == ExcelErrorCode.UnableOpenFile) return String.Format("{0}: Unble to open the file {1} is not found.", action, param);
@@ -40,9 +33,7 @@ public class ErrorMsgBuilder
         if (errorCode == ExcelErrorCode.IndexMustBePositive) return String.Format("{0}: The index must be positive, value: {1}", action, param);
         if (errorCode == ExcelErrorCode.UnableRemoveCell) return String.Format("{0}: Unable to remve the cell, address: {1}", action, param);
 
-
         // if the code is not managed
         return String.Format("{0}: An internal error occurs, code: {1}", action, errorCode);
     }
-
 }

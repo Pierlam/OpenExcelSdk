@@ -1,10 +1,4 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
-using OpenExcelSdk;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using OpenExcelSdk;
 
 namespace DevApp;
 
@@ -15,9 +9,9 @@ public class EasierWay
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = @".\Files\CellFormats.xlsx";
-        ExcelFile excelFile= proc.OpenExcelFile(filename);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        ExcelSheet excelSheet= proc.GetSheetAt(excelFile, 0);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ////--B2: int, border
         ExcelCell excelCell = proc.GetCellAt(excelSheet, "B2");
@@ -30,6 +24,5 @@ public class EasierWay
         //res = proc.SetCellValue(excelSheet, "B2", new DateOnly(2025, 10, 12), "d/m/yyyy");
 
         proc.CloseExcelFile(excelFile);
-
     }
 }

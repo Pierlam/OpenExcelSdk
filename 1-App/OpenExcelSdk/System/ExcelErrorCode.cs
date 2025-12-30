@@ -1,6 +1,5 @@
 ﻿namespace OpenExcelSdk;
 
-
 /// <summary>
 /// Excel error code.
 /// </summary>

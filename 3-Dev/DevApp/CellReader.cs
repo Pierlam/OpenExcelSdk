@@ -11,7 +11,7 @@ internal class CellReader
 
         string filename = @".\Files\datLinesThenACellBlankOk.xlsx";
         ExcelFile excelFile = proc.OpenExcelFile(filename);
-        ExcelSheet excelSheet= proc.GetSheetAt(excelFile, 0);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
         ExcelCellValue excelCellValue;
@@ -22,7 +22,7 @@ internal class CellReader
         //--A5:
         cell = proc.GetCellAt(excelSheet, "A5");
         //var cellValueType = proc.GetCellType(excelSheet, cell);
-        excelCellValue= proc.GetCellValue(excelSheet, cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
 
         if (excelCellValue.CellType == ExcelCellType.String)
         { }
@@ -35,7 +35,7 @@ internal class CellReader
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = @".\Files\CellFormats.xlsx";
-        ExcelFile excelFile= proc.OpenExcelFile(filename);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
@@ -47,7 +47,7 @@ internal class CellReader
         //--B2: int, border
         cell = proc.GetCellAt(excelSheet, "B2");
         var cellValueType = proc.GetCellValue(excelSheet, cell);
-        excelCellValue= proc.GetCellValue(excelSheet, cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
         cellFormat = proc.GetCellFormat(excelSheet, cell);
         //cellFormat.BorderId
 
@@ -55,7 +55,7 @@ internal class CellReader
         // B5: red: #FF0000 // ARGB: FF + FF0000
 
         cell = proc.GetCellAt(excelSheet, "B5");
-        excelCellValue= proc.GetCellValue(excelSheet, cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
         cellFormat = proc.GetCellFormat(excelSheet, cell);
         if (cellFormat != null && cellFormat.BorderId != null)
         {
@@ -99,14 +99,14 @@ internal class CellReader
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = @".\Files\data.xlsx";
-        ExcelFile excelFile= proc.OpenExcelFile(filename);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         int lastRowIdx = proc.GetLastRowIndex(excelSheet);
         Console.WriteLine("last row idx: " + lastRowIdx);
 
         ExcelRow row = proc.GetRowAt(excelSheet, 0);
-        if (row==null)
+        if (row == null)
             Console.WriteLine("ERROR, unbale to read the row");
 
         ExcelCell cell;

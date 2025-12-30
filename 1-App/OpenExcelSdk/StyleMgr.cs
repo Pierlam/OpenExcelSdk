@@ -46,14 +46,13 @@ public class StyleMgr
         // in CellFormat, default value for id is 0, not null
         if (numberFormatId != null)
             // if there is numberFormatId!
-            applyNumberFormat = true;  
+            applyNumberFormat = true;
         else
             // if null, set 0, it's the standard way
             numberFormatId = 0;
 
-
         // same style/cellFormat already exists?
-        CellFormat? cellFormat = FindCellFormatWithNumberFormatId(stylesPart, currCellFormat , numberFormatId, out int index);
+        CellFormat? cellFormat = FindCellFormatWithNumberFormatId(stylesPart, currCellFormat, numberFormatId, out int index);
         if (cellFormat != null)
         {
             // get the index of the found style
@@ -92,7 +91,6 @@ public class StyleMgr
         int count = stylesPart.Stylesheet.CellFormats.Elements().Count();
         excelCell.Cell.StyleIndex = (uint)(count - 1);
         return true;
-
     }
 
     /// <summary>
@@ -199,7 +197,6 @@ public class StyleMgr
         index = 0;
         if (cellFormat == null) return null;
         if (stylesPart.Stylesheet == null) return null;
-
 
         // scan each cell format, only on object, not an apply flag
         for (int i = 0; i < stylesPart.Stylesheet.CellFormats.Elements().Count(); i++)

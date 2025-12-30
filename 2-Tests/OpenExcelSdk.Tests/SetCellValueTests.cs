@@ -27,7 +27,7 @@ public class SetCellValueTests : TestBase
         cell = proc.CreateCell(excelSheet, 2, 2);
 
         // set value in a cell, if cell does not exist, it will be created
-        res=proc.SetCellValue(excelSheet, cell, "Hello World!");
+        res = proc.SetCellValue(excelSheet, cell, "Hello World!");
         Assert.IsTrue(res);
 
         //--B3: string
@@ -35,15 +35,15 @@ public class SetCellValueTests : TestBase
         Assert.IsTrue(res);
 
         //--B4: string+BgColor: rain
-        res=proc.SetCellValue(excelSheet, 2, 4, "rain");
+        res = proc.SetCellValue(excelSheet, 2, 4, "rain");
         Assert.IsTrue(res);
 
         //--B5: string+Border: small
-        res=proc.SetCellValue(excelSheet, 2, 5, "small");
+        res = proc.SetCellValue(excelSheet, 2, 5, "small");
         Assert.IsTrue(res);
 
         //--B6: int
-        res=proc.SetCellValue(excelSheet, 2, 6, "other");
+        res = proc.SetCellValue(excelSheet, 2, 6, "other");
         Assert.IsTrue(res);
 
         //--B7: double
@@ -71,7 +71,7 @@ public class SetCellValueTests : TestBase
         Assert.IsTrue(res);
 
         //--B13: date+fmt+BgColor
-        res =   proc.SetCellValue(excelSheet, 2, 13, "walker");
+        res = proc.SetCellValue(excelSheet, 2, 13, "walker");
         Assert.IsTrue(res);
 
         // save the changes
@@ -230,12 +230,11 @@ public class SetCellValueTests : TestBase
         //--B3: datetime custom format,  set 25.8  -> display 25.80, built-in format 2
         proc.SetCellValue(excelSheet, 2, 3, 25.8, "0.00");
 
-        //--B4: currency -> 357.200 
+        //--B4: currency -> 357.200
         proc.SetCellValue(excelSheet, 2, 4, 357.2, "0.000");
 
-        //--B5: string,  -> "#,##0.00\\ \"€\""   
+        //--B5: string,  -> "#,##0.00\\ \"€\""
         proc.SetCellValue(excelSheet, 2, 5, 1450, "#,##0.00\\ \"€\"");
-
 
         // save the changes
         proc.CloseExcelFile(excelFile);
@@ -398,7 +397,7 @@ public class SetCellValueTests : TestBase
         cell = proc.GetCellAt(excelSheet, "B7");
         excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.TimeOnly, excelCellValue.CellType);
-        Assert.AreEqual(new TimeOnly(10,34,56), excelCellValue.TimeOnlyValue);
+        Assert.AreEqual(new TimeOnly(10, 34, 56), excelCellValue.TimeOnlyValue);
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
         cellFormat = proc.GetCellFormat(excelSheet, cell);
@@ -406,8 +405,7 @@ public class SetCellValueTests : TestBase
         Assert.AreEqual("1", cellFormat.ApplyNumberFormat);
         Assert.AreEqual("hh:mm:ss", excelCellValue.NumberFormat);
         // custom so >163
-        Assert.IsTrue((int)cellFormat.NumberFormatId.Value>163);
-
+        Assert.IsTrue((int)cellFormat.NumberFormatId.Value > 163);
     }
 
     [TestMethod]

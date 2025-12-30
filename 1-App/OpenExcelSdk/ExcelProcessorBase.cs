@@ -1,16 +1,11 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OpenExcelSdk;
 
 /// <summary>
-/// low-level ExcelProcessor functions 
+/// low-level ExcelProcessor functions
 /// </summary>
 public class ExcelProcessorBase
 {
@@ -34,7 +29,7 @@ public class ExcelProcessorBase
 
     #endregion Get CellType
 
-    #region Get CellValue as 
+    #region Get CellValue as
 
     /// <summary>
     /// Get the value of the cell as a string.
@@ -47,7 +42,7 @@ public class ExcelProcessorBase
     public string GetCellValueAsString(ExcelSheet excelSheet, ExcelCell excelCell)
     {
         ExcelCellValue excelCellValue = GetCellValue(excelSheet, excelCell);
-        if (excelCellValue==null)
+        if (excelCellValue == null)
             return string.Empty;
 
         if (excelCellValue.CellType == ExcelCellType.String)
@@ -135,7 +130,9 @@ public class ExcelProcessorBase
         return new DateOnly();
     }
 
-    #endregion Get CellValue as 
+    #endregion Get CellValue as
+
+
 
     #region Get CellValue
 
@@ -149,14 +146,13 @@ public class ExcelProcessorBase
     /// <returns></returns>
     public ExcelCellValue GetCellValue(ExcelSheet excelSheet, ExcelCell excelCell)
     {
-        ExcelCellValue  excelCellValue = null;
+        ExcelCellValue excelCellValue = null;
 
         if (excelSheet == null || excelCell == null)
             return null;
 
-
         //--cell datatype is defined?
-        excelCellValue= GetCellStringValue(excelSheet, excelCell);
+        excelCellValue = GetCellStringValue(excelSheet, excelCell);
         if (excelCellValue != null) return excelCellValue;
 
         // get the number format id
@@ -250,7 +246,6 @@ public class ExcelProcessorBase
     {
         string cellValue;
 
-
         if (excelCell.Cell.DataType == null) return null;
 
         if (excelCell.Cell.DataType.Value == CellValues.SharedString)
@@ -288,7 +283,7 @@ public class ExcelProcessorBase
         return null;
     }
 
-    #endregion CellValue
+    #endregion Get CellValue
 
     #region Create cell
 
@@ -329,7 +324,7 @@ public class ExcelProcessorBase
         {
             Cell cell = row.Elements<Cell>().Where(c => c.CellReference is not null && c.CellReference.Value == cellReference).First();
             // the cell at the provided address exists
-            ExcelCell excelCell= new ExcelCell(excelSheet, cell);
+            ExcelCell excelCell = new ExcelCell(excelSheet, cell);
             // get the style of the cell
             excelCell.CellFormat = GetCellFormat(excelSheet, excelCell);
             return excelCell;
@@ -357,70 +352,70 @@ public class ExcelProcessorBase
 
     #region Set cell value
 
-    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, string value, string format)
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, string value, string numberFormat)
     {
-        uint formatId;
+        uint numberFormatId;
 
         // get (built-in or custom) or create the format (custom)
-        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId))
+        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, numberFormat, out numberFormatId))
             return false;
 
-        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId);
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, numberFormatId);
     }
 
-    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, int value, string format)
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, int value, string numberFormat)
     {
-        uint formatId;
+        uint numberFormatId;
 
         // get (built-in or custom) or create the format (custom)
-        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId))
+        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, numberFormat, out numberFormatId))
             return false;
 
-        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId);
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, numberFormatId);
     }
 
-    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, double value, string format)
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, double value, string numberFormat)
     {
-        uint formatId;
+        uint numberFormatId;
 
         // get (built-in or custom) or create the format (custom)
-        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId))
+        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, numberFormat, out numberFormatId))
             return false;
 
-        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId);
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, numberFormatId);
     }
 
-    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, DateOnly value, string format)
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, DateOnly value, string numberFormat)
     {
-        uint formatId;
+        uint numberFormatId;
 
         // get (built-in or custom) or create the format (custom)
-        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId))
+        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, numberFormat, out numberFormatId))
             return false;
 
-        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId);
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, numberFormatId);
     }
 
-    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, DateTime value, string format)
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, DateTime value, string numberFormat)
     {
-        uint formatId;
+        uint numberFormatId;
 
         // get (built-in or custom) or create the format (custom)
-        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId))
+        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, numberFormat, out numberFormatId))
             return false;
 
-        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId);
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, numberFormatId);
     }
 
-    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, TimeOnly value, string format)
+    public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, TimeOnly value, string numberFormat)
     {
-        uint formatId;
+        uint numberFormatId;
 
         // get (built-in or custom) or create the format (custom)
-        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, format, out formatId))
+        if (!_styleMgr.GetOrCreateNumberFormat(excelSheet, numberFormat, out numberFormatId))
             return false;
 
-        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, formatId);
+        return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, numberFormatId);
     }
 
     public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, string value)
@@ -448,7 +443,7 @@ public class ExcelProcessorBase
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
     /// <param name="value"></param>
-    /// <param name="error"></param>
+    /// <param name="numberFormatId"></param>
     /// <returns></returns>
     public bool SetCellValueAndNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, string value, uint? numberFormatId)
     {
@@ -506,7 +501,7 @@ public class ExcelProcessorBase
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
     /// <param name="value"></param>
-    /// <param name="error"></param>
+    /// <param name="numberFormatId"></param>
     /// <returns></returns>
     public bool SetCellValueAndNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, double value, uint? numberFormatId)
     {
@@ -546,7 +541,7 @@ public class ExcelProcessorBase
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
     /// <param name="value"></param>
-    /// <param name="error"></param>
+    /// <param name="numberFormatId"></param>
     /// <returns></returns>
     public bool SetCellValueAndNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, DateOnly value, uint? numberFormatId)
     {
@@ -585,7 +580,7 @@ public class ExcelProcessorBase
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
     /// <param name="value"></param>
-    /// <param name="error"></param>
+    /// <param name="numberFormatId"></param>
     /// <returns></returns>
     public bool SetCellValueAndNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, DateTime value, uint? numberFormatId)
     {
@@ -613,6 +608,16 @@ public class ExcelProcessorBase
         return true;
     }
 
+    /// <summary>
+    /// Set cell value as a timeOnly.
+    /// Keep some aprt of the style: border, color, font...
+    /// but clear the number format -> style/CellFormat/NumberingFormat
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="value"></param>
+    /// <param name="numberFormatId"></param>
+    /// <returns></returns>
     public bool SetCellValueAndNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, TimeOnly value, uint? numberFormatId)
     {
         // Important: store as number
@@ -684,5 +689,4 @@ public class ExcelProcessorBase
     }
 
     #endregion Get something
-
 }

@@ -63,7 +63,7 @@ public class ValueBuilder
         return excelCellValue;
     }
 
-    public static ExcelCellValue CreateValueInteger(string value, int numberFormatId,  string numberFormat)
+    public static ExcelCellValue CreateValueInteger(string value, int numberFormatId, string numberFormat)
     {
         bool res = int.TryParse(value, out int valInt);
         if (!res)
@@ -130,7 +130,7 @@ public class ValueBuilder
         }
     }
 
-    public static ExcelCellValue CreateValueTimeOnly(string value, int numberFormatId,  string numberFormat)
+    public static ExcelCellValue CreateValueTimeOnly(string value, int numberFormatId, string numberFormat)
     {
         try
         {

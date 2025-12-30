@@ -1,22 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace OpenExcelSdk;
+﻿namespace OpenExcelSdk;
 
 /// <summary>
 /// Excel exception.
 /// </summary>
-public class ExcelException :Exception
+public class ExcelException : Exception
 {
     /// <summary>
     /// the method name where the error occurs.
     /// </summary>
-    public string Action {  get; set; }
+    public string Action { get; set; }
 
-    public ExcelErrorCode ExcelErrorCode { get; set;  }
+    public ExcelErrorCode ExcelErrorCode { get; set; }
 
     public ExcelException(string action, ExcelErrorCode excelErrorCode)
     {
@@ -45,7 +39,7 @@ public class ExcelException :Exception
 
     public static ExcelException Create(string action, ExcelErrorCode excelErrorCode, string param)
     {
-        string msg= ErrorMsgBuilder.BuildMsg(action, excelErrorCode, param);
+        string msg = ErrorMsgBuilder.BuildMsg(action, excelErrorCode, param);
         return new ExcelException(action, excelErrorCode, msg);
     }
 
@@ -54,5 +48,4 @@ public class ExcelException :Exception
         string msg = ErrorMsgBuilder.BuildMsg(action, excelErrorCode, param);
         return new ExcelException(action, excelErrorCode, msg, ex);
     }
-
 }

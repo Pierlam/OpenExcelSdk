@@ -19,7 +19,7 @@ public sealed class ExcelFileTests : TestBase
         if (File.Exists(filename))
             File.Delete(filename);
 
-        ExcelFile excelFile =proc.CreateExcelFile(filename);
+        ExcelFile excelFile = proc.CreateExcelFile(filename);
 
         Assert.IsTrue(File.Exists(filename));
 
@@ -33,7 +33,7 @@ public sealed class ExcelFileTests : TestBase
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "data3rows.xlsx";
-        ExcelFile excelFile= proc.OpenExcelFile(filename);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
@@ -56,7 +56,7 @@ public sealed class ExcelFileTests : TestBase
             string filename = PathFiles + "notexists.xlsx";
             ExcelFile excelFile = proc.OpenExcelFile(filename);
         }
-        catch (ExcelException ex) 
+        catch (ExcelException ex)
         {
             Assert.AreEqual(ExcelErrorCode.FileNotFound, ex.ExcelErrorCode);
             return;
@@ -81,7 +81,6 @@ public sealed class ExcelFileTests : TestBase
 
         int lastRowIdx = proc.GetLastRowIndex(excelSheet);
         Assert.AreEqual(0, lastRowIdx);
-
 
         // try to get a cell that does not exist -> should works
         ExcelCell cell = proc.GetCellAt(excelSheet, 2, 2);
