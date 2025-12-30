@@ -4,16 +4,14 @@ using OpenExcelSdk;
 void DevCloneStyle()
 {
     ExcelProcessor proc = new ExcelProcessor();
-    bool res;
-    ExcelError error;
     string filename = @"Files\DevCloneStyle.xlsx";
 
     ExcelFile excelFile = proc.OpenExcelFile(filename);
     ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
     //--B2: dateTime, custom, BgColor, FgCOlor, Border: 09/12/2021 12:30:45
-    res = proc.GetCellAt(excelSheet, 2, 2, out ExcelCell excelCell, out error);
-    proc.SetCellValue(excelSheet, excelCell, "Bonjour", out error);
+    ExcelCell excelCell = proc.GetCellAt(excelSheet, 2, 2);
+    proc.SetCellValue(excelSheet, excelCell, "Bonjour");
 
     //StyleMgr styleMgr = new StyleMgr();
     //res = styleMgr.CloneStyle(excelSheet, excelCell);

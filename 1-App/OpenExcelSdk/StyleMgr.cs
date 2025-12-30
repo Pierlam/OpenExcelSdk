@@ -113,10 +113,8 @@ public class StyleMgr
     /// <param name="formatId"></param>
     /// <param name="error"></param>
     /// <returns></returns>
-    public bool GetOrCreateNumberFormat(ExcelSheet excelSheet, string format, out uint formatId, out ExcelError error)
+    public bool GetOrCreateNumberFormat(ExcelSheet excelSheet, string format, out uint formatId)
     {
-        error = null;
-
         // is the format a Built-In format?
         if (!BuiltInNumberFormatMgr.GetFormatId(format, out formatId))
         {
@@ -124,7 +122,7 @@ public class StyleMgr
             if (!GetCustomNumberFormatId(excelSheet, format, out formatId))
             {
                 // create a new custom format
-                if (!CreateCustomNumberFormat(excelSheet, format, out formatId, out error))
+                if (!CreateCustomNumberFormat(excelSheet, format, out formatId))
                     return false;
             }
         }
@@ -241,10 +239,8 @@ public class StyleMgr
     /// <param name="formatId"></param>
     /// <param name="error"></param>
     /// <returns></returns>
-    public bool CreateCustomNumberFormat(ExcelSheet excelSheet, string format, out uint formatId, out ExcelError error)
+    public bool CreateCustomNumberFormat(ExcelSheet excelSheet, string format, out uint formatId)
     {
-        error = null;
-
         var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
 
         // max id not yet calculated?

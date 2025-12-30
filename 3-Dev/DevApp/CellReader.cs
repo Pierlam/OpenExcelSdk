@@ -7,8 +7,6 @@ internal class CellReader
 {
     public static void CheckFilePb()
     {
-        ExcelError error;
-        bool res;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = @".\Files\datLinesThenACellBlankOk.xlsx";
@@ -22,9 +20,9 @@ internal class CellReader
         StyleMgr styleMgr = new StyleMgr();
 
         //--A5:
-        res = proc.GetCellAt(excelSheet, "A5", out cell, out error);
+        cell = proc.GetCellAt(excelSheet, "A5");
         //var cellValueType = proc.GetCellType(excelSheet, cell);
-        proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        cellValueMulti= proc.GetCellValue(excelSheet, cell);
 
         if (cellValueMulti.CellType == ExcelCellType.String)
         { }
@@ -34,8 +32,6 @@ internal class CellReader
 
     public static void ReadCellFormats()
     {
-        ExcelError error;
-        bool res;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = @".\Files\CellFormats.xlsx";
@@ -49,18 +45,17 @@ internal class CellReader
         StyleMgr styleMgr = new StyleMgr();
 
         //--B2: int, border
-        res = proc.GetCellAt(excelSheet, "B2", out cell, out error);
-        var cellValueType = proc.GetCellType(excelSheet, cell);
-        proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        cell = proc.GetCellAt(excelSheet, "B2");
+        var cellValueType = proc.GetCellValue(excelSheet, cell);
+        cellValueMulti= proc.GetCellValue(excelSheet, cell);
         cellFormat = proc.GetCellFormat(excelSheet, cell);
         //cellFormat.BorderId
 
         //--B4: int, bgcolor
         // B5: red: #FF0000 // ARGB: FF + FF0000
 
-        res = proc.GetCellAt(excelSheet, "B5", out cell, out error);
-        cellValueType = proc.GetCellType(excelSheet, cell);
-        proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+        cell = proc.GetCellAt(excelSheet, "B5");
+        cellValueMulti= proc.GetCellValue(excelSheet, cell);
         cellFormat = proc.GetCellFormat(excelSheet, cell);
         if (cellFormat != null && cellFormat.BorderId != null)
         {
@@ -101,8 +96,6 @@ internal class CellReader
 
     public static void Read()
     {
-        ExcelError error;
-        bool res;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = @".\Files\data.xlsx";
@@ -112,15 +105,15 @@ internal class CellReader
         int lastRowIdx = proc.GetLastRowIndex(excelSheet);
         Console.WriteLine("last row idx: " + lastRowIdx);
 
-        res = proc.GetRowAt(excelSheet, 0, out ExcelRow row, out error);
-        if (!res)
+        ExcelRow row = proc.GetRowAt(excelSheet, 0);
+        if (row==null)
             Console.WriteLine("ERROR, unbale to read the row");
 
         ExcelCell cell;
 
         ////--A1: values
-        res = proc.GetCellAt(excelSheet, 1, 1, out cell, out error);
-        var cellValueType = proc.GetCellType(excelSheet, cell);
+        cell = proc.GetCellAt(excelSheet, 1, 1);
+        var cellValueType = proc.GetCellValue(excelSheet, cell);
         string val = proc.GetCellValueAsString(excelSheet, cell);
 
         proc.CloseExcelFile(excelFile);

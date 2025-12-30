@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace OpenExcelSdk;
 
 /// <summary>
-/// Specific excel exception.
+/// Excel exception.
 /// </summary>
 public class ExcelException :Exception
 {

@@ -8,8 +8,6 @@ public class SheetTests : TestBase
     [TestMethod]
     public void GetSheetByName()
     {
-        bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "hasManySheets.xlsx";
@@ -31,8 +29,6 @@ public class SheetTests : TestBase
     [TestMethod]
     public void CreateSheet()
     {
-        bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "CreateSheet.xlsx";

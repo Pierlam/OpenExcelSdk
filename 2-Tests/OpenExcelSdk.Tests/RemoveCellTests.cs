@@ -9,7 +9,6 @@ public class RemoveCellTests : TestBase
     public void SetCellValueString()
     {
         bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "RemoveCell.xlsx";
@@ -21,19 +20,19 @@ public class RemoveCellTests : TestBase
         ExcelCellValueMulti cellValueMulti;
 
         //--B2: already null!
-        res = proc.RemoveCell(excelSheet, "B2", out error);
+        res = proc.RemoveCell(excelSheet, "B2");
         Assert.IsTrue(res);
 
         //--B3:
-        res = proc.RemoveCell(excelSheet, "B3", out error);
+        res = proc.RemoveCell(excelSheet, "B3");
         Assert.IsTrue(res);
 
         //--B4:
-        res = proc.RemoveCell(excelSheet, 2, 4, out error);
+        res = proc.RemoveCell(excelSheet, 2, 4);
         Assert.IsTrue(res);
 
         //--B5:
-        res = proc.RemoveCell(excelSheet, 2, 5, out error);
+        res = proc.RemoveCell(excelSheet, 2, 5);
         Assert.IsTrue(res);
 
         // save the changes
@@ -44,13 +43,11 @@ public class RemoveCellTests : TestBase
         excelSheet = proc.GetSheetAt(excelFile, 0);
 
         //--B2: null
-        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 2);
         Assert.IsNull(cell);
 
         //--B3:
-        res = proc.GetCellAt(excelSheet, 2, 3, out cell, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 3);
         Assert.IsNull(cell);
     }
 }

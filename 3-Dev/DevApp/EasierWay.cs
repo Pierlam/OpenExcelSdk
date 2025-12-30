@@ -12,8 +12,6 @@ public class EasierWay
 {
     public static void TestFctLight()
     {
-        ExcelError error;
-        bool res;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = @".\Files\CellFormats.xlsx";
@@ -22,7 +20,7 @@ public class EasierWay
         ExcelSheet excelSheet= proc.GetSheetAt(excelFile, 0);
 
         ////--B2: int, border
-        //ExcelCell excelCell = proc.GetCellAt(excelSheet, "B2");
+        ExcelCell excelCell = proc.GetCellAt(excelSheet, "B2");
         //var cellValueType = proc.GetCellType(excelSheet, excelCell);
 
         //ExcelCellValueMulti excelCellValueMulti= proc.GetCellTypeAndValue(excelSheet, excelCell);

@@ -10,7 +10,6 @@ public class GetCellTypeAndValueTests : TestBase
     public void GetCellTypeAndValueSpecial()
     {
         bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "GetCellTypeAndValueSpecial.xlsx";
@@ -22,17 +21,15 @@ public class GetCellTypeAndValueTests : TestBase
         ExcelCellValueMulti cellValueMulti;
 
         //--B2: null
-        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(cell);
+        cell = proc.GetCellAt(excelSheet, 2, 2);
         // no cell, is null not an error!
-        Assert.IsNull(error);
+        Assert.IsNull(cell);
 
         //--B3: empty, bgColor:yellow
-        res = proc.GetCellAt(excelSheet, 2, 3, out cell, out error);
-        Assert.IsTrue(res);
-        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 3);
+        Assert.IsNotNull(cell);
+        cellValueMulti = proc.GetCellValue(excelSheet, cell);
+        Assert.IsNotNull(cellValueMulti);
         // empty cell, type is undefined
         Assert.AreEqual(ExcelCellType.Undefined, cellValueMulti.CellType);
     }
@@ -41,7 +38,6 @@ public class GetCellTypeAndValueTests : TestBase
     public void GetCellTypeAndValueString()
     {
         bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "GetCellTypeAndValueString.xlsx";
@@ -53,26 +49,20 @@ public class GetCellTypeAndValueTests : TestBase
         ExcelCellValueMulti cellValueMulti;
 
         //--B2: string:hello
-        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
-        Assert.IsTrue(res);
-        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 2);
+        cellValueMulti = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.String, cellValueMulti.CellType);
         Assert.AreEqual("hello", cellValueMulti.StringValue);
 
         //--B3: string:wind, bgColor:yellow
-        res = proc.GetCellAt(excelSheet, 2, 3, out cell, out error);
-        Assert.IsTrue(res);
-        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 3);
+        cellValueMulti = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.String, cellValueMulti.CellType);
         Assert.AreEqual("wind", cellValueMulti.StringValue);
 
         //--B4: string:great, border:all, thick,black
-        res = proc.GetCellAt(excelSheet, 2, 4, out cell, out error);
-        Assert.IsTrue(res);
-        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 4);
+        cellValueMulti = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.String, cellValueMulti.CellType);
         Assert.AreEqual("great", cellValueMulti.StringValue);
     }
@@ -84,7 +74,6 @@ public class GetCellTypeAndValueTests : TestBase
     public void GetCellTypeAndValueNumber()
     {
         bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "GetCellTypeAndValueNumber.xlsx";
@@ -96,44 +85,34 @@ public class GetCellTypeAndValueTests : TestBase
         ExcelCellValueMulti cellValueMulti;
 
         //--B2: int
-        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
-        Assert.IsTrue(res);
-        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 2);
+        cellValueMulti = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.Integer, cellValueMulti.CellType);
         Assert.AreEqual(12, cellValueMulti.IntegerValue);
 
         //--B3: double
-        res = proc.GetCellAt(excelSheet, 2, 3, out cell, out error);
-        Assert.IsTrue(res);
-        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 3);
+        cellValueMulti = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
         Assert.AreEqual(34.56, cellValueMulti.DoubleValue);
 
         // --B4: double, number format: 0.00, number format id: 2
-        res = proc.GetCellAt(excelSheet, 2, 4, out cell, out error);
-        Assert.IsTrue(res);
-        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 4);
+        cellValueMulti = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
         Assert.AreEqual(27.13, cellValueMulti.DoubleValue);
         Assert.AreEqual("0.00", cellValueMulti.NumberFormat);
 
         //--B5: double, number format: 0%, number format id: 9
-        res = proc.GetCellAt(excelSheet, 2, 5, out cell, out error);
-        Assert.IsTrue(res);
-        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 5);
+        cellValueMulti = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
         // 12.5%  -> 0.125
         Assert.AreEqual(0.125, cellValueMulti.DoubleValue);
 
         //--B6: double+BgColor+border, 36.29
-        res = proc.GetCellAt(excelSheet, 2, 6, out cell, out error);
-        Assert.IsTrue(res);
-        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 6);
+        cellValueMulti = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
         Assert.AreEqual(36.29, cellValueMulti.DoubleValue);
 
@@ -156,7 +135,6 @@ public class GetCellTypeAndValueTests : TestBase
     public void GetCellTypeAndValueDate()
     {
         bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "GetCellTypeAndValueDate.xlsx";
@@ -171,10 +149,8 @@ public class GetCellTypeAndValueTests : TestBase
         StyleMgr styleMgr = new StyleMgr();
 
         //--B2: date 07/12/2019
-        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
-        Assert.IsTrue(res);
-        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 2);
+        cellValueMulti = proc.GetCellValue(excelSheet, cell);
         Assert.IsFalse(cellValueMulti.IsEmpty);
         Assert.AreEqual(ExcelCellType.DateOnly, cellValueMulti.CellType);
         Assert.AreEqual(new DateOnly(2019, 12, 7), cellValueMulti.DateOnlyValue);
@@ -187,10 +163,8 @@ public class GetCellTypeAndValueTests : TestBase
         Assert.AreEqual(14, (int)cellFormat.NumberFormatId.Value);
 
         //--B3: datetime: 15/09/2021 12:30:45  displayed: 15/09/2021 12:30  sec are not diplayed
-        res = proc.GetCellAt(excelSheet, 2, 3, out cell, out error);
-        Assert.IsTrue(res);
-        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 3);
+        cellValueMulti = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.DateTime, cellValueMulti.CellType);
         Assert.AreEqual(new DateTime(2021, 09, 15, 12, 30, 45), cellValueMulti.DateTimeValue);
 
@@ -202,10 +176,8 @@ public class GetCellTypeAndValueTests : TestBase
         Assert.AreEqual(22, (int)cellFormat.NumberFormatId.Value);
 
         //--B4: time: 09:34:56
-        res = proc.GetCellAt(excelSheet, 2, 4, out cell, out error);
-        Assert.IsTrue(res);
-        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 4);
+        cellValueMulti = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.TimeOnly, cellValueMulti.CellType);
         Assert.AreEqual(new TimeOnly(09, 34, 56), cellValueMulti.TimeOnlyValue);
         // check the style and the number format
@@ -216,10 +188,8 @@ public class GetCellTypeAndValueTests : TestBase
         Assert.AreEqual(21, (int)cellFormat.NumberFormatId.Value);
 
         //--B5: datetime, custom format: "dd/mm/yyyy\\ hh:mm:ss" -> 10/12/2025 12:34:56
-        res = proc.GetCellAt(excelSheet, 2, 5, out cell, out error);
-        Assert.IsTrue(res);
-        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 5);
+        cellValueMulti = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.DateTime, cellValueMulti.CellType);
         Assert.AreEqual(new DateTime(2025, 12, 10, 12, 34, 56), cellValueMulti.DateTimeValue);
         // check the style and the number format
@@ -239,7 +209,6 @@ public class GetCellTypeAndValueTests : TestBase
     public void GetCellTypeAndValueCustom()
     {
         bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "GetCellTypeAndValueCustom.xlsx";
@@ -251,10 +220,8 @@ public class GetCellTypeAndValueTests : TestBase
         ExcelCellValueMulti cellValueMulti;
 
         //--B2: datetime, custom format: dd-MMM-yyyy HH:mm:ss -> 27/09/2025 12:34:56
-        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
-        Assert.IsTrue(res);
-        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 2);
+        cellValueMulti = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.DateTime, cellValueMulti.CellType);
         Assert.AreEqual(new DateTime(2025, 09, 27, 12, 34, 56), cellValueMulti.DateTimeValue);
     }
@@ -263,7 +230,6 @@ public class GetCellTypeAndValueTests : TestBase
     public void GetCellTypeNullEmpty()
     {
         bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "GetCellTypeNullEmpty.xlsx";
@@ -275,18 +241,14 @@ public class GetCellTypeAndValueTests : TestBase
         ExcelCellValueMulti cellValueMulti;
 
         //--B2: number, empty
-        res = proc.GetCellAt(excelSheet, "B2", out cell, out error);
-        Assert.IsTrue(res);
-        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, "B2");
+        cellValueMulti = proc.GetCellValue(excelSheet, cell);
         Assert.IsTrue(cellValueMulti.IsEmpty);
         Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
 
         //--B3: date, bgcolor, empty
-        res = proc.GetCellAt(excelSheet, "B3", out cell, out error);
-        Assert.IsTrue(res);
-        res = proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, "B3");
+        cellValueMulti = proc.GetCellValue(excelSheet, cell);
         Assert.IsTrue(cellValueMulti.IsEmpty);
         Assert.AreEqual(ExcelCellType.DateOnly, cellValueMulti.CellType);
     }

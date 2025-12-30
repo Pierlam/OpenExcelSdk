@@ -30,7 +30,6 @@ public sealed class ExcelFileTests : TestBase
     public void OpenExcelOk()
     {
         bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "data3rows.xlsx";
@@ -38,9 +37,8 @@ public sealed class ExcelFileTests : TestBase
 
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
-        res = proc.GetRowAt(excelSheet, 0, out ExcelRow row, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        ExcelRow row = proc.GetRowAt(excelSheet, 0);
+        Assert.IsNotNull(row);
 
         int lastRowIdx = proc.GetLastRowIndex(excelSheet);
         Assert.AreEqual(3, lastRowIdx);
@@ -52,7 +50,6 @@ public sealed class ExcelFileTests : TestBase
     public void OpenExcelNotExistsErr()
     {
         bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
         try
         {
@@ -71,7 +68,6 @@ public sealed class ExcelFileTests : TestBase
     public void OpenEmptyExcel()
     {
         bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "empty.xlsx";
@@ -79,20 +75,16 @@ public sealed class ExcelFileTests : TestBase
 
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
-        res = proc.GetRowAt(excelSheet, 0, out ExcelRow row, out error);
-        Assert.IsTrue(res);
-        // no row, not an error
-        Assert.IsNull(error);
+        ExcelRow row = proc.GetRowAt(excelSheet, 0);
+        // no data row, not an error, just return null
         Assert.IsNull(row);
 
         int lastRowIdx = proc.GetLastRowIndex(excelSheet);
         Assert.AreEqual(0, lastRowIdx);
 
-        ExcelCell cell;
 
         // try to get a cell that does not exist -> should works
-        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
-        Assert.IsTrue(res);
+        ExcelCell cell = proc.GetCellAt(excelSheet, 2, 2);
         Assert.IsNull(cell);
 
         proc.CloseExcelFile(excelFile);
