@@ -14,7 +14,7 @@ internal class CellReader
         ExcelSheet excelSheet= proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValue cellValueMulti;
+        ExcelCellValue excelCellValue;
         CellFormat cellFormat;
         string dataFormat;
         StyleMgr styleMgr = new StyleMgr();
@@ -22,9 +22,9 @@ internal class CellReader
         //--A5:
         cell = proc.GetCellAt(excelSheet, "A5");
         //var cellValueType = proc.GetCellType(excelSheet, cell);
-        cellValueMulti= proc.GetCellValue(excelSheet, cell);
+        excelCellValue= proc.GetCellValue(excelSheet, cell);
 
-        if (cellValueMulti.CellType == ExcelCellType.String)
+        if (excelCellValue.CellType == ExcelCellType.String)
         { }
 
         proc.CloseExcelFile(excelFile);
@@ -39,7 +39,7 @@ internal class CellReader
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValue cellValueMulti;
+        ExcelCellValue excelCellValue;
         CellFormat cellFormat;
         string dataFormat;
         StyleMgr styleMgr = new StyleMgr();
@@ -47,7 +47,7 @@ internal class CellReader
         //--B2: int, border
         cell = proc.GetCellAt(excelSheet, "B2");
         var cellValueType = proc.GetCellValue(excelSheet, cell);
-        cellValueMulti= proc.GetCellValue(excelSheet, cell);
+        excelCellValue= proc.GetCellValue(excelSheet, cell);
         cellFormat = proc.GetCellFormat(excelSheet, cell);
         //cellFormat.BorderId
 
@@ -55,7 +55,7 @@ internal class CellReader
         // B5: red: #FF0000 // ARGB: FF + FF0000
 
         cell = proc.GetCellAt(excelSheet, "B5");
-        cellValueMulti= proc.GetCellValue(excelSheet, cell);
+        excelCellValue= proc.GetCellValue(excelSheet, cell);
         cellFormat = proc.GetCellFormat(excelSheet, cell);
         if (cellFormat != null && cellFormat.BorderId != null)
         {

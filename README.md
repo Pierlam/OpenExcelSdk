@@ -30,7 +30,7 @@ After that, if the type of the cell is string, get the string cell value and dis
 
 ```
 bool res;
-ExcelCellValueMulti cellValueMulti;
+excelCellValue excelCellValue;
 
 // create the excel processor to read/create/update cell
 ExcelProcessor proc = new ExcelProcessor();
@@ -46,12 +46,12 @@ ExcelSheet excelSheet = proc.GetFirstSheet(excelFile);
 ExcelCell cell= proc.GetCellAt(excelSheet, "B7");
 
 // get the type and the value of cell
-cellValueMulti= proc.GetCellValue(excelSheet, cell);
+excelCellValue= proc.GetCellValue(excelSheet, cell);
 
 //> type of the cell can be: string, int, double, DateTime, DateOnly, TimeOnly.
 
 // if the cell type is string, get the value and display it
-if(cellValueMulti.CellType == ExcelCellType.String)
+if(excelCellValue.CellType == ExcelCellType.String)
 {
   Console.WriteLine("B7 type: string, value:" + proc.GetCellValueAsString(excelFile, cell));
 } 
@@ -107,13 +107,13 @@ ExcelCell excelCell= proc.GetCellAt(excelSheet, "B4");
 // or like this:  ExcelCell excelCell= proc.GetCellAt(excelSheet, 2,4);
 
 // get the type, the format and the value
-ExcelCellValueMulti excelCellValueMulti= proc.GetCellValue(excelSheet, excelCell);
+excelCellValue excelCellValue= proc.GetCellValue(excelSheet, excelCell);
 
-// check: excelCellValueMulti.CellType, contains the type of the cell value.
-// then get the value from cellValueMulti property: StringValue, IntegerValue, DoubleValue, DateOnlyValue and TimeOnly
+// check: excelCellValue.CellType, contains the type of the cell value.
+// then get the value from excelCellValue property: StringValue, IntegerValue, DoubleValue, DateOnlyValue and TimeOnly
 
 // the cell value can be empty/Blank, in some cases the type will be undefined
-if(excelCellValueMulti.IsEmpty) ...
+if(excelCellValue.IsEmpty) ...
 
 ```
 

@@ -382,9 +382,9 @@ public class ExcelProcessor: ExcelProcessorBase
     /// <returns></returns>
     public ExcelCellType GetCellType(ExcelSheet excelSheet, string addressName)
     {
-        var excelCellValueMulti = GetCellValue(excelSheet, addressName);
-        if (excelCellValueMulti == null) return ExcelCellType.Undefined;
-        return excelCellValueMulti.CellType;
+        var excelCellValue = GetCellValue(excelSheet, addressName);
+        if (excelCellValue == null) return ExcelCellType.Undefined;
+        return excelCellValue.CellType;
     }
 
     /// <summary>
@@ -396,9 +396,9 @@ public class ExcelProcessor: ExcelProcessorBase
     /// <returns></returns>
     public ExcelCellType GetCellType(ExcelSheet excelSheet, int colIdx, int rowIdx)
     {
-        var excelCellValueMulti = GetCellValue(excelSheet, colIdx, rowIdx);
-        if (excelCellValueMulti == null) return ExcelCellType.Undefined;
-        return excelCellValueMulti.CellType;
+        var excelCellValue = GetCellValue(excelSheet, colIdx, rowIdx);
+        if (excelCellValue == null) return ExcelCellType.Undefined;
+        return excelCellValue.CellType;
     }
 
     #endregion Get CellType
@@ -419,7 +419,7 @@ public class ExcelProcessor: ExcelProcessorBase
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
-    /// <param name="excelCellValueMulti"></param>
+    /// <param name="excelCellValue"></param>
     /// <param name="excelError"></param>
     /// <returns></returns>
     public ExcelCellValue GetCellValue(ExcelSheet excelSheet, string addressName)
@@ -436,7 +436,7 @@ public class ExcelProcessor: ExcelProcessorBase
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
-    /// <param name="excelCellValueMulti"></param>
+    /// <param name="excelCellValue"></param>
     /// <param name="excelError"></param>
     /// <returns></returns>
     public ExcelCellValue GetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx)

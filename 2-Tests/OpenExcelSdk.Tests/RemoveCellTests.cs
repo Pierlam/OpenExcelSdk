@@ -17,7 +17,7 @@ public class RemoveCellTests : TestBase
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValue cellValueMulti;
+        ExcelCellValue excelCellValue;
 
         //--B2: already null!
         res = proc.RemoveCell(excelSheet, "B2");

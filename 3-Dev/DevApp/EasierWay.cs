@@ -23,9 +23,9 @@ public class EasierWay
         ExcelCell excelCell = proc.GetCellAt(excelSheet, "B2");
         //var cellValueType = proc.GetCellType(excelSheet, excelCell);
 
-        //ExcelCellValueMulti excelCellValueMulti= proc.GetCellTypeAndValue(excelSheet, excelCell);
+        //excelCellValue excelCellValue= proc.GetCellTypeAndValue(excelSheet, excelCell);
 
-        //excelCellValueMulti = proc.GetCellTypeAndValue(excelSheet, "B4");
+        //excelCellValue = proc.GetCellTypeAndValue(excelSheet, "B4");
 
         //res = proc.SetCellValue(excelSheet, "B2", new DateOnly(2025, 10, 12), "d/m/yyyy");
 

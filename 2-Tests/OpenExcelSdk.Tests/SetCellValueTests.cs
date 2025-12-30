@@ -17,7 +17,7 @@ public class SetCellValueTests : TestBase
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValue cellValueMulti;
+        ExcelCellValue excelCellValue;
 
         // to check style/CellFormat creation
         var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
@@ -87,52 +87,52 @@ public class SetCellValueTests : TestBase
 
         //--B2: "Hello World!"
         cell = proc.GetCellAt(excelSheet, 2, 2);
-        cellValueMulti = proc.GetCellValue(excelSheet, cell);
-        Assert.AreEqual(ExcelCellType.String, cellValueMulti.CellType);
-        Assert.AreEqual("Hello World!", cellValueMulti.StringValue);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.String, excelCellValue.CellType);
+        Assert.AreEqual("Hello World!", excelCellValue.StringValue);
 
         //--B3: string
-        cellValueMulti = proc.GetCellValue(excelSheet, 2, 3);
-        Assert.AreEqual(ExcelCellType.String, cellValueMulti.CellType);
-        Assert.AreEqual("montreal", cellValueMulti.StringValue);
+        excelCellValue = proc.GetCellValue(excelSheet, 2, 3);
+        Assert.AreEqual(ExcelCellType.String, excelCellValue.CellType);
+        Assert.AreEqual("montreal", excelCellValue.StringValue);
 
         //--B4: string+BgColor
-        cellValueMulti = proc.GetCellValue(excelSheet, 2, 4);
-        Assert.AreEqual(ExcelCellType.String, cellValueMulti.CellType);
-        Assert.AreEqual("rain", cellValueMulti.StringValue);
+        excelCellValue = proc.GetCellValue(excelSheet, 2, 4);
+        Assert.AreEqual(ExcelCellType.String, excelCellValue.CellType);
+        Assert.AreEqual("rain", excelCellValue.StringValue);
 
         //--B5: string+Border
-        cellValueMulti = proc.GetCellValue(excelSheet, 2, 5);
-        Assert.AreEqual(ExcelCellType.String, cellValueMulti.CellType);
-        Assert.AreEqual("small", cellValueMulti.StringValue);
+        excelCellValue = proc.GetCellValue(excelSheet, 2, 5);
+        Assert.AreEqual(ExcelCellType.String, excelCellValue.CellType);
+        Assert.AreEqual("small", excelCellValue.StringValue);
 
         //--B8: string
-        cellValueMulti = proc.GetCellValue(excelSheet, 2, 8);
-        Assert.AreEqual(ExcelCellType.String, cellValueMulti.CellType);
-        Assert.AreEqual("mountain", cellValueMulti.StringValue);
+        excelCellValue = proc.GetCellValue(excelSheet, 2, 8);
+        Assert.AreEqual(ExcelCellType.String, excelCellValue.CellType);
+        Assert.AreEqual("mountain", excelCellValue.StringValue);
 
         //--B9: string
-        cellValueMulti = proc.GetCellValue(excelSheet, 2, 9);
-        Assert.AreEqual(ExcelCellType.String, cellValueMulti.CellType);
-        Assert.AreEqual("georges", cellValueMulti.StringValue);
+        excelCellValue = proc.GetCellValue(excelSheet, 2, 9);
+        Assert.AreEqual(ExcelCellType.String, excelCellValue.CellType);
+        Assert.AreEqual("georges", excelCellValue.StringValue);
 
         //--B10: string
-        cellValueMulti = proc.GetCellValue(excelSheet, 2, 10);
+        excelCellValue = proc.GetCellValue(excelSheet, 2, 10);
         Assert.IsTrue(res);
-        Assert.AreEqual(ExcelCellType.String, cellValueMulti.CellType);
-        Assert.AreEqual("franck", cellValueMulti.StringValue);
+        Assert.AreEqual(ExcelCellType.String, excelCellValue.CellType);
+        Assert.AreEqual("franck", excelCellValue.StringValue);
 
         //--B11: formula
-        cellValueMulti = proc.GetCellValue(excelSheet, 2, 11);
+        excelCellValue = proc.GetCellValue(excelSheet, 2, 11);
         Assert.IsTrue(res);
-        Assert.AreEqual(ExcelCellType.String, cellValueMulti.CellType);
-        Assert.AreEqual("ferrari", cellValueMulti.StringValue);
+        Assert.AreEqual(ExcelCellType.String, excelCellValue.CellType);
+        Assert.AreEqual("ferrari", excelCellValue.StringValue);
 
         //--B13: was a custom datetime+fmt+BgColor, now string
-        cellValueMulti = proc.GetCellValue(excelSheet, 2, 13);
+        excelCellValue = proc.GetCellValue(excelSheet, 2, 13);
         Assert.IsTrue(res);
-        Assert.AreEqual(ExcelCellType.String, cellValueMulti.CellType);
-        Assert.AreEqual("walker", cellValueMulti.StringValue);
+        Assert.AreEqual(ExcelCellType.String, excelCellValue.CellType);
+        Assert.AreEqual("walker", excelCellValue.StringValue);
 
         // check the style and the number format
         cell = proc.GetCellAt(excelSheet, 2, 13);
@@ -156,7 +156,7 @@ public class SetCellValueTests : TestBase
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValue cellValueMulti;
+        ExcelCellValue excelCellValue;
 
         // to check style/CellFormat creation
         var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
@@ -196,15 +196,15 @@ public class SetCellValueTests : TestBase
 
         //--B2: 12.5
         cell = proc.GetCellAt(excelSheet, 2, 2);
-        cellValueMulti = proc.GetCellValue(excelSheet, cell);
-        Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
-        Assert.AreEqual(12.5, cellValueMulti.DoubleValue);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
+        Assert.AreEqual(12.5, excelCellValue.DoubleValue);
 
         //--B6: 234.9
         cell = proc.GetCellAt(excelSheet, 2, 6);
-        cellValueMulti = proc.GetCellValue(excelSheet, cell);
-        Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
-        Assert.AreEqual(234.9, cellValueMulti.DoubleValue);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
+        Assert.AreEqual(234.9, excelCellValue.DoubleValue);
     }
 
     [TestMethod]
@@ -219,7 +219,7 @@ public class SetCellValueTests : TestBase
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValue cellValueMulti;
+        ExcelCellValue excelCellValue;
 
         // to check style/CellFormat creation
         int count = proc.GetCustomNumberFormatsCount(excelSheet);
@@ -250,9 +250,9 @@ public class SetCellValueTests : TestBase
 
         //--B2: 12.3
         cell = proc.GetCellAt(excelSheet, 2, 2);
-        cellValueMulti = proc.GetCellValue(excelSheet, cell);
-        Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
-        Assert.AreEqual(12.5, cellValueMulti.DoubleValue);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
+        Assert.AreEqual(12.5, excelCellValue.DoubleValue);
 
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
@@ -264,9 +264,9 @@ public class SetCellValueTests : TestBase
 
         //--B3: datetime custom format,  set 25.8  -> display 25.80, built-in format 2
         cell = proc.GetCellAt(excelSheet, 2, 3);
-        cellValueMulti = proc.GetCellValue(excelSheet, cell);
-        Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
-        Assert.AreEqual(25.8, cellValueMulti.DoubleValue);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
+        Assert.AreEqual(25.8, excelCellValue.DoubleValue);
 
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
@@ -277,10 +277,10 @@ public class SetCellValueTests : TestBase
 
         //--B4: 357,200
         cell = proc.GetCellAt(excelSheet, 2, 4);
-        cellValueMulti = proc.GetCellValue(excelSheet, cell);
-        Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
-        Assert.AreEqual(357.2, cellValueMulti.DoubleValue);
-        Assert.AreEqual("0.000", cellValueMulti.NumberFormat);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
+        Assert.AreEqual(357.2, excelCellValue.DoubleValue);
+        Assert.AreEqual("0.000", excelCellValue.NumberFormat);
 
         // numberFormat must be defined, is a custom format > 164
         Assert.IsNotNull(cell.Cell.StyleIndex);
@@ -293,11 +293,11 @@ public class SetCellValueTests : TestBase
 
         //--B5: int 1 450,00 €
         cell = proc.GetCellAt(excelSheet, 2, 5);
-        cellValueMulti = proc.GetCellValue(excelSheet, cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
         // currency value is always a double
-        Assert.AreEqual(ExcelCellType.Double, cellValueMulti.CellType);
-        Assert.AreEqual(1450, cellValueMulti.DoubleValue);
-        Assert.AreEqual("#,##0.00\\ \"€\"", cellValueMulti.NumberFormat);
+        Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
+        Assert.AreEqual(1450, excelCellValue.DoubleValue);
+        Assert.AreEqual("#,##0.00\\ \"€\"", excelCellValue.NumberFormat);
 
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
@@ -321,7 +321,7 @@ public class SetCellValueTests : TestBase
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValue cellValueMulti;
+        ExcelCellValue excelCellValue;
 
         // to check style/CellFormat creation
         int count = proc.GetCustomNumberFormatsCount(excelSheet);
@@ -365,10 +365,10 @@ public class SetCellValueTests : TestBase
 
         //--B2:
         cell = proc.GetCellAt(excelSheet, "B2");
-        cellValueMulti = proc.GetCellValue(excelSheet, cell);
-        Assert.AreEqual(ExcelCellType.DateOnly, cellValueMulti.CellType);
-        Assert.AreEqual(new DateOnly(2025, 10, 12), cellValueMulti.DateOnlyValue);
-        Assert.AreEqual(14, cellValueMulti.NumberFormatId);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.DateOnly, excelCellValue.CellType);
+        Assert.AreEqual(new DateOnly(2025, 10, 12), excelCellValue.DateOnlyValue);
+        Assert.AreEqual(14, excelCellValue.NumberFormatId);
 
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
@@ -378,15 +378,15 @@ public class SetCellValueTests : TestBase
 
         //--B3:
         cell = proc.GetCellAt(excelSheet, "B3");
-        cellValueMulti = proc.GetCellValue(excelSheet, cell);
-        Assert.AreEqual(ExcelCellType.DateOnly, cellValueMulti.CellType);
-        Assert.AreEqual(new DateOnly(2019, 05, 07), cellValueMulti.DateOnlyValue);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.DateOnly, excelCellValue.CellType);
+        Assert.AreEqual(new DateOnly(2019, 05, 07), excelCellValue.DateOnlyValue);
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
         cellFormat = proc.GetCellFormat(excelSheet, cell);
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
         Assert.AreEqual(14, (int)cellFormat.NumberFormatId.Value);
-        Assert.AreEqual(14, cellValueMulti.NumberFormatId);
+        Assert.AreEqual(14, excelCellValue.NumberFormatId);
 
         //--B4: 15/11/2020 14:30
 
@@ -396,15 +396,15 @@ public class SetCellValueTests : TestBase
 
         //--B7: 10:34:56
         cell = proc.GetCellAt(excelSheet, "B7");
-        cellValueMulti = proc.GetCellValue(excelSheet, cell);
-        Assert.AreEqual(ExcelCellType.TimeOnly, cellValueMulti.CellType);
-        Assert.AreEqual(new TimeOnly(10,34,56), cellValueMulti.TimeOnlyValue);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.TimeOnly, excelCellValue.CellType);
+        Assert.AreEqual(new TimeOnly(10,34,56), excelCellValue.TimeOnlyValue);
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
         cellFormat = proc.GetCellFormat(excelSheet, cell);
         // "hh:mm:ss"
         Assert.AreEqual("1", cellFormat.ApplyNumberFormat);
-        Assert.AreEqual("hh:mm:ss", cellValueMulti.NumberFormat);
+        Assert.AreEqual("hh:mm:ss", excelCellValue.NumberFormat);
         // custom so >163
         Assert.IsTrue((int)cellFormat.NumberFormatId.Value>163);
 
@@ -422,7 +422,7 @@ public class SetCellValueTests : TestBase
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValue cellValueMulti;
+        ExcelCellValue excelCellValue;
 
         //--B2: number
         res = proc.SetCellValueEmpty(excelSheet, 2, 2);
@@ -443,18 +443,18 @@ public class SetCellValueTests : TestBase
 
         //--B2: number, empty
         cell = proc.GetCellAt(excelSheet, "B2");
-        cellValueMulti = proc.GetCellValue(excelSheet, cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.IsTrue(res);
-        Assert.IsTrue(cellValueMulti.IsEmpty);
+        Assert.IsTrue(excelCellValue.IsEmpty);
         // not able to define the type
-        Assert.AreEqual(ExcelCellType.Undefined, cellValueMulti.CellType);
+        Assert.AreEqual(ExcelCellType.Undefined, excelCellValue.CellType);
 
         //--B3: date, bgcolor, empty
         cell = proc.GetCellAt(excelSheet, "B3");
         Assert.IsTrue(res);
-        cellValueMulti = proc.GetCellValue(excelSheet, cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.IsTrue(res);
-        Assert.IsTrue(cellValueMulti.IsEmpty);
-        Assert.AreEqual(ExcelCellType.DateOnly, cellValueMulti.CellType);
+        Assert.IsTrue(excelCellValue.IsEmpty);
+        Assert.AreEqual(ExcelCellType.DateOnly, excelCellValue.CellType);
     }
 }

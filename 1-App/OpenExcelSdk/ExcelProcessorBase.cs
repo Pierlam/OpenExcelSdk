@@ -27,9 +27,9 @@ public class ExcelProcessorBase
     /// <returns></returns>
     public ExcelCellType GetCellType(ExcelSheet excelSheet, ExcelCell excelCell)
     {
-        var excelCellValueMulti = GetCellValue(excelSheet, excelCell);
-        if (excelCellValueMulti == null) return ExcelCellType.Undefined;
-        return excelCellValueMulti.CellType;
+        var excelCellValue = GetCellValue(excelSheet, excelCell);
+        if (excelCellValue == null) return ExcelCellType.Undefined;
+        return excelCellValue.CellType;
     }
 
     #endregion Get CellType
@@ -46,27 +46,27 @@ public class ExcelProcessorBase
     /// <returns></returns>
     public string GetCellValueAsString(ExcelSheet excelSheet, ExcelCell excelCell)
     {
-        ExcelCellValue excelCellValueMulti = GetCellValue(excelSheet, excelCell);
-        if (excelCellValueMulti==null)
+        ExcelCellValue excelCellValue = GetCellValue(excelSheet, excelCell);
+        if (excelCellValue==null)
             return string.Empty;
 
-        if (excelCellValueMulti.CellType == ExcelCellType.String)
-            return excelCellValueMulti.StringValue;
+        if (excelCellValue.CellType == ExcelCellType.String)
+            return excelCellValue.StringValue;
 
-        if (excelCellValueMulti.CellType == ExcelCellType.Integer)
-            return excelCellValueMulti.IntegerValue.ToString();
+        if (excelCellValue.CellType == ExcelCellType.Integer)
+            return excelCellValue.IntegerValue.ToString();
 
-        if (excelCellValueMulti.CellType == ExcelCellType.Double)
-            return excelCellValueMulti.DoubleValue.ToString();
+        if (excelCellValue.CellType == ExcelCellType.Double)
+            return excelCellValue.DoubleValue.ToString();
 
-        if (excelCellValueMulti.CellType == ExcelCellType.DateTime)
-            return excelCellValueMulti.DateTimeValue.ToString();
+        if (excelCellValue.CellType == ExcelCellType.DateTime)
+            return excelCellValue.DateTimeValue.ToString();
 
-        if (excelCellValueMulti.CellType == ExcelCellType.DateOnly)
-            return excelCellValueMulti.DateOnlyValue.ToString();
+        if (excelCellValue.CellType == ExcelCellType.DateOnly)
+            return excelCellValue.DateOnlyValue.ToString();
 
-        if (excelCellValueMulti.CellType == ExcelCellType.TimeOnly)
-            return excelCellValueMulti.TimeOnlyValue.ToString();
+        if (excelCellValue.CellType == ExcelCellType.TimeOnly)
+            return excelCellValue.TimeOnlyValue.ToString();
         return string.Empty;
     }
 
@@ -79,31 +79,31 @@ public class ExcelProcessorBase
     /// <returns></returns>
     public double GetCellValueAsDouble(ExcelSheet excelSheet, ExcelCell excelCell)
     {
-        ExcelCellValue excelCellValueMulti = GetCellValue(excelSheet, excelCell);
-        if (excelCellValueMulti == null)
+        ExcelCellValue excelCellValue = GetCellValue(excelSheet, excelCell);
+        if (excelCellValue == null)
             return 0;
 
-        if (excelCellValueMulti.CellType == ExcelCellType.String)
+        if (excelCellValue.CellType == ExcelCellType.String)
             return 0;
 
-        if (excelCellValueMulti.CellType == ExcelCellType.Integer)
-            return excelCellValueMulti.IntegerValue.Value;
+        if (excelCellValue.CellType == ExcelCellType.Integer)
+            return excelCellValue.IntegerValue.Value;
 
-        if (excelCellValueMulti.CellType == ExcelCellType.Double)
-            return excelCellValueMulti.DoubleValue.Value;
+        if (excelCellValue.CellType == ExcelCellType.Double)
+            return excelCellValue.DoubleValue.Value;
 
-        if (excelCellValueMulti.CellType == ExcelCellType.DateTime)
-            return excelCellValueMulti.DateTimeValue.Value.ToOADate();
+        if (excelCellValue.CellType == ExcelCellType.DateTime)
+            return excelCellValue.DateTimeValue.Value.ToOADate();
 
-        if (excelCellValueMulti.CellType == ExcelCellType.DateOnly)
+        if (excelCellValue.CellType == ExcelCellType.DateOnly)
         {
-            DateTime dt = excelCellValueMulti.DateOnlyValue.Value.ToDateTime(TimeOnly.MinValue);
+            DateTime dt = excelCellValue.DateOnlyValue.Value.ToDateTime(TimeOnly.MinValue);
             return dt.ToOADate();
         }
 
-        if (excelCellValueMulti.CellType == ExcelCellType.TimeOnly)
+        if (excelCellValue.CellType == ExcelCellType.TimeOnly)
         {
-            TimeSpan ts = excelCellValueMulti.TimeOnlyValue.Value.ToTimeSpan();
+            TimeSpan ts = excelCellValue.TimeOnlyValue.Value.ToTimeSpan();
             return ts.TotalMicroseconds;
         }
 
@@ -119,17 +119,17 @@ public class ExcelProcessorBase
     /// <returns></returns>
     public DateOnly GetCellValueAsDateOnly(ExcelSheet excelSheet, ExcelCell excelCell)
     {
-        ExcelCellValue excelCellValueMulti = GetCellValue(excelSheet, excelCell);
-        if (excelCellValueMulti == null)
+        ExcelCellValue excelCellValue = GetCellValue(excelSheet, excelCell);
+        if (excelCellValue == null)
             return new DateOnly();
 
-        if (excelCellValueMulti.CellType == ExcelCellType.DateOnly)
-            return excelCellValueMulti.DateOnlyValue.Value;
+        if (excelCellValue.CellType == ExcelCellType.DateOnly)
+            return excelCellValue.DateOnlyValue.Value;
 
-        if (excelCellValueMulti.CellType == ExcelCellType.DateTime)
+        if (excelCellValue.CellType == ExcelCellType.DateTime)
         {
             // convert the date time to date only
-            return DateOnly.FromDateTime(excelCellValueMulti.DateTimeValue.Value);
+            return DateOnly.FromDateTime(excelCellValue.DateTimeValue.Value);
         }
 
         return new DateOnly();
@@ -144,20 +144,20 @@ public class ExcelProcessorBase
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
-    /// <param name="excelCellValueMulti"></param>
+    /// <param name="excelCellValue"></param>
     /// <param name="excelError"></param>
     /// <returns></returns>
     public ExcelCellValue GetCellValue(ExcelSheet excelSheet, ExcelCell excelCell)
     {
-        ExcelCellValue  excelCellValueMulti = null;
+        ExcelCellValue  excelCellValue = null;
 
         if (excelSheet == null || excelCell == null)
             return null;
 
 
         //--cell datatype is defined?
-        excelCellValueMulti= GetCellStringValue(excelSheet, excelCell);
-        if (excelCellValueMulti != null) return excelCellValueMulti;
+        excelCellValue= GetCellStringValue(excelSheet, excelCell);
+        if (excelCellValue != null) return excelCellValue;
 
         // get the number format id
         if (!_styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatId))
@@ -184,18 +184,18 @@ public class ExcelProcessorBase
 
         if (value == string.Empty)
         {
-            excelCellValueMulti = new ExcelCellValue();
-            excelCellValueMulti.IsEmpty = true;
-            return excelCellValueMulti;
+            excelCellValue = new ExcelCellValue();
+            excelCellValue.IsEmpty = true;
+            return excelCellValue;
         }
 
         // is it an int?
         bool res = int.TryParse(value, out valInt);
         if (res)
         {
-            excelCellValueMulti = new ExcelCellValue(valInt);
-            excelCellValueMulti.Formula = excelCell.Cell?.CellFormula?.Text;
-            return excelCellValueMulti;
+            excelCellValue = new ExcelCellValue(valInt);
+            excelCellValue.Formula = excelCell.Cell?.CellFormula?.Text;
+            return excelCellValue;
         }
 
         // is it a double?  cultureInfo prb: replace . by ,
@@ -203,14 +203,14 @@ public class ExcelProcessorBase
         res = double.TryParse(value, out valDouble);
         if (res)
         {
-            excelCellValueMulti = new ExcelCellValue(valDouble);
-            excelCellValueMulti.Formula = excelCell.Cell?.CellFormula?.Text;
-            return excelCellValueMulti;
+            excelCellValue = new ExcelCellValue(valDouble);
+            excelCellValue.Formula = excelCell.Cell?.CellFormula?.Text;
+            return excelCellValue;
         }
 
         // not able to find the type
-        excelCellValueMulti = new ExcelCellValue();
-        return excelCellValueMulti;
+        excelCellValue = new ExcelCellValue();
+        return excelCellValue;
     }
 
     /// <summary>
@@ -259,9 +259,9 @@ public class ExcelProcessorBase
             if (!SharedStringMgr.GetSharedStringValue(excelSheet, excelCell, out cellValue))
                 throw ExcelException.Create("GetCellStringValue", ExcelErrorCode.UnableGetCellStringValue);
 
-            var excelCellValueMulti = new ExcelCellValue(cellValue);
-            excelCellValueMulti.Formula = excelCell.Cell.CellFormula?.Text;
-            return excelCellValueMulti;
+            var excelCellValue = new ExcelCellValue(cellValue);
+            excelCellValue.Formula = excelCell.Cell.CellFormula?.Text;
+            return excelCellValue;
         }
 
         if (excelCell.Cell.DataType.Value == CellValues.InlineString)
@@ -270,18 +270,18 @@ public class ExcelProcessorBase
             if (cellValue == null)
                 throw ExcelException.Create("GetCellStringValue", ExcelErrorCode.UnableGetCellStringValue);
 
-            var excelCellValueMulti = new ExcelCellValue(cellValue);
-            excelCellValueMulti.Formula = excelCell.Cell.CellFormula?.Text;
-            return excelCellValueMulti;
+            var excelCellValue = new ExcelCellValue(cellValue);
+            excelCellValue.Formula = excelCell.Cell.CellFormula?.Text;
+            return excelCellValue;
         }
 
         if (excelCell.Cell.DataType.Value == CellValues.String)
         {
             string value = excelCell.Cell.InnerText;
             if (value == null) value = string.Empty;
-            var excelCellValueMulti = new ExcelCellValue(value);
-            excelCellValueMulti.Formula = excelCell.Cell.CellFormula?.Text;
-            return excelCellValueMulti;
+            var excelCellValue = new ExcelCellValue(value);
+            excelCellValue.Formula = excelCell.Cell.CellFormula?.Text;
+            return excelCellValue;
         }
 
         // not a string, bye

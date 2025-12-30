@@ -1,66 +1,66 @@
 ﻿namespace OpenExcelSdk;
 
 /// <summary>
-/// To build ExcelCellValueMulti object.
+/// To build excelCellValue object.
 /// type and value of a cell.
 /// </summary>
 public class ValueBuilder
 {
     public static ExcelCellValue CreateValue(ExcelCell excelCell, ExcelCellType cellType, string value, int numberFormatId, string numberFormat)
     {
-        ExcelCellValue excelCellValueMulti;
+        ExcelCellValue excelCellValue;
 
         if (string.IsNullOrEmpty(value))
         {
-            excelCellValueMulti = new ExcelCellValue();
-            excelCellValueMulti.CellType = cellType;
-            excelCellValueMulti.IsEmpty = true;
-            return excelCellValueMulti;
+            excelCellValue = new ExcelCellValue();
+            excelCellValue.CellType = cellType;
+            excelCellValue.IsEmpty = true;
+            return excelCellValue;
         }
 
         if (cellType == ExcelCellType.Integer)
         {
-            excelCellValueMulti = ValueBuilder.CreateValueInteger(value, (int)numberFormatId, numberFormat);
-            if (excelCellValueMulti == null) return null;
-            excelCellValueMulti.Formula = excelCell.Cell.CellFormula?.Text;
-            return excelCellValueMulti;
+            excelCellValue = ValueBuilder.CreateValueInteger(value, (int)numberFormatId, numberFormat);
+            if (excelCellValue == null) return null;
+            excelCellValue.Formula = excelCell.Cell.CellFormula?.Text;
+            return excelCellValue;
         }
 
         if (cellType == ExcelCellType.Double)
         {
-            excelCellValueMulti = ValueBuilder.CreateValueDouble(value, (int)numberFormatId, numberFormat);
-            if (excelCellValueMulti == null) return null;
-            excelCellValueMulti.Formula = excelCell.Cell.CellFormula?.Text;
-            return excelCellValueMulti;
+            excelCellValue = ValueBuilder.CreateValueDouble(value, (int)numberFormatId, numberFormat);
+            if (excelCellValue == null) return null;
+            excelCellValue.Formula = excelCell.Cell.CellFormula?.Text;
+            return excelCellValue;
         }
 
         if (cellType == ExcelCellType.DateOnly)
         {
-            excelCellValueMulti = ValueBuilder.CreateValueDateOnly(value, (int)numberFormatId, numberFormat);
-            if (excelCellValueMulti == null) return null;
-            excelCellValueMulti.Formula = excelCell.Cell.CellFormula?.Text;
-            return excelCellValueMulti;
+            excelCellValue = ValueBuilder.CreateValueDateOnly(value, (int)numberFormatId, numberFormat);
+            if (excelCellValue == null) return null;
+            excelCellValue.Formula = excelCell.Cell.CellFormula?.Text;
+            return excelCellValue;
         }
 
         if (cellType == ExcelCellType.DateTime)
         {
-            excelCellValueMulti = ValueBuilder.CreateValueDateTime(value, (int)numberFormatId, numberFormat);
-            if (excelCellValueMulti == null) return null;
-            excelCellValueMulti.Formula = excelCell.Cell.CellFormula?.Text;
-            return excelCellValueMulti;
+            excelCellValue = ValueBuilder.CreateValueDateTime(value, (int)numberFormatId, numberFormat);
+            if (excelCellValue == null) return null;
+            excelCellValue.Formula = excelCell.Cell.CellFormula?.Text;
+            return excelCellValue;
         }
 
         if (cellType == ExcelCellType.TimeOnly)
         {
-            excelCellValueMulti = ValueBuilder.CreateValueTimeOnly(value, (int)numberFormatId, numberFormat);
-            if (excelCellValueMulti == null) return null;
-            excelCellValueMulti.Formula = excelCell.Cell.CellFormula?.Text;
-            return excelCellValueMulti;
+            excelCellValue = ValueBuilder.CreateValueTimeOnly(value, (int)numberFormatId, numberFormat);
+            if (excelCellValue == null) return null;
+            excelCellValue.Formula = excelCell.Cell.CellFormula?.Text;
+            return excelCellValue;
         }
 
-        excelCellValueMulti = new ExcelCellValue();
-        excelCellValueMulti.CellType = cellType;
-        return excelCellValueMulti;
+        excelCellValue = new ExcelCellValue();
+        excelCellValue.CellType = cellType;
+        return excelCellValue;
     }
 
     public static ExcelCellValue CreateValueInteger(string value, int numberFormatId,  string numberFormat)
@@ -69,10 +69,10 @@ public class ValueBuilder
         if (!res)
             throw ExcelException.Create("CreateValueInteger", ExcelErrorCode.TypeWrong, value);
 
-        var excelCellValueMulti = new ExcelCellValue(valInt);
-        excelCellValueMulti.NumberFormatId = numberFormatId;
-        excelCellValueMulti.NumberFormat = numberFormat;
-        return excelCellValueMulti;
+        var excelCellValue = new ExcelCellValue(valInt);
+        excelCellValue.NumberFormatId = numberFormatId;
+        excelCellValue.NumberFormat = numberFormat;
+        return excelCellValue;
     }
 
     public static ExcelCellValue CreateValueDouble(string value, int numberFormatId, string numberFormat)
@@ -83,10 +83,10 @@ public class ValueBuilder
         if (!res)
             throw ExcelException.Create("CreateValueDouble", ExcelErrorCode.TypeWrong, value);
 
-        var excelCellValueMulti = new ExcelCellValue(valDouble);
-        excelCellValueMulti.NumberFormatId = numberFormatId;
-        excelCellValueMulti.NumberFormat = numberFormat;
-        return excelCellValueMulti;
+        var excelCellValue = new ExcelCellValue(valDouble);
+        excelCellValue.NumberFormatId = numberFormatId;
+        excelCellValue.NumberFormat = numberFormat;
+        return excelCellValue;
     }
 
     public static ExcelCellValue CreateValueDateOnly(string value, int numberFormatId, string numberFormat)
@@ -99,10 +99,10 @@ public class ValueBuilder
             // convert the value to date
             DateTime dateTime = DateTime.FromOADate(valDouble);
             DateOnly dateOnly = DateOnly.FromDateTime(dateTime);
-            var excelCellValueMulti = new ExcelCellValue(dateOnly);
-            excelCellValueMulti.NumberFormatId = numberFormatId;
-            excelCellValueMulti.NumberFormat = numberFormat;
-            return excelCellValueMulti;
+            var excelCellValue = new ExcelCellValue(dateOnly);
+            excelCellValue.NumberFormatId = numberFormatId;
+            excelCellValue.NumberFormat = numberFormat;
+            return excelCellValue;
         }
         catch (Exception ex)
         {
@@ -119,10 +119,10 @@ public class ValueBuilder
 
             // convert the value to date
             DateTime dateTime = DateTime.FromOADate(valDouble);
-            var excelCellValueMulti = new ExcelCellValue(dateTime);
-            excelCellValueMulti.NumberFormatId = numberFormatId;
-            excelCellValueMulti.NumberFormat = numberFormat;
-            return excelCellValueMulti;
+            var excelCellValue = new ExcelCellValue(dateTime);
+            excelCellValue.NumberFormatId = numberFormatId;
+            excelCellValue.NumberFormat = numberFormat;
+            return excelCellValue;
         }
         catch (Exception ex)
         {
@@ -140,10 +140,10 @@ public class ValueBuilder
             // convert the value to date
             DateTime dateTime = DateTime.FromOADate(valDouble);
             TimeOnly timeOnly = TimeOnly.FromDateTime(dateTime);
-            var excelCellValueMulti = new ExcelCellValue(timeOnly);
-            excelCellValueMulti.NumberFormatId = numberFormatId;
-            excelCellValueMulti.NumberFormat = numberFormat;
-            return excelCellValueMulti;
+            var excelCellValue = new ExcelCellValue(timeOnly);
+            excelCellValue.NumberFormatId = numberFormatId;
+            excelCellValue.NumberFormat = numberFormat;
+            return excelCellValue;
         }
         catch (Exception ex)
         {
