@@ -1,7 +1,4 @@
-﻿
-All notable changes to this project will be documented in this file.
-
-## 0.4.0 Release (2025-12-30)
+﻿## 0.4.0 Release (2025-12-30)
 
 -Code Reworked, Simplification of several classes and methods.
 
