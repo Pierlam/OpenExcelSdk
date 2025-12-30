@@ -24,34 +24,23 @@ public class ExcelProcessor: ExcelProcessorBase
     /// <param name="excelFile"></param>
     /// <param name="error"></param>
     /// <returns></returns>
-    public bool Open(string fileName, out ExcelFile excelFile, out ExcelError error)
+    public ExcelFile OpenExcelFile(string fileName)
     {
-        excelFile = null;
-        error = null;
-
         if(string.IsNullOrWhiteSpace(fileName))
-        {
-            error = new ExcelError(ExcelErrorCode.FilenameNull);
-            return false;
-        }
+            throw ExcelException.Create("OpenExcel", ExcelErrorCode.FilenameNull);
 
         if (!File.Exists(fileName))
-        {
-            error = new ExcelError(ExcelErrorCode.FileNotFound);
-            return false;
-        }
+            throw ExcelException.Create("OpenExcel", ExcelErrorCode.FileNotFound, fileName);
 
         try
         {
             // Open the document for editing.
             SpreadsheetDocument document = SpreadsheetDocument.Open(fileName, true);
-            excelFile = new ExcelFile(fileName, document);
-            return true;
+            return new ExcelFile(fileName, document);
         }
         catch (Exception ex)
         {
-            error = new ExcelError(ExcelErrorCode.UnableOpenFile, ex);
-            return false;
+            throw ExcelException.Create("OpenExcel", ExcelErrorCode.UnableOpenFile, fileName, ex);
         }
     }
 
@@ -61,19 +50,16 @@ public class ExcelProcessor: ExcelProcessorBase
     /// <param name="excelFile"></param>
     /// <param name="error"></param>
     /// <returns></returns>
-    public bool Close(ExcelFile excelFile, out ExcelError error)
+    public void CloseExcelFile(ExcelFile excelFile)
     {
-        error = null;
         try
         {
             excelFile.SpreadsheetDocument.Dispose();
             excelFile.SpreadsheetDocument = null;
-            return true;
         }
         catch (Exception ex)
         {
-            error = new ExcelError(ExcelErrorCode.UnableCloseFile, ex);
-            return false;
+            throw ExcelException.Create("CloseExcel", ExcelErrorCode.UnableOpenFile, excelFile.Filename, ex);
         }
     }
 
@@ -86,9 +72,9 @@ public class ExcelProcessor: ExcelProcessorBase
     /// <param name="excelFile"></param>
     /// <param name="error"></param>
     /// <returns></returns>
-    public bool CreateExcelFile(string fileName, out ExcelFile excelFile, out ExcelError error)
+    public ExcelFile CreateExcelFile(string fileName)
     {
-        return CreateExcelFile(fileName, Definitions.DefaultFirstSheetName, out excelFile, out error);
+        return CreateExcelFile(fileName, Definitions.DefaultFirstSheetName);
     }
 
     /// <summary>
@@ -99,22 +85,17 @@ public class ExcelProcessor: ExcelProcessorBase
     /// https://learn.microsoft.com/en-us/office/open-xml/spreadsheet/structure-of-a-spreadsheetml-document?tabs=cs
     /// </summary>
     /// <param name="fileName"></param>
-    public bool CreateExcelFile(string fileName, string sheetName, out ExcelFile excelFile, out ExcelError error)
+    public ExcelFile CreateExcelFile(string fileName, string sheetName)
     {
-        error = null;
-        excelFile = null;
+        if (string.IsNullOrWhiteSpace(fileName))
+            throw ExcelException.Create("CreateExcelFile", ExcelErrorCode.FilenameNull);
 
         if (File.Exists(fileName))
-        {
-            error = new ExcelError(ExcelErrorCode.FileAlreadyExists);
-            return false;
-        }
+            throw ExcelException.Create("CreateExcelFile", ExcelErrorCode.FileAlreadyExists, fileName);
+
 
         if (string.IsNullOrWhiteSpace(sheetName))
-        {
-            error = new ExcelError(ExcelErrorCode.ValueNull);
-            return false;
-        }
+            throw ExcelException.Create("CreateExcelFile", ExcelErrorCode.SheetnameNull);
 
         try
         {
@@ -137,14 +118,11 @@ public class ExcelProcessor: ExcelProcessorBase
             Sheet sheet = new Sheet() { Id = workbookPart.GetIdOfPart(worksheetPart), SheetId = 1, Name = sheetName };
             sheets.Append(sheet);
 
-            excelFile = new ExcelFile(fileName, spreadsheetDocument);
-
-            return true;
+            return new ExcelFile(fileName, spreadsheetDocument);
         }
         catch (Exception ex)
         {
-            error = new ExcelError(ExcelErrorCode.UnableCreateFile, ex);
-            return false;
+            throw ExcelException.Create("CreateExcelFile", ExcelErrorCode.UnableCreateFile, fileName, ex);
         }
     }
 

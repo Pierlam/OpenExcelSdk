@@ -17,7 +17,7 @@ public class EasierWay
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = @".\Files\CellFormats.xlsx";
-        //ExcelFile excelFile= proc.Open(filename);
+        ExcelFile excelFile= proc.OpenExcelFile(filename);
 
         //ExcelSheet excelSheet= proc.GetSheetAt(excelFile, 0);
 
@@ -30,6 +30,8 @@ public class EasierWay
         //excelCellValueMulti = proc.GetCellTypeAndValue(excelSheet, "B4");
 
         //res = proc.SetCellValue(excelSheet, "B2", new DateOnly(2025, 10, 12), "d/m/yyyy");
+
+        proc.CloseExcelFile(excelFile);
 
     }
 }

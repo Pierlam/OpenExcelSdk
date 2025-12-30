@@ -8,7 +8,7 @@ void DevCloneStyle()
     ExcelError error;
     string filename = @"Files\DevCloneStyle.xlsx";
 
-    res = proc.Open(filename, out ExcelFile excelFile, out error);
+    ExcelFile excelFile = proc.OpenExcelFile(filename);
     res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
 
     //--B2: dateTime, custom, BgColor, FgCOlor, Border: 09/12/2021 12:30:45
@@ -21,7 +21,7 @@ void DevCloneStyle()
     //proc.Close(excelFile, out error);
 
     // save the changes
-    res = proc.Close(excelFile, out error);
+    proc.CloseExcelFile(excelFile);
 }
 
 void ConvertDouble()

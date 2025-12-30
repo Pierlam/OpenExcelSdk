@@ -11,8 +11,6 @@ public sealed class ExcelFileTests : TestBase
     [TestMethod]
     public void CreateExcelOk()
     {
-        bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "tmpCreation.xlsx";
@@ -21,15 +19,11 @@ public sealed class ExcelFileTests : TestBase
         if (File.Exists(filename))
             File.Delete(filename);
 
-        res = proc.CreateExcelFile(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        ExcelFile excelFile =proc.CreateExcelFile(filename);
 
         Assert.IsTrue(File.Exists(filename));
 
-        res = proc.Close(excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        proc.CloseExcelFile(excelFile);
     }
 
     [TestMethod]
@@ -40,9 +34,7 @@ public sealed class ExcelFileTests : TestBase
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "data3rows.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        ExcelFile excelFile= proc.OpenExcelFile(filename);
 
         res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);
@@ -55,9 +47,7 @@ public sealed class ExcelFileTests : TestBase
         int lastRowIdx = proc.GetLastRowIndex(excelSheet);
         Assert.AreEqual(3, lastRowIdx);
 
-        res = proc.Close(excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        proc.CloseExcelFile(excelFile);
     }
 
     [TestMethod]
@@ -66,12 +56,17 @@ public sealed class ExcelFileTests : TestBase
         bool res;
         ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
-
-        string filename = PathFiles + "notexists.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsFalse(res);
-        Assert.IsNotNull(error);
-        Assert.AreEqual(ExcelErrorCode.FileNotFound, error.ErrorCode);
+        try
+        {
+            string filename = PathFiles + "notexists.xlsx";
+            ExcelFile excelFile = proc.OpenExcelFile(filename);
+        }
+        catch (ExcelException ex) 
+        {
+            Assert.AreEqual(ExcelErrorCode.FileNotFound, ex.ExcelErrorCode);
+            return;
+        }
+        Assert.Fail("exception expected");
     }
 
     [TestMethod]
@@ -82,9 +77,7 @@ public sealed class ExcelFileTests : TestBase
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "empty.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
         res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);
@@ -106,8 +99,6 @@ public sealed class ExcelFileTests : TestBase
         Assert.IsTrue(res);
         Assert.IsNull(cell);
 
-        res = proc.Close(excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        proc.CloseExcelFile(excelFile);
     }
 }

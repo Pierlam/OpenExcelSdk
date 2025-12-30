@@ -14,8 +14,7 @@ public class GetCellTypeAndValueTests : TestBase
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "GetCellTypeAndValueSpecial.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
         res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);
@@ -47,8 +46,7 @@ public class GetCellTypeAndValueTests : TestBase
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "GetCellTypeAndValueString.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
         res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);
@@ -92,8 +90,7 @@ public class GetCellTypeAndValueTests : TestBase
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "GetCellTypeAndValueNumber.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
         res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);
@@ -166,8 +163,7 @@ public class GetCellTypeAndValueTests : TestBase
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "GetCellTypeAndValueDate.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
         res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);
@@ -251,8 +247,7 @@ public class GetCellTypeAndValueTests : TestBase
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "GetCellTypeAndValueCustom.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
         res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);
@@ -277,8 +272,7 @@ public class GetCellTypeAndValueTests : TestBase
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "GetCellTypeNullEmpty.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
         res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);

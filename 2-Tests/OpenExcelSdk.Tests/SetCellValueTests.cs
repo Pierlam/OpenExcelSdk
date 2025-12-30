@@ -13,8 +13,7 @@ public class SetCellValueTests : TestBase
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "SetCellValueString.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
         res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);
@@ -77,10 +76,10 @@ public class SetCellValueTests : TestBase
         Assert.IsTrue(res);
 
         // save the changes
-        res = proc.Close(excelFile, out error);
+        proc.CloseExcelFile(excelFile);
 
         //==>check the excel content
-        res = proc.Open(filename, out excelFile, out error);
+        excelFile = proc.OpenExcelFile(filename);
         Assert.IsTrue(res);
         res = proc.GetSheetAt(excelFile, 0, out excelSheet, out error);
         Assert.IsTrue(res);
@@ -162,8 +161,7 @@ public class SetCellValueTests : TestBase
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "SetCellValueDouble.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
         res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);
@@ -198,11 +196,10 @@ public class SetCellValueTests : TestBase
         proc.SetCellValue(excelSheet, 2, 8, 456.89, out error);
 
         // save the changes
-        res = proc.Close(excelFile, out error);
+        proc.CloseExcelFile(excelFile);
 
         //==>check the excel content
-        res = proc.Open(filename, out excelFile, out error);
-        Assert.IsTrue(res);
+        excelFile = proc.OpenExcelFile(filename);
         res = proc.GetSheetAt(excelFile, 0, out excelSheet, out error);
         Assert.IsTrue(res);
 
@@ -235,8 +232,7 @@ public class SetCellValueTests : TestBase
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "SetCellValueAndFormat.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
         res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);
@@ -260,11 +256,10 @@ public class SetCellValueTests : TestBase
         proc.SetCellValue(excelSheet, 2, 5, 1450, "#,##0.00\\ \"€\"", out error);
 
         // save the changes
-        res = proc.Close(excelFile, out error);
+        proc.CloseExcelFile(excelFile);
 
         //==>check the excel content
-        res = proc.Open(filename, out excelFile, out error);
-        Assert.IsTrue(res);
+        excelFile = proc.OpenExcelFile(filename);
         res = proc.GetSheetAt(excelFile, 0, out excelSheet, out error);
         Assert.IsTrue(res);
 
@@ -349,8 +344,7 @@ public class SetCellValueTests : TestBase
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "SetCellValueDate.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
         res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);
@@ -388,11 +382,10 @@ public class SetCellValueTests : TestBase
         //ici(); 08:12:45
 
         // save the changes
-        res = proc.Close(excelFile, out error);
+        proc.CloseExcelFile(excelFile);
 
         //==>check the excel content
-        res = proc.Open(filename, out excelFile, out error);
-        Assert.IsTrue(res);
+        excelFile = proc.OpenExcelFile(filename);
         res = proc.GetSheetAt(excelFile, 0, out excelSheet, out error);
         Assert.IsTrue(res);
 
@@ -440,8 +433,7 @@ public class SetCellValueTests : TestBase
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "SetCellValueEmpty.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
         res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);
@@ -458,10 +450,10 @@ public class SetCellValueTests : TestBase
         Assert.IsTrue(res);
 
         // save the changes
-        res = proc.Close(excelFile, out error);
+        proc.CloseExcelFile(excelFile);
 
         //==>check the excel content
-        res = proc.Open(filename, out excelFile, out error);
+        excelFile = proc.OpenExcelFile(filename);
         Assert.IsTrue(res);
         res = proc.GetSheetAt(excelFile, 0, out excelSheet, out error);
         Assert.IsTrue(res);

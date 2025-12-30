@@ -11,7 +11,6 @@ public enum ExcelErrorCode
     ObjectNull,
     ValueNull,
     FilenameNull,
-
     FileNotFound,
 
     UnableCreateFile,
@@ -19,6 +18,7 @@ public enum ExcelErrorCode
     UnableOpenFile,
     UnableCloseFile,
 
+    SheetnameNull,
     UnableCreateSheet,
     UnableGetSheet,
 

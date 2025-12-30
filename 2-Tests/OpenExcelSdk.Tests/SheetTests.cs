@@ -13,9 +13,7 @@ public class SheetTests : TestBase
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "hasManySheets.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
         res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);
@@ -30,9 +28,7 @@ public class SheetTests : TestBase
         Assert.IsFalse(res);
         Assert.IsNull(error);
 
-        res = proc.Close(excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        proc.CloseExcelFile(excelFile);
     }
 
     [TestMethod]
@@ -43,9 +39,7 @@ public class SheetTests : TestBase
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "CreateSheet.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
         res = proc.CreateSheet(excelFile, "mysheet", out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);
@@ -54,8 +48,6 @@ public class SheetTests : TestBase
         res = proc.CreateSheet(excelFile, "Sheet1", out excelSheet, out error);
         Assert.IsFalse(res);
 
-        res = proc.Close(excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        proc.CloseExcelFile(excelFile);
     }
 }

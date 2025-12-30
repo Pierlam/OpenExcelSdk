@@ -12,7 +12,7 @@ internal class CellReader
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = @".\Files\datLinesThenACellBlankOk.xlsx";
-        proc.Open(filename, out ExcelFile excelFile, out error);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
         proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
 
         ExcelCell cell;
@@ -29,7 +29,7 @@ internal class CellReader
         if (cellValueMulti.CellType == ExcelCellType.String)
         { }
 
-        proc.Close(excelFile, out error);
+        proc.CloseExcelFile(excelFile);
     }
 
     public static void ReadCellFormats()
@@ -39,7 +39,7 @@ internal class CellReader
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = @".\Files\CellFormats.xlsx";
-        proc.Open(filename, out ExcelFile excelFile, out error);
+        ExcelFile excelFile= proc.OpenExcelFile(filename);
         proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
 
         ExcelCell cell;
@@ -106,7 +106,7 @@ internal class CellReader
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = @".\Files\data.xlsx";
-        proc.Open(filename, out ExcelFile excelFile, out error);
+        ExcelFile excelFile= proc.OpenExcelFile(filename);
         proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
 
         int lastRowIdx = proc.GetLastRowIndex(excelSheet);
@@ -123,7 +123,6 @@ internal class CellReader
         var cellValueType = proc.GetCellType(excelSheet, cell);
         string val = proc.GetCellValueAsString(excelSheet, cell);
 
-        if (!proc.Close(excelFile, out error))
-            Console.WriteLine("ERROR, Unable to close the Excel file.");
+        proc.CloseExcelFile(excelFile);
     }
 }

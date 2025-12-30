@@ -13,8 +13,7 @@ public class RemoveCellTests : TestBase
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "RemoveCell.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
         res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
         Assert.IsTrue(res);
@@ -39,11 +38,10 @@ public class RemoveCellTests : TestBase
         Assert.IsTrue(res);
 
         // save the changes
-        res = proc.Close(excelFile, out error);
+        proc.CloseExcelFile(excelFile);
 
         //==>check the excel content
-        res = proc.Open(filename, out excelFile, out error);
-        Assert.IsTrue(res);
+        excelFile = proc.OpenExcelFile(filename);
         res = proc.GetSheetAt(excelFile, 0, out excelSheet, out error);
         Assert.IsTrue(res);
 
