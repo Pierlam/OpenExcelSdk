@@ -11,8 +11,6 @@ public sealed class ExcelFileTests : TestBase
     [TestMethod]
     public void CreateExcelOk()
     {
-        bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "tmpCreation.xlsx";
@@ -21,93 +19,73 @@ public sealed class ExcelFileTests : TestBase
         if (File.Exists(filename))
             File.Delete(filename);
 
-        res = proc.CreateExcelFile(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        ExcelFile excelFile = proc.CreateExcelFile(filename);
 
         Assert.IsTrue(File.Exists(filename));
 
-        res = proc.Close(excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        proc.CloseExcelFile(excelFile);
     }
 
     [TestMethod]
     public void OpenExcelOk()
     {
         bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "data3rows.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
-        res = proc.GetRowAt(excelSheet, 0, out ExcelRow row, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        ExcelRow row = proc.GetRowAt(excelSheet, 0);
+        Assert.IsNotNull(row);
 
         int lastRowIdx = proc.GetLastRowIndex(excelSheet);
         Assert.AreEqual(3, lastRowIdx);
 
-        res = proc.Close(excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        proc.CloseExcelFile(excelFile);
     }
 
     [TestMethod]
     public void OpenExcelNotExistsErr()
     {
         bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
-
-        string filename = PathFiles + "notexists.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsFalse(res);
-        Assert.IsNotNull(error);
-        Assert.AreEqual(ExcelErrorCode.FileNotFound, error.ErrorCode);
+        try
+        {
+            string filename = PathFiles + "notexists.xlsx";
+            ExcelFile excelFile = proc.OpenExcelFile(filename);
+        }
+        catch (ExcelException ex)
+        {
+            Assert.AreEqual(ExcelErrorCode.FileNotFound, ex.ExcelErrorCode);
+            return;
+        }
+        Assert.Fail("exception expected");
     }
 
     [TestMethod]
     public void OpenEmptyExcel()
     {
         bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "empty.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
-        res = proc.GetRowAt(excelSheet, 0, out ExcelRow row, out error);
-        Assert.IsTrue(res);
-        // no row, not an error
-        Assert.IsNull(error);
+        ExcelRow row = proc.GetRowAt(excelSheet, 0);
+        // no data row, not an error, just return null
         Assert.IsNull(row);
 
         int lastRowIdx = proc.GetLastRowIndex(excelSheet);
         Assert.AreEqual(0, lastRowIdx);
 
-        ExcelCell cell;
-
         // try to get a cell that does not exist -> should works
-        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
-        Assert.IsTrue(res);
+        ExcelCell cell = proc.GetCellAt(excelSheet, 2, 2);
         Assert.IsNull(cell);
 
-        res = proc.Close(excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        proc.CloseExcelFile(excelFile);
     }
 }

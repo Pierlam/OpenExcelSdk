@@ -21,20 +21,20 @@ public class ExcelUtils
     /// Get the column index.
     /// exp: B2 -> return 2.
     /// </summary>
-    /// <param name="addressName"></param>
+    /// <param name="cellReference"></param>
     /// <returns></returns>
-    public static int GetColIndex(string addressName)
+    public static int GetColumnIndex(string cellReference)
     {
-        if (string.IsNullOrWhiteSpace(addressName)) return 0;
+        if (string.IsNullOrWhiteSpace(cellReference)) return 0;
         string columnAddress = string.Empty;
         int i = 0;
         while (true)
         {
-            if (i >= addressName.Length) break;
+            if (i >= cellReference.Length) break;
 
-            if (char.IsLetter(addressName[i]))
+            if (char.IsLetter(cellReference[i]))
             {
-                columnAddress += addressName[i];
+                columnAddress += cellReference[i];
                 i++;
                 continue;
             }
@@ -56,16 +56,16 @@ public class ExcelUtils
     /// <summary>
     /// Get the row value from a cell address.
     /// </summary>
-    /// <param name="addressName"></param>
+    /// <param name="cellReference"></param>
     /// <returns></returns>
-    public static int GetRowIndex(string addressName)
+    public static int GetRowIndex(string cellReference)
     {
-        if (string.IsNullOrWhiteSpace(addressName)) return 0;
+        if (string.IsNullOrWhiteSpace(cellReference)) return 0;
         int i = 0;
         while (true)
         {
-            if (i >= addressName.Length) break;
-            if (char.IsLetter(addressName[i]))
+            if (i >= cellReference.Length) break;
+            if (char.IsLetter(cellReference[i]))
             {
                 i++;
                 continue;
@@ -75,10 +75,10 @@ public class ExcelUtils
         string rowStr = string.Empty;
         while (true)
         {
-            if (i >= addressName.Length) break;
-            if (char.IsDigit(addressName[i]))
+            if (i >= cellReference.Length) break;
+            if (char.IsDigit(cellReference[i]))
             {
-                rowStr += addressName[i];
+                rowStr += cellReference[i];
                 i++;
                 continue;
             }

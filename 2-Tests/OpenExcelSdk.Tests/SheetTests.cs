@@ -8,54 +8,46 @@ public class SheetTests : TestBase
     [TestMethod]
     public void GetSheetByName()
     {
-        bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "hasManySheets.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
+        Assert.IsNotNull(excelSheet);
 
-        res = proc.GetSheetByName(excelFile, "Feuil1", out excelSheet, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        excelSheet = proc.GetSheetByName(excelFile, "Feuil1");
+        Assert.IsNotNull(excelSheet);
         Assert.AreEqual("Feuil1", excelSheet.Sheet.Name.Value);
 
-        res = proc.GetSheetByName(excelFile, "DoesNotExists", out excelSheet, out error);
-        Assert.IsFalse(res);
-        Assert.IsNull(error);
+        excelSheet = proc.GetSheetByName(excelFile, "DoesNotExists");
+        Assert.IsNull(excelSheet);
 
-        res = proc.Close(excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        proc.CloseExcelFile(excelFile);
     }
 
     [TestMethod]
     public void CreateSheet()
     {
-        bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "CreateSheet.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.CreateSheet(excelFile, "mysheet", out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
+        ExcelSheet excelSheet = proc.CreateSheet(excelFile, "mysheet");
+        Assert.IsNotNull(excelSheet);
 
-        // create sheet by the name is already used
-        res = proc.CreateSheet(excelFile, "Sheet1", out excelSheet, out error);
-        Assert.IsFalse(res);
-
-        res = proc.Close(excelFile, out error);
-        Assert.IsTrue(res);
-        Assert.IsNull(error);
+        try
+        {
+            // create sheet by the name is already used
+            excelSheet = proc.CreateSheet(excelFile, "Sheet1");
+        }
+        catch (ExcelException ex)
+        {
+            Assert.AreEqual(ExcelErrorCode.UnableCreateSheet, ex.ExcelErrorCode);
+            proc.CloseExcelFile(excelFile);
+            return;
+        }
+        Assert.Fail("Exception expected");
     }
 }

@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.3.0</Version>
+    <Version>0.4.0</Version>
     <Title>OpenExcelSdk - Backend library to work easily with Excel content</Title>
     <Authors>Pierlam</Authors>
     <Company></Company>
@@ -13,8 +13,9 @@
     <PackageProjectUrl>https://github.com/Pierlam/OpenExcelSdk</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Pierlam/OpenExcelSdk</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-	<PackageTags>excel SpreadSheet SpreadSheetsML sheet row col cell numberingformat format csharp net8</PackageTags>
+	<PackageTags>excel OpenXML SpreadSheet SpreadSheetsML sheet row col cell numberFormat numberFormatId csharp net8</PackageTags>
 	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<PackageReleaseNotes>(Package release notes are in CHANGELOG.md)</PackageReleaseNotes>
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<GenerateDocumentationFile>True</GenerateDocumentationFile>
@@ -31,4 +32,9 @@
     <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
   </ItemGroup>
 
+	<Target Name="InjectPackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec" Condition="Exists('CHANGELOG.md')">
+		<PropertyGroup>
+			<PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/CHANGELOG.md"))</PackageReleaseNotes>
+		</PropertyGroup>
+	</Target>
 </Project>

@@ -30,29 +30,28 @@ After that, if the type of the cell is string, get the string cell value and dis
 
 ```
 bool res;
-ExcelError error;
-ExcelCellValueMulti cellValueMulti;
+excelCellValue excelCellValue;
 
 // create the excel processor to read/create/update cell
 ExcelProcessor proc = new ExcelProcessor();
 
 // open an excel file
 string filename = @".\Files\data.xlsx";
-res = proc.Open(filename, out ExcelFile excelFile, out error);
+ExcelFile excelFile = proc.OpenExcelFile(filename);
 
 // get the first sheet of the excel file
-proc.GetFirstSheet(excelFile, out ExcelSheet excelSheet, out error);
+ExcelSheet excelSheet = proc.GetFirstSheet(excelFile);
 
-// get cell at B7, if the cell doesn't exists, cell is null, not an error 
-proc.GetCellAt(excelSheet, "B7", out ExcelCell cell, out error);
+// get cell at B7, if the cell doesn't exists, cell is null, it's not an error 
+ExcelCell cell= proc.GetCellAt(excelSheet, "B7");
 
 // get the type and the value of cell
-proc.GetCellTypeAndValue(excelSheet, cell, out cellValueMulti, out error);
+excelCellValue= proc.GetCellValue(excelSheet, cell);
 
 //> type of the cell can be: string, int, double, DateTime, DateOnly, TimeOnly.
 
 // if the cell type is string, get the value and display it
-if(cellValueMulti.CellType == ExcelCellType.String)
+if(excelCellValue.CellType == ExcelCellType.String)
 {
   Console.WriteLine("B7 type: string, value:" + proc.GetCellValueAsString(excelFile, cell));
 } 
@@ -86,16 +85,17 @@ Set a value to a cell is possible for each of these types.
 
 After creating or opening an excel file, the next action is to get a sheet.
 There are 3 ways to get a sheet.
+First sheet index is 0, like for rows.
 
 ```
 //-case1: get the first sheet of the excel file
-proc.GetFirstSheet(excelFile, out ExcelSheet excelSheet, out error);
+ExcelSheet excelSheet= proc.GetFirstSheet(excelFile);
 
 //-case 2: Get a sheet at an index, starting from 0
-proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+ExcelSheet excelSheet= proc.GetSheetAt(excelFile, 0);
 
 //-case 3: Get a sheet by the name
-proc.GetSheetByName(excelFile, "Sheet1", out ExcelSheet excelSheet, out error);
+ExcelSheet excelSheet= proc.GetSheetByName(excelFile, "Sheet1");
 ```
 
 
@@ -103,30 +103,32 @@ proc.GetSheetByName(excelFile, "Sheet1", out ExcelSheet excelSheet, out error);
 
 ```
 // read B4 cell
-proc.GetCellAt(excelSheet, "B4", out ExcelCell excelCell, out error);
+ExcelCell excelCell= proc.GetCellAt(excelSheet, "B4");
 
-// or like this:  proc.GetCellAt(excelSheet, 2,4, out ExcelCell excelCell, out error);
+// or like this:  ExcelCell excelCell= proc.GetCellAt(excelSheet, 2,4);
 
 // get the type, the format and the value
-proc.GetCellTypeAndValue(excelSheet, excelCell, out ExcelCellValueMulti excelCellValueMulti, out error);
+excelCellValue excelCellValue= proc.GetCellValue(excelSheet, excelCell);
 
-// check: excelCellValueMulti.CellType, contains the type of the cell value.
-// then get the value from cellValueMulti property: StringValue, IntegerValue, DoubleValue, DateOnlyValue and TimeOnly
+// check: excelCellValue.CellType, contains the type of the cell value.
+// then get the value from excelCellValue property: StringValue, IntegerValue, DoubleValue, DateOnlyValue and TimeOnlyValue
 
 // the cell value can be empty/Blank, in some cases the type will be undefined
-if(excelCellValueMulti.IsEmpty) ...
+if(excelCellValue.IsEmpty) ...
 
 ```
 
 
 ## Read unexisting cell 
 
+Reading a cell which not exist jsut return a null value, it's not an error.
+
 ```
 // read B9 cell which not exists
-bool res= proc.GetCellAt(excelSheet, "B9"2, 9", out cell, out excelError);
+ExcelCell excelCell= proc.GetCellAt(excelSheet, "B9", 9");
 
-// the cell is null, not an error, res is true and excelError is null
-if(cell==null)
+// the cell is null, it's not an error
+if(excelCell==null)
 { // do something }
 ```
 
@@ -137,10 +139,10 @@ If the cell does not exists, it will be created before setting the value. If the
 
 ```
 // set a double value into cell C10
-proc.SetCellValue(excelSheet, "C10", 12.5, out error);
+proc.SetCellValue(excelSheet, "C10", 12.5);
 
 // or 
-proc.SetCellValue(excelSheet, 3, 10, 12.5, out error);
+proc.SetCellValue(excelSheet, 3, 10, 12.5);
 
 ```
 
@@ -155,10 +157,10 @@ Example, format the display of a number:
 
 ```
 // set a double value and format it with 2 decimals, e.g.: 12,30
-proc.SetCellValue(excelSheet, "B9", 12.5, "0.00", out error);
+proc.SetCellValue(excelSheet, "B9", 12.5, "0.00");
 
-// set a date with a standard format
-proc.SetCellValue(excelSheet, "D12", new DateOnly(2025,10,12), "d/m/yyyy", out error);
+// set a date with a standard format, will display: 12/10/2025
+proc.SetCellValue(excelSheet, "D12", new DateOnly(2025,10,12), "d/m/yyyy");
 ```
 
 You can use one of some predefined format declared in the class Definitions.cs.
@@ -167,11 +169,11 @@ You can use one of some predefined format declared in the class Definitions.cs.
 ```
 // set a double value and format it with 2 decimals, e.g.: 12,30
 // Definitions.NumFmtNumberTwoDec2= "0.00"
-proc.SetCellValue(excelSheet, "B5", 12.3, Definitions.NumFmtNumberTwoDec2, out error);
+proc.SetCellValue(excelSheet, "B5", 12.3, Definitions.NumFmtNumberTwoDec2);
 
 // set a formated date
 // Definitions.NumFmtDayMonthYear14= "d/m/yyyy"
-proc.SetCellValue(excelSheet, "C4", new DateOnly(2025,12,28), Definitions.NumFmtDayMonthYear14, out error);
+proc.SetCellValue(excelSheet, "C4", new DateOnly(2025,12,28), Definitions.NumFmtDayMonthYear14);
 ```
 
 If you set a value (string, int or double) without format in a existing cell, the defined format of the cell is used as much as possible.
@@ -180,26 +182,26 @@ If you set a value (string, int or double) without format in a existing cell, th
 ## Get row/last row index
 
 The code below get a the last row index, and also get a row at an index.
+Be careful first row index is 0. First cell column index is 1, first cell row index is 1.
 
 ```
-ExcelError error;
 bool res;
 ExcelProcessor proc = new ExcelProcessor();
 
 // open an existing excel file
 string filename = @".\Files\data.xlsx";
-proc.Open(filename, out ExcelFile excelFile, out error);
+ExcelFile excelFile= proc.OpenExcelFile(filename);
 
 // get the first sheet
-proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+ExcelSheet excelSheet= proc.GetSheetAt(excelFile, 0);
 
 // get the index of the last row containing cells
 int lastRowIdx = proc.GetLastRowIndex(excelSheet);
 Console.WriteLine("last row idx: " + lastRowIdx);
 
 // get the row at index 0, the first one
-res = proc.GetRowAt(excelSheet, 0, out ExcelRow row, out error);
-if (!res)
+ExcelRow row = proc.GetRowAt(excelSheet, 0);
+if (row==null)
 	Console.WriteLine("ERROR, unable to read the row");
 ```
 
@@ -210,33 +212,32 @@ The code below will create an excel file with one sheet.
 
 ```
 bool res;
-ExcelError error;
 ExcelProcessor proc = new ExcelProcessor();
 
 // create an excel with one sheet, the name will: Sheet1
 string filename = @".\Files\data.xlsx";
-res=proc.CreateExcelFile(filename, out ExcelFile excelFile, out error);
+ExcelFile excelFile= proc.CreateExcelFile(filename);
 
-// or set your sheet name 
-res=proc.CreateExcelFile(filename, "MySheet", out ExcelFile excelFile, out error);
+// or set the name of the first sheet
+ExcelFile excelFile= proc.CreateExcelFile(filename, "MySheet");
 
 ```
 
-## Style/CellFormat/NumbergingFormat
+## Style/CellFormat/NumberFormat
 
 Cell formating take an important place when read or write cell value.
 
-Technically, Excel has two kind of format, built-in and custom.
+Technically, Excel has two kind of number format: built-in and custom.
 built-in are only identified by dedicated id, from 0 to 163.
 
-Custom format are defined by a string which represents the format.
+Custom format are defined by a string which represents the number format.
 
 Manage cell value formatting for number, date and currency is a nightmare.
 
 The library hide this complexity to the user so you have just to set a value and a format.
 
 Creation of a style/CellFormat is managed as better as possible.
-The max number of custom style is high but limited.
+The maximum count of custom style is high but limited.
 
 
 Style/CellFormat are defined in the scope of a sheet, not on all the excel file.

@@ -9,52 +9,45 @@ public class RemoveCellTests : TestBase
     public void SetCellValueString()
     {
         bool res;
-        ExcelError error;
         ExcelProcessor proc = new ExcelProcessor();
 
         string filename = PathFiles + "RemoveCell.xlsx";
-        res = proc.Open(filename, out ExcelFile excelFile, out error);
-        Assert.IsTrue(res);
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
 
-        res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
-        Assert.IsTrue(res);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValueMulti cellValueMulti;
+        ExcelCellValue excelCellValue;
 
         //--B2: already null!
-        res = proc.RemoveCell(excelSheet, "B2", out error);
+        res = proc.RemoveCell(excelSheet, "B2");
         Assert.IsTrue(res);
 
         //--B3:
-        res = proc.RemoveCell(excelSheet, "B3", out error);
+        res = proc.RemoveCell(excelSheet, "B3");
         Assert.IsTrue(res);
 
         //--B4:
-        res = proc.RemoveCell(excelSheet, 2, 4, out error);
+        res = proc.RemoveCell(excelSheet, 2, 4);
         Assert.IsTrue(res);
 
         //--B5:
-        res = proc.RemoveCell(excelSheet, 2, 5, out error);
+        res = proc.RemoveCell(excelSheet, 2, 5);
         Assert.IsTrue(res);
 
         // save the changes
-        res = proc.Close(excelFile, out error);
+        proc.CloseExcelFile(excelFile);
 
         //==>check the excel content
-        res = proc.Open(filename, out excelFile, out error);
-        Assert.IsTrue(res);
-        res = proc.GetSheetAt(excelFile, 0, out excelSheet, out error);
-        Assert.IsTrue(res);
+        excelFile = proc.OpenExcelFile(filename);
+        excelSheet = proc.GetSheetAt(excelFile, 0);
 
         //--B2: null
-        res = proc.GetCellAt(excelSheet, 2, 2, out cell, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 2);
         Assert.IsNull(cell);
 
         //--B3:
-        res = proc.GetCellAt(excelSheet, 2, 3, out cell, out error);
-        Assert.IsTrue(res);
+        cell = proc.GetCellAt(excelSheet, 2, 3);
         Assert.IsNull(cell);
     }
 }

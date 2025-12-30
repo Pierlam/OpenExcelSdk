@@ -19,6 +19,7 @@ public class StyleMgr
     /// <summary>
     /// Create a new style to update numberFormatId, in Cellformat.
     /// Clone the style and modify it.
+    /// !Never modify an existing CellFormat! in place create a new one!
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
@@ -28,70 +29,57 @@ public class StyleMgr
         var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
 
         CellFormat? currCellFormat = null;
-        CellFormat? cellFormat = null;
-        Alignment? alignment = null;
-        BooleanValue? applyAlignement = null;
-        BooleanValue? applyBorder = null;
-        BooleanValue? applyFill = null;
-        BooleanValue? applyFont = null;
         BooleanValue? applyNumberFormat = null;
-        BooleanValue? applyProtection = null;
-        UInt32Value? borderId = null;
-        UInt32Value? fillId = null;
-        UInt32Value? fontId = null;
-        UInt32Value? numFmtId = null;
-        Protection? protection = null;
 
-        // set the new value or set null?
-        if (numberFormatId != null)
-        {
-            applyNumberFormat = true;
-            numFmtId = (uint)numberFormatId;
-        }
-
+        // the cell has a style, a CellFormat?
         if (excelCell.Cell.StyleIndex != null)
         {
             // get the style of cell
             currCellFormat = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
-
-            // same style/cellFormat already exists?
-            cellFormat = FindCellFormatWithNumberFormatId(stylesPart, currCellFormat, numberFormatId, out int index);
-            if (cellFormat != null)
-            {
-                // get the index of the found style
-                excelCell.Cell.StyleIndex = (uint)index;
-                return true;
-            }
-            alignment = currCellFormat.Alignment;
-            applyAlignement = currCellFormat.ApplyAlignment;
-            applyBorder = currCellFormat.ApplyBorder;
-            applyFill = currCellFormat.ApplyFill;
-            applyFont = currCellFormat.ApplyFont;
-            applyProtection = currCellFormat.ApplyProtection;
-            borderId = currCellFormat.BorderId;
-            fillId = currCellFormat.FillId;
-            fontId = currCellFormat.FontId;
-            protection = currCellFormat.Protection;
+        }
+        else
+        {
+            // cell has no CellFormat, create a new one
+            currCellFormat = CreateCellFormat();
         }
 
-        // need to create a new style
+        // in CellFormat, default value for id is 0, not null
+        if (numberFormatId != null)
+            // if there is numberFormatId!
+            applyNumberFormat = true;
+        else
+            // if null, set 0, it's the standard way
+            numberFormatId = 0;
+
+        // same style/cellFormat already exists?
+        CellFormat? cellFormat = FindCellFormatWithNumberFormatId(stylesPart, currCellFormat, numberFormatId, out int index);
+        if (cellFormat != null)
+        {
+            // get the index of the found style
+            excelCell.Cell.StyleIndex = (uint)index;
+            return true;
+        }
+
+        // the cell has no style, no cellFormat, need to create a new style
         cellFormat = new CellFormat
         {
-            Alignment = alignment,
-            ApplyAlignment = applyAlignement,
-            ApplyBorder = applyBorder,
-            ApplyFill = applyFill,
-            ApplyFont = applyFont,
-            // apply a value or null
-            ApplyNumberFormat = applyNumberFormat,
-            ApplyProtection = applyProtection,
-            BorderId = borderId,
-            FillId = fillId,
-            FontId = fontId,
+            ApplyAlignment = currCellFormat.ApplyAlignment,
+            ApplyBorder = currCellFormat.ApplyBorder,
+            ApplyFill = currCellFormat.ApplyFill,
+            ApplyFont = currCellFormat.ApplyFont,
+            ApplyProtection = currCellFormat.ApplyProtection,
 
-            // apply a value or null
-            NumberFormatId = numFmtId,
-            Protection = protection
+            // apply or not a number format id
+            ApplyNumberFormat = applyNumberFormat,
+
+            Alignment = currCellFormat.Alignment,
+            BorderId = currCellFormat.BorderId,
+            FillId = currCellFormat.FillId,
+            FontId = currCellFormat.FontId,
+
+            // set the new value
+            NumberFormatId = numberFormatId,
+            Protection = currCellFormat.Protection
         };
 
         // append the new style
@@ -113,10 +101,8 @@ public class StyleMgr
     /// <param name="formatId"></param>
     /// <param name="error"></param>
     /// <returns></returns>
-    public bool GetOrCreateNumberFormat(ExcelSheet excelSheet, string format, out uint formatId, out ExcelError error)
+    public bool GetOrCreateNumberFormat(ExcelSheet excelSheet, string format, out uint formatId)
     {
-        error = null;
-
         // is the format a Built-In format?
         if (!BuiltInNumberFormatMgr.GetFormatId(format, out formatId))
         {
@@ -124,7 +110,7 @@ public class StyleMgr
             if (!GetCustomNumberFormatId(excelSheet, format, out formatId))
             {
                 // create a new custom format
-                if (!CreateCustomNumberFormat(excelSheet, format, out formatId, out error))
+                if (!CreateCustomNumberFormat(excelSheet, format, out formatId))
                     return false;
             }
         }
@@ -212,10 +198,7 @@ public class StyleMgr
         if (cellFormat == null) return null;
         if (stylesPart.Stylesheet == null) return null;
 
-        UInt32Value? numFmtId = null;
-        if (numberFormatId != null) numFmtId = (uint)numberFormatId;
-
-        // scan each cell format
+        // scan each cell format, only on object, not an apply flag
         for (int i = 0; i < stylesPart.Stylesheet.CellFormats.Elements().Count(); i++)
         {
             index = i;
@@ -225,7 +208,8 @@ public class StyleMgr
                 cellFormatFound.FillId == cellFormat.FillId &&
                 cellFormatFound.Protection == cellFormat.Protection &&
                 cellFormatFound.FontId == cellFormat.FontId &&
-                cellFormatFound.NumberFormatId == numFmtId)
+
+                cellFormatFound.NumberFormatId == numberFormatId)
                 return cellFormatFound;
         }
         return null;
@@ -241,10 +225,8 @@ public class StyleMgr
     /// <param name="formatId"></param>
     /// <param name="error"></param>
     /// <returns></returns>
-    public bool CreateCustomNumberFormat(ExcelSheet excelSheet, string format, out uint formatId, out ExcelError error)
+    public bool CreateCustomNumberFormat(ExcelSheet excelSheet, string format, out uint formatId)
     {
-        error = null;
-
         var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
 
         // max id not yet calculated?
@@ -319,6 +301,23 @@ public class StyleMgr
         // Built-in format
         formatId = 0;
         return false;
+    }
+
+    /// <summary>
+    /// Create a CellFormat.
+    /// ! all id have to be set to 0 and not null!
+    /// </summary>
+    /// <returns></returns>
+    public CellFormat CreateCellFormat()
+    {
+        var currCellFormat = new CellFormat();
+
+        currCellFormat.BorderId = 0;
+        currCellFormat.FontId = 0;
+        currCellFormat.NumberFormatId = 0;
+        currCellFormat.FillId = 0;
+
+        return currCellFormat;
     }
 
     /// <summary>

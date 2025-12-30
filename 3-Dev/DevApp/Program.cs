@@ -4,16 +4,14 @@ using OpenExcelSdk;
 void DevCloneStyle()
 {
     ExcelProcessor proc = new ExcelProcessor();
-    bool res;
-    ExcelError error;
     string filename = @"Files\DevCloneStyle.xlsx";
 
-    res = proc.Open(filename, out ExcelFile excelFile, out error);
-    res = proc.GetSheetAt(excelFile, 0, out ExcelSheet excelSheet, out error);
+    ExcelFile excelFile = proc.OpenExcelFile(filename);
+    ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
     //--B2: dateTime, custom, BgColor, FgCOlor, Border: 09/12/2021 12:30:45
-    res = proc.GetCellAt(excelSheet, 2, 2, out ExcelCell excelCell, out error);
-    proc.SetCellValue(excelSheet, excelCell, "Bonjour", out error);
+    ExcelCell excelCell = proc.GetCellAt(excelSheet, 2, 2);
+    proc.SetCellValue(excelSheet, excelCell, "Bonjour");
 
     //StyleMgr styleMgr = new StyleMgr();
     //res = styleMgr.CloneStyle(excelSheet, excelCell);
@@ -21,7 +19,7 @@ void DevCloneStyle()
     //proc.Close(excelFile, out error);
 
     // save the changes
-    res = proc.Close(excelFile, out error);
+    proc.CloseExcelFile(excelFile);
 }
 
 void ConvertDouble()
@@ -41,8 +39,10 @@ Console.WriteLine("=> OpenExcelSdk DevApp:");
 
 //DevCloneStyle();
 
-CellReader.ReadCellFormats();
+//CellReader.ReadCellFormats();
 
 //CellReader.CheckFilePb();
+
+EasierWay.TestFctLight();
 
 Console.WriteLine("=> Ok, Ends.");

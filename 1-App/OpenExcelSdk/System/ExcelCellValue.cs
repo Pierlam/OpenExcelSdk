@@ -1,49 +1,52 @@
 ﻿namespace OpenExcelSdk;
 
 /// <summary>
-/// Excel cell that can hold multiple values/types.
+/// Excel cell value, can manage all cases of type/value.
+/// Type/Value can be: stirng, integer, double, dateOnly,, dateTime and timeOnly.
+/// Contains also number format used to format the display of the value.
 /// </summary>
-public class ExcelCellValueMulti
+public class ExcelCellValue
 {
     /// <summary>
     /// Used for null cell.
+    /// Type is Undefined.
     /// </summary>
-    public ExcelCellValueMulti()
+    public ExcelCellValue()
     {
         CellType = ExcelCellType.Undefined;
     }
 
-    public ExcelCellValueMulti(string value)
+    public ExcelCellValue(string value)
     {
         CellType = ExcelCellType.String;
         StringValue = value;
     }
 
-    public ExcelCellValueMulti(int value)
+    public ExcelCellValue(int value)
     {
         CellType = ExcelCellType.Integer;
         IntegerValue = value;
     }
 
-    public ExcelCellValueMulti(double value)
+    public ExcelCellValue(double value)
     {
         CellType = ExcelCellType.Double;
         DoubleValue = value;
     }
 
-    public ExcelCellValueMulti(DateOnly value)
+    public ExcelCellValue(DateOnly value)
     {
         CellType = ExcelCellType.DateOnly;
         DateOnlyValue = value;
     }
 
-    public ExcelCellValueMulti(DateTime value)
+    public ExcelCellValue(DateTime value)
     {
         CellType = ExcelCellType.DateTime;
         DateTimeValue = value;
     }
 
-    public ExcelCellValueMulti(TimeOnly value)
+    public ExcelCellValue(TimeOnly value)
     {
         CellType = ExcelCellType.TimeOnly;
         TimeOnlyValue = value;
@@ -57,7 +60,7 @@ public class ExcelCellValueMulti
 
     /// <summary>
     /// Return true if the value of the cell is empty/blank.
-    /// Type can be defined, or not, it will be Undefined in this case.
+    /// Type can be defined (string, integer,...) but in some cases, the type will be Undefined.
     /// </summary>
     public bool IsEmpty { get; set; } = false;
 
@@ -66,7 +69,18 @@ public class ExcelCellValueMulti
     /// Used for DateTime, TimeSpan, DateOnly, TimeOnly formats.
     /// and also currency, percentage,... In this case, type is Double.
     /// </summary>
-    public string? DataFormat { get; set; } = null;
+    public string? NumberFormat { get; set; } = null;
+
+    /// <summary>
+    /// part of the style/CellFormat.
+    /// Number format id, if it exists. if not the default value is -1.
+    /// </summary>
+    public int NumberFormatId { get; set; } = -1;
+
+    /// <summary>
+    /// Set if the cell contains a formula.
+    /// </summary>
+    public string? Formula { get; set; } = null;
 
     /// <summary>
     /// Set if the type of the cell value is a string.
