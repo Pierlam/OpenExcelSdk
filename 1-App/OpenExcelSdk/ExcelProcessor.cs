@@ -422,7 +422,7 @@ public class ExcelProcessor: ExcelProcessorBase
     /// <param name="excelCellValueMulti"></param>
     /// <param name="excelError"></param>
     /// <returns></returns>
-    public ExcelCellValueMulti GetCellValue(ExcelSheet excelSheet, string addressName)
+    public ExcelCellValue GetCellValue(ExcelSheet excelSheet, string addressName)
     {
         ExcelCell excelCell = GetCellAt(excelSheet, addressName);
         if (excelCell == null) return null;
@@ -439,7 +439,7 @@ public class ExcelProcessor: ExcelProcessorBase
     /// <param name="excelCellValueMulti"></param>
     /// <param name="excelError"></param>
     /// <returns></returns>
-    public ExcelCellValueMulti GetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx)
+    public ExcelCellValue GetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx)
     {
         ExcelCell excelCell = GetCellAt(excelSheet, colIdx, rowIdx);
         if (excelCell==null) return null;

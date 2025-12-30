@@ -17,7 +17,7 @@ public class SetCellValueTests : TestBase
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValueMulti cellValueMulti;
+        ExcelCellValue cellValueMulti;
 
         // to check style/CellFormat creation
         var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
@@ -156,7 +156,7 @@ public class SetCellValueTests : TestBase
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValueMulti cellValueMulti;
+        ExcelCellValue cellValueMulti;
 
         // to check style/CellFormat creation
         var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
@@ -219,7 +219,7 @@ public class SetCellValueTests : TestBase
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValueMulti cellValueMulti;
+        ExcelCellValue cellValueMulti;
 
         // to check style/CellFormat creation
         int count = proc.GetCustomNumberFormatsCount(excelSheet);
@@ -321,7 +321,7 @@ public class SetCellValueTests : TestBase
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValueMulti cellValueMulti;
+        ExcelCellValue cellValueMulti;
 
         // to check style/CellFormat creation
         int count = proc.GetCustomNumberFormatsCount(excelSheet);
@@ -422,7 +422,7 @@ public class SetCellValueTests : TestBase
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValueMulti cellValueMulti;
+        ExcelCellValue cellValueMulti;
 
         //--B2: number
         res = proc.SetCellValueEmpty(excelSheet, 2, 2);

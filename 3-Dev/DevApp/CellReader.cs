@@ -14,7 +14,7 @@ internal class CellReader
         ExcelSheet excelSheet= proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValueMulti cellValueMulti;
+        ExcelCellValue cellValueMulti;
         CellFormat cellFormat;
         string dataFormat;
         StyleMgr styleMgr = new StyleMgr();
@@ -39,7 +39,7 @@ internal class CellReader
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValueMulti cellValueMulti;
+        ExcelCellValue cellValueMulti;
         CellFormat cellFormat;
         string dataFormat;
         StyleMgr styleMgr = new StyleMgr();

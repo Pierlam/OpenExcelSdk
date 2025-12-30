@@ -46,7 +46,7 @@ public class ExcelProcessorBase
     /// <returns></returns>
     public string GetCellValueAsString(ExcelSheet excelSheet, ExcelCell excelCell)
     {
-        ExcelCellValueMulti excelCellValueMulti = GetCellValue(excelSheet, excelCell);
+        ExcelCellValue excelCellValueMulti = GetCellValue(excelSheet, excelCell);
         if (excelCellValueMulti==null)
             return string.Empty;
 
@@ -79,7 +79,7 @@ public class ExcelProcessorBase
     /// <returns></returns>
     public double GetCellValueAsDouble(ExcelSheet excelSheet, ExcelCell excelCell)
     {
-        ExcelCellValueMulti excelCellValueMulti = GetCellValue(excelSheet, excelCell);
+        ExcelCellValue excelCellValueMulti = GetCellValue(excelSheet, excelCell);
         if (excelCellValueMulti == null)
             return 0;
 
@@ -119,7 +119,7 @@ public class ExcelProcessorBase
     /// <returns></returns>
     public DateOnly GetCellValueAsDateOnly(ExcelSheet excelSheet, ExcelCell excelCell)
     {
-        ExcelCellValueMulti excelCellValueMulti = GetCellValue(excelSheet, excelCell);
+        ExcelCellValue excelCellValueMulti = GetCellValue(excelSheet, excelCell);
         if (excelCellValueMulti == null)
             return new DateOnly();
 
@@ -147,9 +147,9 @@ public class ExcelProcessorBase
     /// <param name="excelCellValueMulti"></param>
     /// <param name="excelError"></param>
     /// <returns></returns>
-    public ExcelCellValueMulti GetCellValue(ExcelSheet excelSheet, ExcelCell excelCell)
+    public ExcelCellValue GetCellValue(ExcelSheet excelSheet, ExcelCell excelCell)
     {
-        ExcelCellValueMulti  excelCellValueMulti = null;
+        ExcelCellValue  excelCellValueMulti = null;
 
         if (excelSheet == null || excelCell == null)
             return null;
@@ -184,7 +184,7 @@ public class ExcelProcessorBase
 
         if (value == string.Empty)
         {
-            excelCellValueMulti = new ExcelCellValueMulti();
+            excelCellValueMulti = new ExcelCellValue();
             excelCellValueMulti.IsEmpty = true;
             return excelCellValueMulti;
         }
@@ -193,7 +193,7 @@ public class ExcelProcessorBase
         bool res = int.TryParse(value, out valInt);
         if (res)
         {
-            excelCellValueMulti = new ExcelCellValueMulti(valInt);
+            excelCellValueMulti = new ExcelCellValue(valInt);
             excelCellValueMulti.Formula = excelCell.Cell?.CellFormula?.Text;
             return excelCellValueMulti;
         }
@@ -203,13 +203,13 @@ public class ExcelProcessorBase
         res = double.TryParse(value, out valDouble);
         if (res)
         {
-            excelCellValueMulti = new ExcelCellValueMulti(valDouble);
+            excelCellValueMulti = new ExcelCellValue(valDouble);
             excelCellValueMulti.Formula = excelCell.Cell?.CellFormula?.Text;
             return excelCellValueMulti;
         }
 
         // not able to find the type
-        excelCellValueMulti = new ExcelCellValueMulti();
+        excelCellValueMulti = new ExcelCellValue();
         return excelCellValueMulti;
     }
 
@@ -246,7 +246,7 @@ public class ExcelProcessorBase
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
     /// <returns></returns>
-    public static ExcelCellValueMulti GetCellStringValue(ExcelSheet excelSheet, ExcelCell excelCell)
+    public static ExcelCellValue GetCellStringValue(ExcelSheet excelSheet, ExcelCell excelCell)
     {
         string cellValue;
 
@@ -259,7 +259,7 @@ public class ExcelProcessorBase
             if (!SharedStringMgr.GetSharedStringValue(excelSheet, excelCell, out cellValue))
                 throw ExcelException.Create("GetCellStringValue", ExcelErrorCode.UnableGetCellStringValue);
 
-            var excelCellValueMulti = new ExcelCellValueMulti(cellValue);
+            var excelCellValueMulti = new ExcelCellValue(cellValue);
             excelCellValueMulti.Formula = excelCell.Cell.CellFormula?.Text;
             return excelCellValueMulti;
         }
@@ -270,7 +270,7 @@ public class ExcelProcessorBase
             if (cellValue == null)
                 throw ExcelException.Create("GetCellStringValue", ExcelErrorCode.UnableGetCellStringValue);
 
-            var excelCellValueMulti = new ExcelCellValueMulti(cellValue);
+            var excelCellValueMulti = new ExcelCellValue(cellValue);
             excelCellValueMulti.Formula = excelCell.Cell.CellFormula?.Text;
             return excelCellValueMulti;
         }
@@ -279,7 +279,7 @@ public class ExcelProcessorBase
         {
             string value = excelCell.Cell.InnerText;
             if (value == null) value = string.Empty;
-            var excelCellValueMulti = new ExcelCellValueMulti(value);
+            var excelCellValueMulti = new ExcelCellValue(value);
             excelCellValueMulti.Formula = excelCell.Cell.CellFormula?.Text;
             return excelCellValueMulti;
         }

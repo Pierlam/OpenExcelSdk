@@ -6,13 +6,13 @@
 /// </summary>
 public class ValueBuilder
 {
-    public static ExcelCellValueMulti CreateValue(ExcelCell excelCell, ExcelCellType cellType, string value, int numberFormatId, string numberFormat)
+    public static ExcelCellValue CreateValue(ExcelCell excelCell, ExcelCellType cellType, string value, int numberFormatId, string numberFormat)
     {
-        ExcelCellValueMulti excelCellValueMulti;
+        ExcelCellValue excelCellValueMulti;
 
         if (string.IsNullOrEmpty(value))
         {
-            excelCellValueMulti = new ExcelCellValueMulti();
+            excelCellValueMulti = new ExcelCellValue();
             excelCellValueMulti.CellType = cellType;
             excelCellValueMulti.IsEmpty = true;
             return excelCellValueMulti;
@@ -58,24 +58,24 @@ public class ValueBuilder
             return excelCellValueMulti;
         }
 
-        excelCellValueMulti = new ExcelCellValueMulti();
+        excelCellValueMulti = new ExcelCellValue();
         excelCellValueMulti.CellType = cellType;
         return excelCellValueMulti;
     }
 
-    public static ExcelCellValueMulti CreateValueInteger(string value, int numberFormatId,  string numberFormat)
+    public static ExcelCellValue CreateValueInteger(string value, int numberFormatId,  string numberFormat)
     {
         bool res = int.TryParse(value, out int valInt);
         if (!res)
             throw ExcelException.Create("CreateValueInteger", ExcelErrorCode.TypeWrong, value);
 
-        var excelCellValueMulti = new ExcelCellValueMulti(valInt);
+        var excelCellValueMulti = new ExcelCellValue(valInt);
         excelCellValueMulti.NumberFormatId = numberFormatId;
         excelCellValueMulti.NumberFormat = numberFormat;
         return excelCellValueMulti;
     }
 
-    public static ExcelCellValueMulti CreateValueDouble(string value, int numberFormatId, string numberFormat)
+    public static ExcelCellValue CreateValueDouble(string value, int numberFormatId, string numberFormat)
     {
         // cultureInfo prb: replace . by ,
         value = value.Replace('.', ',');
@@ -83,13 +83,13 @@ public class ValueBuilder
         if (!res)
             throw ExcelException.Create("CreateValueDouble", ExcelErrorCode.TypeWrong, value);
 
-        var excelCellValueMulti = new ExcelCellValueMulti(valDouble);
+        var excelCellValueMulti = new ExcelCellValue(valDouble);
         excelCellValueMulti.NumberFormatId = numberFormatId;
         excelCellValueMulti.NumberFormat = numberFormat;
         return excelCellValueMulti;
     }
 
-    public static ExcelCellValueMulti CreateValueDateOnly(string value, int numberFormatId, string numberFormat)
+    public static ExcelCellValue CreateValueDateOnly(string value, int numberFormatId, string numberFormat)
     {
         try
         {
@@ -99,7 +99,7 @@ public class ValueBuilder
             // convert the value to date
             DateTime dateTime = DateTime.FromOADate(valDouble);
             DateOnly dateOnly = DateOnly.FromDateTime(dateTime);
-            var excelCellValueMulti = new ExcelCellValueMulti(dateOnly);
+            var excelCellValueMulti = new ExcelCellValue(dateOnly);
             excelCellValueMulti.NumberFormatId = numberFormatId;
             excelCellValueMulti.NumberFormat = numberFormat;
             return excelCellValueMulti;
@@ -110,7 +110,7 @@ public class ValueBuilder
         }
     }
 
-    public static ExcelCellValueMulti CreateValueDateTime(string value, int numberFormatId, string numberFormat)
+    public static ExcelCellValue CreateValueDateTime(string value, int numberFormatId, string numberFormat)
     {
         try
         {
@@ -119,7 +119,7 @@ public class ValueBuilder
 
             // convert the value to date
             DateTime dateTime = DateTime.FromOADate(valDouble);
-            var excelCellValueMulti = new ExcelCellValueMulti(dateTime);
+            var excelCellValueMulti = new ExcelCellValue(dateTime);
             excelCellValueMulti.NumberFormatId = numberFormatId;
             excelCellValueMulti.NumberFormat = numberFormat;
             return excelCellValueMulti;
@@ -130,7 +130,7 @@ public class ValueBuilder
         }
     }
 
-    public static ExcelCellValueMulti CreateValueTimeOnly(string value, int numberFormatId,  string numberFormat)
+    public static ExcelCellValue CreateValueTimeOnly(string value, int numberFormatId,  string numberFormat)
     {
         try
         {
@@ -140,7 +140,7 @@ public class ValueBuilder
             // convert the value to date
             DateTime dateTime = DateTime.FromOADate(valDouble);
             TimeOnly timeOnly = TimeOnly.FromDateTime(dateTime);
-            var excelCellValueMulti = new ExcelCellValueMulti(timeOnly);
+            var excelCellValueMulti = new ExcelCellValue(timeOnly);
             excelCellValueMulti.NumberFormatId = numberFormatId;
             excelCellValueMulti.NumberFormat = numberFormat;
             return excelCellValueMulti;

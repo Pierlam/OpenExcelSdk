@@ -18,7 +18,7 @@ public class GetCellTypeAndValueTests : TestBase
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValueMulti cellValueMulti;
+        ExcelCellValue cellValueMulti;
 
         //--B2: null
         cell = proc.GetCellAt(excelSheet, 2, 2);
@@ -46,7 +46,7 @@ public class GetCellTypeAndValueTests : TestBase
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValueMulti cellValueMulti;
+        ExcelCellValue cellValueMulti;
 
         //--B2: string:hello
         cell = proc.GetCellAt(excelSheet, 2, 2);
@@ -82,7 +82,7 @@ public class GetCellTypeAndValueTests : TestBase
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValueMulti cellValueMulti;
+        ExcelCellValue cellValueMulti;
 
         //--B2: int
         cell = proc.GetCellAt(excelSheet, 2, 2);
@@ -143,7 +143,7 @@ public class GetCellTypeAndValueTests : TestBase
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValueMulti cellValueMulti;
+        ExcelCellValue cellValueMulti;
         CellFormat cellFormat;
         string dataFormat;
         StyleMgr styleMgr = new StyleMgr();
@@ -217,7 +217,7 @@ public class GetCellTypeAndValueTests : TestBase
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValueMulti cellValueMulti;
+        ExcelCellValue cellValueMulti;
 
         //--B2: datetime, custom format: dd-MMM-yyyy HH:mm:ss -> 27/09/2025 12:34:56
         cell = proc.GetCellAt(excelSheet, 2, 2);
@@ -238,7 +238,7 @@ public class GetCellTypeAndValueTests : TestBase
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
         ExcelCell cell;
-        ExcelCellValueMulti cellValueMulti;
+        ExcelCellValue cellValueMulti;
 
         //--B2: number, empty
         cell = proc.GetCellAt(excelSheet, "B2");
