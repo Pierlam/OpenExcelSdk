@@ -14,8 +14,8 @@ public class ExcelProcessorBase
     #region Get CellType
 
     /// <summary>
-    /// Get the type of the cell value.
-    /// If the cell is empty/blank, in some cases the type will be Undefined.
+    /// Get the type of the cell value. If the cell is empty/blank, in some cases the type
+    /// will be Undefined.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
@@ -35,9 +35,7 @@ public class ExcelProcessorBase
     /// Get the value of the cell as a string.
     /// </summary>
     /// <param name="excelSheet"></param>
-    /// <param name="cell"></param>
-    /// <param name="stringValue"></param>
-    /// <param name="error"></param>
+    /// <param name="excelCell"></param>
     /// <returns></returns>
     public string GetCellValueAsString(ExcelSheet excelSheet, ExcelCell excelCell)
     {
@@ -66,8 +64,7 @@ public class ExcelProcessorBase
     }
 
     /// <summary>
-    /// Get the value of the cell as a double.
-    /// The type of the cell should match!
+    /// Get the value of the cell as a double. The type of the cell should match!
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
@@ -106,8 +103,7 @@ public class ExcelProcessorBase
     }
 
     /// <summary>
-    /// Get the cell value as a date.
-    /// The type of the cell should match!
+    /// Get the cell value as a date. The type of the cell should match!
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
@@ -132,8 +128,6 @@ public class ExcelProcessorBase
 
     #endregion Get CellValue as
 
-
-
     #region Get CellValue
 
     /// <summary>
@@ -141,8 +135,6 @@ public class ExcelProcessorBase
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
-    /// <param name="excelCellValue"></param>
-    /// <param name="excelError"></param>
     /// <returns></returns>
     public ExcelCellValue GetCellValue(ExcelSheet excelSheet, ExcelCell excelCell)
     {
@@ -194,7 +186,7 @@ public class ExcelProcessorBase
             return excelCellValue;
         }
 
-        // is it a double?  cultureInfo prb: replace . by ,
+        // is it a double? cultureInfo prb: replace . by ,
         value = value.Replace('.', ',');
         res = double.TryParse(value, out valDouble);
         if (res)
@@ -210,9 +202,7 @@ public class ExcelProcessorBase
     }
 
     /// <summary>
-    /// Get the type of cell from the data format.
-    /// exp:
-    /// "dd/mm/yyyy\\ hh:mm:ss" , it's a DateTime.
+    /// Get the type of cell from the data format. exp: "dd/mm/yyyy\\ hh:mm:ss" , it's a DateTime.
     /// </summary>
     /// <param name="numberFormat"></param>
     /// <returns></returns>
@@ -288,15 +278,13 @@ public class ExcelProcessorBase
     #region Create cell
 
     /// <summary>
-    /// Given a column name, a row index, and a WorksheetPart, inserts a cell into the worksheet.
-    /// If the cell already exists, returns it.
+    /// Given a column name, a row index, and a WorksheetPart, inserts a cell into the
+    /// worksheet. If the cell already exists, returns it.
     /// Exp: "A", 1 for cell A1.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="columnName"></param>
     /// <param name="rowIndex"></param>
-    /// <param name="excelCell"></param>
-    /// <param name="error"></param>
     /// <returns></returns>
     public ExcelCell CreateCell(ExcelSheet excelSheet, string columnName, uint rowIndex)
     {
@@ -330,7 +318,8 @@ public class ExcelProcessorBase
             return excelCell;
         }
 
-        // Cells must be in sequential order according to CellReference. Determine where to insert the new cell.
+        // Cells must be in sequential order according to CellReference. Determine where
+        // to insert the new cell.
         Cell? refCell = null;
 
         foreach (Cell cell in row.Elements<Cell>())
@@ -352,6 +341,14 @@ public class ExcelProcessorBase
 
     #region Set cell value
 
+    /// <summary>
+    /// Set a string value and the number format to the cell.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="value"></param>
+    /// <param name="numberFormat"></param>
+    /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, string value, string numberFormat)
     {
         uint numberFormatId;
@@ -363,6 +360,14 @@ public class ExcelProcessorBase
         return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, numberFormatId);
     }
 
+    /// <summary>
+    /// Set an int value and the number format to the cell.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="value"></param>
+    /// <param name="numberFormat"></param>
+    /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, int value, string numberFormat)
     {
         uint numberFormatId;
@@ -373,6 +378,15 @@ public class ExcelProcessorBase
 
         return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, numberFormatId);
     }
+
+    /// <summary>
+    /// Set a double value and the number format to the cell.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="value"></param>
+    /// <param name="numberFormat"></param>
+    /// <returns></returns>
 
     public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, double value, string numberFormat)
     {
@@ -385,6 +399,14 @@ public class ExcelProcessorBase
         return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, numberFormatId);
     }
 
+    /// <summary>
+    /// Set a dateOnly value and the number format to the cell.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="value"></param>
+    /// <param name="numberFormat"></param>
+    /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, DateOnly value, string numberFormat)
     {
         uint numberFormatId;
@@ -396,6 +418,14 @@ public class ExcelProcessorBase
         return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, numberFormatId);
     }
 
+    /// <summary>
+    /// Set a dateTime value and the number format to the cell.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="value"></param>
+    /// <param name="numberFormat"></param>
+    /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, DateTime value, string numberFormat)
     {
         uint numberFormatId;
@@ -407,6 +437,14 @@ public class ExcelProcessorBase
         return SetCellValueAndNumberFormatId(excelSheet, excelCell, value, numberFormatId);
     }
 
+    /// <summary>
+    /// Set a timeOnly value and the number format to the cell.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="value"></param>
+    /// <param name="numberFormat"></param>
+    /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, ExcelCell excelCell, TimeOnly value, string numberFormat)
     {
         uint numberFormatId;
@@ -474,7 +512,8 @@ public class ExcelProcessorBase
             _styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatIdCell);
             if (numberFormatIdCell == (numberFormatId ?? 0)) return true;
 
-            // all other style than format (no border, no color,...) are null, clear the style of the cell
+            // all other style than format (no border, no color,...) are null, clear the
+            // style of the cell
             if (numberFormatId == null && _styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
             {
                 // no format to set, all others style part style are null, so clear the style
@@ -494,9 +533,8 @@ public class ExcelProcessorBase
     }
 
     /// <summary>
-    /// Set cell value as double.
-    /// Keep some aprt of the style: border, color, font...
-    /// but clear the number format -> style/CellFormat/NumberingFormat
+    /// Set cell value as double. Keep some aprt of the style: border, color, font... but
+    /// clear the number format -&gt; style/CellFormat/NumberingFormat
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
@@ -519,7 +557,8 @@ public class ExcelProcessorBase
         _styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatIdCell);
         if (numberFormatIdCell == (numberFormatId ?? 0)) return true;
 
-        // all other style than format (no border, no color,...) are null, clear the style of the cell
+        // all other style than format (no border, no color,...) are null, clear the style
+        // of the cell
         if (numberFormatId == null && _styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
         {
             // no format to set, all others style part style are null, so clear the style
@@ -534,9 +573,8 @@ public class ExcelProcessorBase
     }
 
     /// <summary>
-    /// Set cell value as a date.
-    /// Keep some aprt of the style: border, color, font...
-    /// but clear the number format -> style/CellFormat/NumberingFormat
+    /// Set cell value as a date. Keep some aprt of the style: border, color, font... but
+    /// clear the number format -&gt; style/CellFormat/NumberingFormat
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
@@ -573,9 +611,8 @@ public class ExcelProcessorBase
     }
 
     /// <summary>
-    /// Set cell value as a date.
-    /// Keep some aprt of the style: border, color, font...
-    /// but clear the number format -> style/CellFormat/NumberingFormat
+    /// Set cell value as a date. Keep some aprt of the style: border, color, font... but
+    /// clear the number format -&gt; style/CellFormat/NumberingFormat
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
@@ -609,9 +646,8 @@ public class ExcelProcessorBase
     }
 
     /// <summary>
-    /// Set cell value as a timeOnly.
-    /// Keep some aprt of the style: border, color, font...
-    /// but clear the number format -> style/CellFormat/NumberingFormat
+    /// Set cell value as a timeOnly. Keep some aprt of the style: border, color, font...
+    /// but clear the number format -&gt; style/CellFormat/NumberingFormat
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
@@ -671,9 +707,8 @@ public class ExcelProcessorBase
     }
 
     /// <summary>
-    /// Return the count of custom number formats in the excel sheet.
-    /// It's style on cell value, exp: date, currency, percentage,...
-    /// built-in number formats are not counted.
+    /// Return the count of custom number formats in the excel sheet. It's style on cell
+    /// value, exp: date, currency, percentage,... built-in number formats are not counted.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <returns></returns>

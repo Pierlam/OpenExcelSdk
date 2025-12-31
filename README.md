@@ -121,7 +121,7 @@ if(excelCellValue.IsEmpty) ...
 
 ## Read unexisting cell 
 
-Reading a cell which not exist jsut return a null value, it's not an error.
+Reading a cell which not exist just return a null value, it's not an error.
 
 ```
 // read B9 cell which not exists
@@ -161,19 +161,6 @@ proc.SetCellValue(excelSheet, "B9", 12.5, "0.00");
 
 // set a date with a standard format, will display: 12/10/2025
 proc.SetCellValue(excelSheet, "D12", new DateOnly(2025,10,12), "d/m/yyyy");
-```
-
-You can use one of some predefined format declared in the class Definitions.cs.
-
-
-```
-// set a double value and format it with 2 decimals, e.g.: 12,30
-// Definitions.NumFmtNumberTwoDec2= "0.00"
-proc.SetCellValue(excelSheet, "B5", 12.3, Definitions.NumFmtNumberTwoDec2);
-
-// set a formated date
-// Definitions.NumFmtDayMonthYear14= "d/m/yyyy"
-proc.SetCellValue(excelSheet, "C4", new DateOnly(2025,12,28), Definitions.NumFmtDayMonthYear14);
 ```
 
 If you set a value (string, int or double) without format in a existing cell, the defined format of the cell is used as much as possible.

@@ -259,8 +259,6 @@ public class ExcelProcessor : ExcelProcessorBase
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="rowIndex"></param>
-    /// <param name="excelRow"></param>
-    /// <param name="error"></param>
     /// <returns></returns>
     public ExcelRow GetRowAt(ExcelSheet excelSheet, int rowIndex)
     {
@@ -374,7 +372,8 @@ public class ExcelProcessor : ExcelProcessorBase
     /// If the cell is empty/blank, in some cases the type will be Undefined.
     /// </summary>
     /// <param name="excelSheet"></param>
-    /// <param name="excelCell"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
     /// <returns></returns>
     public ExcelCellType GetCellType(ExcelSheet excelSheet, int colIdx, int rowIdx)
     {
@@ -434,8 +433,6 @@ public class ExcelProcessor : ExcelProcessorBase
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="cellReference"></param>
-    /// <param name="excelCell"></param>
-    /// <param name="error"></param>
     /// <returns></returns>
     public ExcelCell CreateCell(ExcelSheet excelSheet, string cellReference)
     {
@@ -451,8 +448,6 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="excelSheet"></param>
     /// <param name="colIdx"></param>
     /// <param name="rowIdx"></param>
-    /// <param name="excelCell"></param>
-    /// <param name="error"></param>
     /// <returns></returns>
     public ExcelCell CreateCell(ExcelSheet excelSheet, int colIdx, int rowIdx)
     {
@@ -469,9 +464,7 @@ public class ExcelProcessor : ExcelProcessorBase
     /// If there is not cell at the address, no eror will occur.
     /// </summary>
     /// <param name="excelSheet"></param>
-    /// <param name="colIdx"></param>
-    /// <param name="rowIdx"></param>
-    /// <param name="error"></param>
+    /// <param name="cellReference"></param>
     /// <returns></returns>
     public bool RemoveCell(ExcelSheet excelSheet, string cellReference)
     {
@@ -483,8 +476,8 @@ public class ExcelProcessor : ExcelProcessorBase
     /// If there is not cell at the address, no eror will occur.
     /// </summary>
     /// <param name="excelSheet"></param>
-    /// <param name="cellAddress"></param>
-    /// <param name="error"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
     /// <returns></returns>
     public bool RemoveCell(ExcelSheet excelSheet, int colIdx, int rowIdx)
     {
@@ -580,11 +573,11 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="excelSheet"></param>
     /// <param name="cellReference"></param>
     /// <param name="value"></param>
-    /// <param name="format"></param>
+    /// <param name="numberFormat"></param>
     /// <returns></returns>
-    public bool SetCellValue(ExcelSheet excelSheet, string cellReference, DateTime value, string format)
+    public bool SetCellValue(ExcelSheet excelSheet, string cellReference, DateTime value, string numberFormat)
     {
-        return SetCellValue(excelSheet, ExcelUtils.GetColumnIndex(cellReference), ExcelUtils.GetRowIndex(cellReference), value, format);
+        return SetCellValue(excelSheet, ExcelUtils.GetColumnIndex(cellReference), ExcelUtils.GetRowIndex(cellReference), value, numberFormat);
     }
 
     /// <summary>
@@ -594,11 +587,11 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="excelSheet"></param>
     /// <param name="cellReference"></param>
     /// <param name="value"></param>
-    /// <param name="format"></param>
+    /// <param name="numberFormat"></param>
     /// <returns></returns>
-    public bool SetCellValue(ExcelSheet excelSheet, string cellReference, TimeOnly value, string format)
+    public bool SetCellValue(ExcelSheet excelSheet, string cellReference, TimeOnly value, string numberFormat)
     {
-        return SetCellValue(excelSheet, ExcelUtils.GetColumnIndex(cellReference), ExcelUtils.GetRowIndex(cellReference), value, format);
+        return SetCellValue(excelSheet, ExcelUtils.GetColumnIndex(cellReference), ExcelUtils.GetRowIndex(cellReference), value, numberFormat);
     }
 
     /// <summary>
@@ -606,14 +599,13 @@ public class ExcelProcessor : ExcelProcessorBase
     /// If the cell does not exist, it will be created.
     /// </summary>
     /// <param name="excelSheet"></param>
-    /// <param name="colIdx"></param>
-    /// <param name="rowIdx"></param>
+    /// <param name="cellReference"></param>
     /// <param name="value"></param>
-    /// <param name="error"></param>
+    /// <param name="numberFormat"></param>
     /// <returns></returns>
-    public bool SetCellValue(ExcelSheet excelSheet, string cellReference, DateOnly value, string format)
+    public bool SetCellValue(ExcelSheet excelSheet, string cellReference, DateOnly value, string numberFormat)
     {
-        return SetCellValue(excelSheet, ExcelUtils.GetColumnIndex(cellReference), ExcelUtils.GetRowIndex(cellReference), value, format);
+        return SetCellValue(excelSheet, ExcelUtils.GetColumnIndex(cellReference), ExcelUtils.GetRowIndex(cellReference), value, numberFormat);
     }
 
     /// <summary>
@@ -625,7 +617,6 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="excelSheet"></param>
     /// <param name="colIdx"></param>
     /// <param name="rowIdx"></param>
-    /// <param name="error"></param>
     /// <returns></returns>
     public bool SetCellValueEmpty(ExcelSheet excelSheet, int colIdx, int rowIdx)
     {
@@ -648,7 +639,6 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="colIdx"></param>
     /// <param name="rowIdx"></param>
     /// <param name="value"></param>
-    /// <param name="error"></param>
     /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, string value)
     {
@@ -665,7 +655,6 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="colIdx"></param>
     /// <param name="rowIdx"></param>
     /// <param name="value"></param>
-    /// <param name="error"></param>
     /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, int value)
     {
@@ -682,7 +671,6 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="colIdx"></param>
     /// <param name="rowIdx"></param>
     /// <param name="value"></param>
-    /// <param name="error"></param>
     /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, double value)
     {
@@ -699,13 +687,13 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="colIdx"></param>
     /// <param name="rowIdx"></param>
     /// <param name="value"></param>
-    /// <param name="error"></param>
+    /// <param name="numberFormat"></param>
     /// <returns></returns>
-    public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, DateOnly value, string format)
+    public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, DateOnly value, string numberFormat)
     {
         string colName = ExcelUtils.GetColumnName(colIdx);
         ExcelCell excelCell = CreateCell(excelSheet, colName, (uint)rowIdx);
-        return SetCellValue(excelSheet, excelCell, value, format);
+        return SetCellValue(excelSheet, excelCell, value, numberFormat);
     }
 
     /// <summary>
@@ -716,13 +704,13 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="colIdx"></param>
     /// <param name="rowIdx"></param>
     /// <param name="value"></param>
-    /// <param name="error"></param>
+    /// <param name="numberFormat"></param>
     /// <returns></returns>
-    public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, DateTime value, string format)
+    public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, DateTime value, string numberFormat)
     {
         string colName = ExcelUtils.GetColumnName(colIdx);
         ExcelCell excelCell = CreateCell(excelSheet, colName, (uint)rowIdx);
-        return SetCellValue(excelSheet, excelCell, value, format);
+        return SetCellValue(excelSheet, excelCell, value, numberFormat);
     }
 
     /// <summary>
@@ -733,13 +721,13 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="colIdx"></param>
     /// <param name="rowIdx"></param>
     /// <param name="value"></param>
-    /// <param name="error"></param>
+    /// <param name="numberFormat"></param>
     /// <returns></returns>
-    public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, TimeOnly value, string format)
+    public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, TimeOnly value, string numberFormat)
     {
         string colName = ExcelUtils.GetColumnName(colIdx);
         ExcelCell excelCell = CreateCell(excelSheet, colName, (uint)rowIdx);
-        return SetCellValue(excelSheet, excelCell, value, format);
+        return SetCellValue(excelSheet, excelCell, value, numberFormat);
     }
 
     /// <summary>
@@ -750,13 +738,13 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="colIdx"></param>
     /// <param name="rowIdx"></param>
     /// <param name="value"></param>
-    /// <param name="error"></param>
+    /// <param name="numberFormat"></param>
     /// <returns></returns>
-    public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, double value, string format)
+    public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, double value, string numberFormat)
     {
         string colName = ExcelUtils.GetColumnName(colIdx);
         ExcelCell excelCell = CreateCell(excelSheet, colName, (uint)rowIdx);
-        return SetCellValue(excelSheet, excelCell, value, format);
+        return SetCellValue(excelSheet, excelCell, value, numberFormat);
     }
 
     #endregion Set cell value
