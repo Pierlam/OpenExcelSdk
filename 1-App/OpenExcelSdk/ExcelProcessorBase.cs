@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using OpenExcelSdk.System;
 
 namespace OpenExcelSdk;
 
@@ -689,6 +690,19 @@ public class ExcelProcessorBase
     #endregion Set cell value and number format Id
 
     #region Get something
+
+    /// <summary>
+    /// Get the foreground and background color of the cell.
+    /// background and/or foreground color can be null if there is no color defined.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <returns></returns>
+    public ExcelCellColor GetCellColor(ExcelSheet excelSheet, ExcelCell excelCell)
+    {
+        CellFormat cellFormat = GetCellFormat(excelSheet, excelCell);
+        return ColorMgr.GetCellColor(_styleMgr, excelSheet, excelCell, cellFormat);
+    }
 
     /// <summary>
     /// Get the style/CellFormat of the cell, if it has one.

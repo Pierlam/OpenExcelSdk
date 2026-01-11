@@ -1,4 +1,11 @@
-﻿## 0.4.0 Release (2025-12-30)
+﻿## 0.5.0 Release (2026-02-01)
+
+-Add export of all styles of an Excel.
+
+-GetCellColor(cell)  Get the background and foreground cell color.
+
+
+## 0.4.0 Release (2025-12-30)
 
 -Code Reworked, Simplification of several classes and methods.
 

@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
 using OpenExcelSdk;
+using OpenExcelSdk.System;
 
 namespace DevApp;
 
@@ -56,6 +57,9 @@ internal class CellReader
 
         cell = proc.GetCellAt(excelSheet, "B5");
         excelCellValue = proc.GetCellValue(excelSheet, cell);
+
+        ExcelCellColor cellColor= proc.GetCellColor(excelSheet, cell);
+
         cellFormat = proc.GetCellFormat(excelSheet, cell);
         if (cellFormat != null && cellFormat.BorderId != null)
         {

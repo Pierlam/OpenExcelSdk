@@ -1,6 +1,7 @@
 ﻿using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using OpenExcelSdk.System.Export;
 
 namespace OpenExcelSdk;
 
@@ -13,6 +14,28 @@ namespace OpenExcelSdk;
 /// </summary>
 public class ExcelProcessor : ExcelProcessorBase
 {
+    StylesExtractor _stylesExtractor;
+
+
+    public ExcelProcessor(): base()
+    {
+        _stylesExtractor = new StylesExtractor(this, _styleMgr);
+    }
+
+    /// <summary>
+    /// Export the styles of the excel file into an outpiut excel file.
+    /// </summary>
+    /// <param name="filenameIn"></param>
+    /// <param name="filenameOut"></param>
+    /// <returns></returns>
+    public ExcelStyles ExportStyles(string filenameIn, string filenameOut)
+    {
+        ExcelStyles excelStyles= _stylesExtractor.Extract(filenameIn);
+
+        StylesExporter.Export(this, excelStyles, filenameOut);
+        return excelStyles;
+    }
+
     #region Open/Close Create Excel file
 
     /// <summary>
@@ -169,6 +192,19 @@ public class ExcelProcessor : ExcelProcessorBase
         excelSheet.Index = (int)sheetId;
         excelSheet.Name = sheet.Name;
         return excelSheet;
+    }
+
+    /// <summary>
+    /// Return the number of sheets defined in the excel file.
+    /// </summary>
+    /// <param name="excelFile"></param>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    public int GetSheetCount(ExcelFile excelFile)
+    {
+        int? count= excelFile.WorkbookPart?.Workbook?.GetFirstChild<Sheets>()?.Elements<Sheet>()?.Count();
+        if (count == null) return 0; 
+        return count.Value;
     }
 
     /// <summary>

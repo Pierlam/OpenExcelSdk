@@ -1,5 +1,7 @@
 ﻿using DevApp;
+using DocumentFormat.OpenXml;
 using OpenExcelSdk;
+using OpenExcelSdk.System.Export;
 
 void DevCloneStyle()
 {
@@ -31,6 +33,20 @@ void ConvertDouble()
     double valDouble = double.Parse(value);
 }
 
+ExcelStyles ExportStyles()
+{
+    ExcelProcessor proc = new ExcelProcessor();
+    //string filename = @"Files\DevCloneStyle.xlsx";
+    string filename = @"Files\CellFormats.xlsx";
+    string filenameOut = @"Out\ListStyles.xlsx";
+
+    if (File.Exists(filenameOut))
+        File.Delete(filenameOut);
+
+    // export
+    return proc.ExportStyles(filename, filenameOut);
+}
+
 Console.WriteLine("=> OpenExcelSdk DevApp:");
 
 //CellReader.Read();
@@ -39,10 +55,15 @@ Console.WriteLine("=> OpenExcelSdk DevApp:");
 
 //DevCloneStyle();
 
-//CellReader.ReadCellFormats();
 
 //CellReader.CheckFilePb();
 
-EasierWay.TestFctLight();
+//EasierWay.TestFctLight();
+
+//CellReader.ReadCellFormats();
+
+
+//var Rgb = HexBinaryValue.FromString("#00FF00");
+ExcelStyles excelStyles =ExportStyles();
 
 Console.WriteLine("=> Ok, Ends.");
