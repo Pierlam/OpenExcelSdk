@@ -8,14 +8,15 @@ namespace OpenExcelSdk.System;
 
 /// <summary>
 /// Excel cell color, can be foreground or background cell color.
+/// For PatternType = Solid, ForegroundColor is the actual fill color, and BackgroundColor is ignored.
 /// </summary>
 public class ExcelCellColor
 {
-    public ExcelCellColor(ExcelCell excelCell, uint fillId, ExcelColor BgColor, ExcelColor fgColor)
+    public ExcelCellColor(ExcelCell excelCell, uint fillId, ExcelColor bgColor, ExcelColor fgColor)
     {
         ExcelCell = excelCell;
         FillId = fillId;
-        BgColor = BgColor;
+        BgColor = bgColor;
         FgColor = fgColor;
     }
 

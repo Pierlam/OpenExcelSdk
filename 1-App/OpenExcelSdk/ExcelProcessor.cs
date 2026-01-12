@@ -1,6 +1,8 @@
 ﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using OpenExcelSdk.System;
 using OpenExcelSdk.System.Export;
 
 namespace OpenExcelSdk;
@@ -213,7 +215,7 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="excelFile"></param>
     /// <param name="index"></param>
     /// <returns></returns>
-    public ExcelSheet GetFirstSheet(ExcelFile excelFile, int index)
+    public ExcelSheet GetFirstSheet(ExcelFile excelFile)
     {
         return GetSheetAt(excelFile, 0);
     }
@@ -333,8 +335,6 @@ public class ExcelProcessor : ExcelProcessorBase
 
     #endregion Get row
 
-
-
     #region Get Cell at
 
     /// <summary>
@@ -375,7 +375,7 @@ public class ExcelProcessor : ExcelProcessorBase
             var excelCell = new ExcelCell(excelSheet, cell);
 
             // get the style of the cell
-            excelCell.CellFormat = GetCellFormat(excelSheet, excelCell);
+            excelCell.CellFormat = ExcelUtils.GetCellFormat(excelSheet, excelCell);
 
             return excelCell;
         }
@@ -460,6 +460,41 @@ public class ExcelProcessor : ExcelProcessorBase
     }
 
     #endregion Get CellValue
+
+    #region Get something
+
+    /// <summary>
+    /// Get the foreground and background color of the cell.
+    /// background and/or foreground color can be null if there is no color defined.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <returns></returns>
+    public ExcelCellColor GetCellColor(ExcelSheet excelSheet, string cellReference)
+    {
+        ExcelCell excelCell = GetCellAt(excelSheet, cellReference);
+        if (excelCell == null) return null;
+
+        return GetCellColor(excelSheet, excelCell);
+    }
+
+    /// <summary>
+    /// Get the foreground and background color of the cell.
+    /// background and/or foreground color can be null if there is no color defined.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <returns></returns>
+    public ExcelCellColor GetCellColor(ExcelSheet excelSheet, int colIdx, int rowIdx)
+    {
+        ExcelCell excelCell = GetCellAt(excelSheet, colIdx, rowIdx);
+        if (excelCell == null) return null;
+
+        return GetCellColor(excelSheet, excelCell);
+
+    }
+
+    #endregion
 
     #region Create cell
 
@@ -784,4 +819,38 @@ public class ExcelProcessor : ExcelProcessorBase
     }
 
     #endregion Set cell value
+
+    #region Set Cell something else
+
+    /// <summary>
+    /// Set a color to a cell.
+    /// Technically set a color to the foreground property, null into background one and set Solid to the pattern property.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="rgb"></param>
+    /// <returns></returns>
+    public ExcelCellColor SetCellColor(ExcelSheet excelSheet,  string cellReference, string rgb)
+    {
+        ExcelCell excelCell = GetCellAt(excelSheet, cellReference);
+        if (excelCell == null) return null;
+        return SetCellColor(excelSheet, excelCell, rgb);
+    }
+
+    /// <summary>
+    /// Set a color to a cell.
+    /// Technically set a color to the foreground property, null into background one and set Solid to the pattern property.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="rgb"></param>
+    /// <returns></returns>
+    public ExcelCellColor SetCellColor(ExcelSheet excelSheet, int colIdx, int rowIdx, string rgb)
+    {
+        string colName = ExcelUtils.GetColumnName(colIdx);
+        ExcelCell excelCell = CreateCell(excelSheet, colName, (uint)rowIdx);
+        return SetCellColor(excelSheet, excelCell, rgb);
+    }
+
+    #endregion
 }

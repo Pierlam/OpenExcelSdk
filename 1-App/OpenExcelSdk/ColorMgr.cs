@@ -11,25 +11,105 @@ namespace OpenExcelSdk;
 public class ColorMgr
 {
     /// <summary>
+    /// Set a foreground color to a cell, with pattern set to Solid.
+    /// So the background color has no effect.
+    /// If the cell has alreayd this foreground color, return the cell color without any modification.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="rgb"></param>
+    /// <returns></returns>
+    public static ExcelCellColor SetCellFgColor(StyleMgr styleMgr, ExcelSheet excelSheet, ExcelCell excelCell, string rgb)
+    {
+        if (string.IsNullOrEmpty(rgb)) return null;
+        if (!rgb.StartsWith("#")) return null;
+        if (rgb.Length!=7) return null;
+
+        CellFormat cellFormat = ExcelUtils.GetCellFormat(excelSheet, excelCell);
+
+        Fill fill = ColorMgr.GetCellFill(excelSheet, excelCell);
+        ExcelCellColor excelCellColor=  GetCellColor(styleMgr, excelSheet, excelCell);
+
+        if (excelCellColor != null && excelCellColor.FgColor!=null)
+        {
+            // The cell has already this color ?
+            if (excelCellColor.FgColor.Rgb.Equals(rgb) && excelCellColor.BgColor==null) return excelCellColor;
+        }
+
+        // is there a fill with the same fg color (+bg=null) ?
+        Fill fillFound = GetFillByFgColorRgb(styleMgr, excelSheet, rgb, out int indexFillFound);
+
+        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+
+        if (fillFound != null)
+        {
+            // is there a CellFormat matching ?
+            cellFormat = styleMgr.FindCellFormatWithFgColor(stylesPart, cellFormat, indexFillFound, out int index);
+            if(cellFormat != null) 
+            {
+                excelCell.Cell.StyleIndex = (uint)index;
+                excelCell.CellFormat = cellFormat;
+                return GetCellColor(styleMgr, excelSheet, excelCell);
+            }
+        }
+
+
+        // have to create a new Fill object, and so a new CellFormat, copy other parts
+        // TODO:
+
+
+
+        // TODO:
+        return null;
+    }
+
+    /// <summary>
+    /// Is there a fill with the same fg color (+bg=null) ?
+    /// </summary>
+    /// <param name="rgb"></param>
+    /// <returns></returns>
+    static Fill GetFillByFgColorRgb(StyleMgr styleMgr, ExcelSheet excelSheet, string rgb, out int indexFillFound)
+    {
+        indexFillFound = -1;
+
+        for (int i = 0; i < excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet.Fills.Elements().Count(); i++)
+        {
+            Fill fill = (Fill)excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet.Fills.ElementAt(i);
+
+            ExcelColor bgColor = GetCellBackgroundColor(styleMgr, excelSheet, fill);
+            // bg color is set, not expected
+            if (bgColor != null) continue;
+
+            ExcelColor fgColor = GetCellForegroundColor(styleMgr, excelSheet, fill);
+            if (fgColor == null) continue;
+
+            indexFillFound = i;
+            if (fgColor.Rgb.Equals(rgb)) return fill;
+        }
+
+        // not found
+        return null;
+    }
+
+
+    /// <summary>
     /// Get the foreground and background color of the cell.
     /// background and/or foreground color can be null if there is no color defined.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
     /// <returns></returns>
-    public static ExcelCellColor GetCellColor(StyleMgr styleMgr, ExcelSheet excelSheet, ExcelCell excelCell, CellFormat cellFormat)
+    public static ExcelCellColor GetCellColor(StyleMgr styleMgr, ExcelSheet excelSheet, ExcelCell excelCell)
     {
+        CellFormat cellFormat = ExcelUtils.GetCellFormat(excelSheet, excelCell);
         if (cellFormat == null) return null;
 
-        if (cellFormat.FillId == null) return null;
-
-        uint fillId = cellFormat.FillId.Value;
-        Fill fill = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet.Fills.ElementAt((int)fillId) as DocumentFormat.OpenXml.Spreadsheet.Fill;
+        Fill fill = ColorMgr.GetCellFill(excelSheet, excelCell);
 
         ExcelColor bgColor = GetCellBackgroundColor(styleMgr, excelSheet, fill);
         ExcelColor fgColor = GetCellForegroundColor(styleMgr, excelSheet, fill);
-        ExcelCellColor excelCellColor = new ExcelCellColor(excelCell, fillId, bgColor, fgColor);
-
+        ExcelCellColor excelCellColor = new ExcelCellColor(excelCell, cellFormat.FillId, bgColor, fgColor);
+                
         //-XXDEBUG:
         //if(fill.GradientFill!=null)
         //{
@@ -100,12 +180,35 @@ public class ColorMgr
         return null;
     }
 
+    /// <summary>
+    /// Return the fill (bg and fg colors) object of the cell.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="rgb"></param>
+    /// <returns></returns>
+    public static Fill GetCellFill(ExcelSheet excelSheet, ExcelCell excelCell)
+    {
+        CellFormat cellFormat = ExcelUtils.GetCellFormat(excelSheet, excelCell);
+        if (cellFormat == null) return null;
+
+        if (cellFormat.FillId == null) return null;
+        
+        uint fillId = cellFormat.FillId.Value;
+        return excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet.Fills.ElementAt((int)fillId) as Fill;        
+    }
+
+    /// <summary>
+    /// Get the color base on the hexa code if it exists.
+    /// </summary>
+    /// <param name="rgb"></param>
+    /// <returns></returns>
     static ColorName GetColorName(string rgb)
     {
         if(string.IsNullOrWhiteSpace(rgb))return ColorName.Undefined;
-        if (rgb.Equals("FFFF00")) return ColorName.Yellow;
-        if (rgb.Equals("FF0000")) return ColorName.Red;
-        if (rgb.Equals("0000FF")) return ColorName.Blue;
+        if (rgb.Equals("#FFFF00")) return ColorName.Yellow;
+        if (rgb.Equals("#FF0000")) return ColorName.Red;
+        if (rgb.Equals("#0000FF")) return ColorName.Blue;
 
         return ColorName.Undefined;
     }

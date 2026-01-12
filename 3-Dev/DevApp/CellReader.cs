@@ -49,7 +49,7 @@ internal class CellReader
         cell = proc.GetCellAt(excelSheet, "B2");
         var cellValueType = proc.GetCellValue(excelSheet, cell);
         excelCellValue = proc.GetCellValue(excelSheet, cell);
-        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        cellFormat = ExcelUtils.GetCellFormat(excelSheet, cell);
         //cellFormat.BorderId
 
         //--B4: int, bgcolor
@@ -58,15 +58,18 @@ internal class CellReader
         cell = proc.GetCellAt(excelSheet, "B5");
         excelCellValue = proc.GetCellValue(excelSheet, cell);
 
-        ExcelCellColor cellColor= proc.GetCellColor(excelSheet, cell);
+        //--B5 bgcolor =yellow
+        ExcelCellColor cellColor= proc.GetCellColor(excelSheet, "B3");
+        cell = proc.GetCellAt(excelSheet, "B3");
+        proc.SetCellColor(excelSheet, cell, "#FFFF00");
 
-        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        cellFormat = ExcelUtils.GetCellFormat(excelSheet, cell);
         if (cellFormat != null && cellFormat.BorderId != null)
         {
             uint fillId = cellFormat.FillId.Value;
             DocumentFormat.OpenXml.Spreadsheet.Fill fill = excelFile.WorkbookPart.WorkbookStylesPart.Stylesheet.Fills.ElementAt((int)fillId) as DocumentFormat.OpenXml.Spreadsheet.Fill;
 
-            if (fill?.PatternFill?.BackgroundColor != null)
+            if (fill?.PatternFill?.ForegroundColor != null)
             {
                 DocumentFormat.OpenXml.Spreadsheet.ForegroundColor fgColor = fill.PatternFill.ForegroundColor;
 

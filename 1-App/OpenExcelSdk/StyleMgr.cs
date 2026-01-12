@@ -216,6 +216,35 @@ public class StyleMgr
     }
 
     /// <summary>
+    /// same style/cellFormat already exists?
+    /// </summary>
+    /// <param name="cellFormat"></param>
+    /// <param name="numberFormatId"></param>
+    /// <returns></returns>
+    public CellFormat? FindCellFormatWithFgColor(WorkbookStylesPart stylesPart, CellFormat cellFormat, int fillId, out int index)
+    {
+        index = 0;
+        if (cellFormat == null) return null;
+        if (stylesPart.Stylesheet == null) return null;
+
+        // scan each cell format, only on object, not an apply flag
+        for (int i = 0; i < stylesPart.Stylesheet.CellFormats.Elements().Count(); i++)
+        {
+            index = i;
+            var cellFormatFound = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt(i);
+            if (cellFormatFound.Alignment == cellFormat.Alignment &&
+                cellFormatFound.BorderId == cellFormat.BorderId &&
+                // fillId
+                cellFormatFound.FillId == fillId &&
+                cellFormatFound.Protection == cellFormat.Protection &&
+                cellFormatFound.FontId == cellFormat.FontId &&
+                cellFormatFound.NumberFormatId == cellFormat.NumberFormatId)
+                return cellFormatFound;
+        }
+        return null;
+    }
+
+    /// <summary>
     /// Create a new custom format.
     ///
     /// IDs 0-163 are reserved by Excel

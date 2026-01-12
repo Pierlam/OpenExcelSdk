@@ -36,22 +36,17 @@ public class StylesExporter
             if (styleTable.BgColor != null)
             {
                 if (styleTable.BgColor.ThemeIndex > 0)
-                {
                     excelProcessor.SetCellValue(excelSheetOut, "H" + rowIdx, styleTable.BgColor.ThemeIndex);
-                    excelProcessor.SetCellValue(excelSheetOut, "I" + rowIdx, styleTable.BgColor.Rgb);
-                }else
-                    excelProcessor.SetCellValue(excelSheetOut, "I" + rowIdx, styleTable.BgColor.ARgb);
+
+                excelProcessor.SetCellValue(excelSheetOut, "I" + rowIdx, styleTable.BgColor.Rgb);
             }
 
             if (styleTable.FgColor != null)
             {
                 if (styleTable.FgColor.ThemeIndex > 0)
-                {
                     excelProcessor.SetCellValue(excelSheetOut, "J" + rowIdx, styleTable.FgColor.ThemeIndex);
-                    excelProcessor.SetCellValue(excelSheetOut, "K" + rowIdx, styleTable.FgColor.Rgb);
-                }
-                else
-                    excelProcessor.SetCellValue(excelSheetOut, "K" + rowIdx, styleTable.FgColor.ARgb);
+
+                excelProcessor.SetCellValue(excelSheetOut, "K" + rowIdx, styleTable.FgColor.Rgb);
             }
 
             i++;

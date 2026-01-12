@@ -28,6 +28,12 @@
     <None Update="10-Files\CreateSheet.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="10-Files\SetCellColor.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="10-Files\GetCellColors.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="10-Files\SetCellValueEmpty.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

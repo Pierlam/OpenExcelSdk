@@ -315,7 +315,7 @@ public class ExcelProcessorBase
             // the cell at the provided address exists
             ExcelCell excelCell = new ExcelCell(excelSheet, cell);
             // get the style of the cell
-            excelCell.CellFormat = GetCellFormat(excelSheet, excelCell);
+            excelCell.CellFormat = ExcelUtils.GetCellFormat(excelSheet, excelCell);
             return excelCell;
         }
 
@@ -689,6 +689,23 @@ public class ExcelProcessorBase
 
     #endregion Set cell value and number format Id
 
+    #region Set cell something
+
+    /// <summary>
+    /// Set a color to a cell.
+    /// Technically set a color to the foreground property, null into background one and set Solid to the pattern property.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <param name="rgb"></param>
+    /// <returns></returns>
+    public ExcelCellColor SetCellColor(ExcelSheet excelSheet, ExcelCell excelCell, string rgb)
+    {
+        return ColorMgr.SetCellFgColor(_styleMgr, excelSheet, excelCell, rgb);
+    }
+
+    #endregion
+
     #region Get something
 
     /// <summary>
@@ -700,25 +717,25 @@ public class ExcelProcessorBase
     /// <returns></returns>
     public ExcelCellColor GetCellColor(ExcelSheet excelSheet, ExcelCell excelCell)
     {
-        CellFormat cellFormat = GetCellFormat(excelSheet, excelCell);
-        return ColorMgr.GetCellColor(_styleMgr, excelSheet, excelCell, cellFormat);
+        return ColorMgr.GetCellColor(_styleMgr, excelSheet, excelCell);
     }
 
     /// <summary>
     /// Get the style/CellFormat of the cell, if it has one.
+    /// It's an OpenXml object.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
     /// <returns></returns>
-    public CellFormat GetCellFormat(ExcelSheet excelSheet, ExcelCell excelCell)
-    {
-        if (excelCell.Cell.StyleIndex == null)
-            // no style, no cell format
-            return null;
+    //public CellFormat GetCellFormat(ExcelSheet excelSheet, ExcelCell excelCell)
+    //{
+    //    if (excelCell.Cell.StyleIndex == null)
+    //        // no style, no cell format
+    //        return null;
 
-        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
-        return (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
-    }
+    //    var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+    //    return (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
+    //}
 
     /// <summary>
     /// Return the count of custom number formats in the excel sheet. It's style on cell

@@ -60,10 +60,10 @@ Console.WriteLine("=> OpenExcelSdk DevApp:");
 
 //EasierWay.TestFctLight();
 
-//CellReader.ReadCellFormats();
+CellReader.ReadCellFormats();
 
 
 //var Rgb = HexBinaryValue.FromString("#00FF00");
-ExcelStyles excelStyles =ExportStyles();
+//ExcelStyles excelStyles =ExportStyles();
 
 Console.WriteLine("=> Ok, Ends.");
