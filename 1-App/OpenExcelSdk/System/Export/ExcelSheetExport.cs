@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace OpenExcelSdk.System.Export;
 
-public class SheetTable
+public class ExcelSheetExport
 {
-    public SheetTable(int index, string name)
+    public ExcelSheetExport(int index, string name)
     {
         Index = index;
         Name = name;

@@ -8,9 +8,13 @@ using System.Threading.Tasks;
 
 namespace OpenExcelSdk.System.Export;
 
-public class StyleTable
+/// <summary>
+/// One style (which is CellFormat) entry in the style table.
+/// Style is identified by its StyleIndex in the Styles part.
+/// </summary>
+public class ExcelStyleExport
 {
-    public StyleTable(int sheetIndex, int styleIdx, int numberFormatId, string numberFormat)
+    public ExcelStyleExport(int sheetIndex, int styleIdx, int numberFormatId, string numberFormat)
     {
         SheetIndex= sheetIndex;
         StyleIndex= styleIdx;
@@ -27,9 +31,8 @@ public class StyleTable
 
     public int FillId { get; set; }
 
-    public string FillPattern { get; set; }
+    public int BorderId { get; set; }
 
-    public ExcelColor? BgColor { get; set; } = null;
-    public ExcelColor? FgColor { get; set; } = null;
+    public int FontId { get; set; }
 
 }

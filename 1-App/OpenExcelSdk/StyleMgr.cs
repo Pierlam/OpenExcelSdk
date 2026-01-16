@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 
@@ -24,7 +25,7 @@ public class StyleMgr
     /// <param name="excelSheet"></param>
     /// <param name="excelCell"></param>
     /// <returns></returns>
-    public bool UpdateCellStyleNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, uint? numberFormatId)
+    public bool CreateCellFormatSetNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, uint? numberFormatId)
     {
         var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
 
@@ -91,6 +92,74 @@ public class StyleMgr
         int count = stylesPart.Stylesheet.CellFormats.Elements().Count();
         excelCell.Cell.StyleIndex = (uint)(count - 1);
         return true;
+    }
+
+    public bool CreateCellFormatSetFillId(ExcelSheet excelSheet, ExcelCell excelCell, int fillId,  out int index)
+    {
+        index = 0;
+
+        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+
+        CellFormat? currCellFormat = null;
+
+        // the cell has a style, a CellFormat?
+        if (excelCell.Cell.StyleIndex != null)
+        {
+            // get the style of cell
+            currCellFormat = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
+        }
+        else
+        {
+            // cell has no CellFormat, create a new one
+            currCellFormat = CreateCellFormat();
+        }
+
+        // the cell has no style, no cellFormat, need to create a new style
+        var cellFormat = new CellFormat
+        {
+            ApplyAlignment = currCellFormat.ApplyAlignment,
+            ApplyBorder = currCellFormat.ApplyBorder,
+            ApplyFill = true,
+            ApplyFont = currCellFormat.ApplyFont,
+            ApplyProtection = currCellFormat.ApplyProtection,
+            ApplyNumberFormat = currCellFormat.ApplyNumberFormat,
+
+            Alignment = currCellFormat.Alignment,
+            BorderId = currCellFormat.BorderId,
+            FontId = currCellFormat.FontId,
+            NumberFormatId = currCellFormat.NumberFormatId,
+            Protection = currCellFormat.Protection,
+
+            // set the new value
+            FillId = (uint)fillId,
+        };
+
+        // append the new style
+        stylesPart.Stylesheet.CellFormats.AppendChild(cellFormat);
+
+        stylesPart.Stylesheet.Save();
+
+        // get the index and set to cell
+        int count = stylesPart.Stylesheet.CellFormats.Elements().Count();
+        excelCell.Cell.StyleIndex = (uint)(count - 1);
+        return true;
+    }
+
+    /// <summary>
+    /// Create a CellFormat.
+    /// ! all id have to be set to 0 and not to null!
+    /// </summary>
+    /// <returns></returns>
+    public CellFormat CreateCellFormat()
+    {
+        var currCellFormat = new CellFormat();
+
+        currCellFormat.BorderId = 0;
+        currCellFormat.FontId = 0;
+        currCellFormat.NumberFormatId = 0;
+        currCellFormat.FillId = 0;
+
+        return currCellFormat;
     }
 
     /// <summary>
@@ -333,23 +402,6 @@ public class StyleMgr
     }
 
     /// <summary>
-    /// Create a CellFormat.
-    /// ! all id have to be set to 0 and not null!
-    /// </summary>
-    /// <returns></returns>
-    public CellFormat CreateCellFormat()
-    {
-        var currCellFormat = new CellFormat();
-
-        currCellFormat.BorderId = 0;
-        currCellFormat.FontId = 0;
-        currCellFormat.NumberFormatId = 0;
-        currCellFormat.FillId = 0;
-
-        return currCellFormat;
-    }
-
-    /// <summary>
     /// Remove the formula from a cell.
     /// </summary>
     /// <param name="excelSheet"></param>
@@ -380,6 +432,34 @@ public class StyleMgr
             excelSheet.ExcelFile.WorkbookPart.DeletePart(calculationChainPart);
 
         return true;
+    }
+
+    public int CreateFill(ExcelSheet excelSheet, string rgb)
+    {
+        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        var fills = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet.Fills;
+
+        // remove the first char which is #
+        if (rgb.StartsWith("#"))
+            rgb = rgb[1..];
+
+        // add Alpha
+        rgb = "FF" + rgb;
+
+        // Value = "FFFF00" 
+        var fill = new Fill(new PatternFill(
+               new ForegroundColor() { Rgb = new HexBinaryValue() { Value = rgb } }
+           //new BackgroundColor() { Indexed = 64 }
+           )
+        { PatternType = PatternValues.Solid });
+
+        // append the new fill
+        fills.AppendChild(fill);
+
+        stylesPart.Stylesheet.Save();
+
+        // get the index and set to cell
+        return stylesPart.Stylesheet.Fills.Elements().Count()-1;
     }
 
     /// <summary>

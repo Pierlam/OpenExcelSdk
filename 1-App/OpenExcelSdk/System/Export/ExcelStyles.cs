@@ -8,9 +8,33 @@ namespace OpenExcelSdk.System.Export;
 
 /// <summary>
 /// All styles of an Excel file.
+/// 
 /// </summary>
 public class ExcelStyles
 {
-    public List<SheetTable> ListSheetTable { get; set; } = new List<SheetTable>();  
-    public List<StyleTable> ListStyleTable { get; set; } = new List<StyleTable>();
+    /// <summary>
+    /// Sheet table list.
+    /// SheetExport
+    /// </summary>
+    public List<ExcelSheetExport> ListSheet { get; set; } = new List<ExcelSheetExport>();
+
+    /// <summary>
+    /// Style (CellFormat) table list.
+    /// </summary>
+    public List<ExcelStyleExport> ListStyle { get; set; } = new List<ExcelStyleExport>();
+
+    /// <summary>
+    /// Fill list.
+    /// </summary>
+    public List<ExcelFillExport> ListFills { get; set; } = new List<ExcelFillExport>();
+
+    /// <summary>
+    /// Border list.
+    /// </summary>
+    public List<ExcelBorderExport> ListBorders { get; set; } = new List<ExcelBorderExport>();
+
+    /// <summary>
+    /// Font list.
+    /// </summary>
+    public List<ExcelFontExport> ListFonts { get; set; } = new List<ExcelFontExport>();
 }

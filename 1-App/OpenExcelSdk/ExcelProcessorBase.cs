@@ -523,7 +523,7 @@ public class ExcelProcessorBase
             }
 
             // duplicate the style to update the CellFormat
-            _styleMgr.UpdateCellStyleNumberFormatId(excelSheet, excelCell, numberFormatId);
+            _styleMgr.CreateCellFormatSetNumberFormatId(excelSheet, excelCell, numberFormatId);
 
             return true;
         }
@@ -568,7 +568,7 @@ public class ExcelProcessorBase
         }
 
         // duplicate the style to update the CellFormat
-        _styleMgr.UpdateCellStyleNumberFormatId(excelSheet, excelCell, numberFormatId);
+        _styleMgr.CreateCellFormatSetNumberFormatId(excelSheet, excelCell, numberFormatId);
 
         return true;
     }
@@ -606,7 +606,7 @@ public class ExcelProcessorBase
         if (numberFormatIdCell == (numberFormatId ?? 0)) return true;
 
         // duplicate the style to update the CellFormat
-        _styleMgr.UpdateCellStyleNumberFormatId(excelSheet, excelCell, numberFormatId);
+        _styleMgr.CreateCellFormatSetNumberFormatId(excelSheet, excelCell, numberFormatId);
 
         return true;
     }
@@ -641,7 +641,7 @@ public class ExcelProcessorBase
         if (numberFormatIdCell == (numberFormatId ?? 0)) return true;
 
         // duplicate the style to update the CellFormat
-        _styleMgr.UpdateCellStyleNumberFormatId(excelSheet, excelCell, numberFormatId);
+        _styleMgr.CreateCellFormatSetNumberFormatId(excelSheet, excelCell, numberFormatId);
 
         return true;
     }
@@ -682,7 +682,7 @@ public class ExcelProcessorBase
         if (numberFormatIdCell == (numberFormatId ?? 0)) return true;
 
         // duplicate the style to update the CellFormat
-        _styleMgr.UpdateCellStyleNumberFormatId(excelSheet, excelCell, numberFormatId);
+        _styleMgr.CreateCellFormatSetNumberFormatId(excelSheet, excelCell, numberFormatId);
 
         return true;
     }

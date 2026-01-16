@@ -2,6 +2,7 @@
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
+using OpenExcelSdk.Export;
 using OpenExcelSdk.System;
 using OpenExcelSdk.System.Export;
 
@@ -32,9 +33,26 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <returns></returns>
     public ExcelStyles ExportStyles(string filenameIn, string filenameOut)
     {
-        ExcelStyles excelStyles= _stylesExtractor.Extract(filenameIn);
+        // extract the styles from the input file
+        ExcelStyles excelStyles = _stylesExtractor.Extract(filenameIn);
 
-        StylesExporter.Export(this, excelStyles, filenameOut);
+        ExcelFile excelFileOut = CreateExcelFile(filenameOut, "Styles");
+
+        // tabpage one: Styles
+        ExcelStylesExporter.Export(this, excelStyles, excelFileOut);
+
+        // tabpage two: Fills
+        ExcelFillsExporter.ExportFills(this, excelStyles, excelFileOut);
+
+        // tabpage 3: Border
+        ExcelBordersExporter.ExportBorders(this, excelStyles, excelFileOut);
+
+        // tabpage 4: Font
+        ExcelFontsExporter.ExportFonts(this, excelStyles, excelFileOut);
+
+
+        CloseExcelFile(excelFileOut);
+
         return excelStyles;
     }
 

@@ -25,9 +25,6 @@ public class ColorMgr
         if (!rgb.StartsWith("#")) return null;
         if (rgb.Length!=7) return null;
 
-        CellFormat cellFormat = ExcelUtils.GetCellFormat(excelSheet, excelCell);
-
-        Fill fill = ColorMgr.GetCellFill(excelSheet, excelCell);
         ExcelCellColor excelCellColor=  GetCellColor(styleMgr, excelSheet, excelCell);
 
         if (excelCellColor != null && excelCellColor.FgColor!=null)
@@ -41,26 +38,30 @@ public class ColorMgr
 
         var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
 
+        CellFormat cellFormat = ExcelUtils.GetCellFormat(excelSheet, excelCell);
         if (fillFound != null)
         {
             // is there a CellFormat matching ?
             cellFormat = styleMgr.FindCellFormatWithFgColor(stylesPart, cellFormat, indexFillFound, out int index);
-            if(cellFormat != null) 
+            if (cellFormat != null)
             {
                 excelCell.Cell.StyleIndex = (uint)index;
                 excelCell.CellFormat = cellFormat;
                 return GetCellColor(styleMgr, excelSheet, excelCell);
             }
         }
+        else
+        {
+            indexFillFound = styleMgr.CreateFill(excelSheet, rgb);
+        }
 
 
-        // have to create a new Fill object, and so a new CellFormat, copy other parts
-        // TODO:
+        // have to create a new new CellFormat, copy other parts
+        styleMgr.CreateCellFormatSetFillId(excelSheet, excelCell, indexFillFound, out int styleIndex);
 
+        //excelCell.Cell.StyleIndex = (uint)styleIndex;
 
-
-        // TODO:
-        return null;
+        return GetCellColor(styleMgr, excelSheet, excelCell);
     }
 
     /// <summary>

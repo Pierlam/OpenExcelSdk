@@ -36,8 +36,9 @@ void ConvertDouble()
 ExcelStyles ExportStyles()
 {
     ExcelProcessor proc = new ExcelProcessor();
-    //string filename = @"Files\DevCloneStyle.xlsx";
-    string filename = @"Files\CellFormats.xlsx";
+
+    //string filename = @"Files\CellFormat.xlsx";
+    string filename = @"Files\SetCellColorOut.xlsx";
     string filenameOut = @"Out\ListStyles.xlsx";
 
     if (File.Exists(filenameOut))
@@ -60,10 +61,12 @@ Console.WriteLine("=> OpenExcelSdk DevApp:");
 
 //EasierWay.TestFctLight();
 
-CellReader.ReadCellFormats();
+//CellReader.ReadCellFormats();
 
 
 //var Rgb = HexBinaryValue.FromString("#00FF00");
-//ExcelStyles excelStyles =ExportStyles();
+
+
+ExcelStyles excelStyles =ExportStyles();
 
 Console.WriteLine("=> Ok, Ends.");
