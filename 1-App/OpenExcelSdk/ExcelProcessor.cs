@@ -34,21 +34,26 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <returns></returns>
     public ExcelAllStylesExport ExportAllStyles(string filenameIn, string filenameOut)
     {
+        ExcelFile excelFileIn = OpenExcelFile(filenameIn);
+
         // extract the styles from the input file
-        ExcelAllStylesExport excelStyles = _stylesExtractor.Extract(filenameIn);
+        ExcelAllStylesExport excelStyles = _stylesExtractor.Extract(excelFileIn);
 
         ExcelFile excelFileOut = CreateExcelFile(filenameOut, "Styles");
 
-        // tabpage one: Styles
+        // tabpage 1: first 1000 cells infis
+        ExcelCellExporter.Export(this, excelFileIn, excelFileOut);
+
+        // tabpage 2: Styles
         ExcelStylesExporter.Export(this, excelStyles, excelFileOut);
 
-        // tabpage two: Fills
+        // tabpage 3: Fills
         ExcelFillsExporter.ExportFills(this, excelStyles, excelFileOut);
 
-        // tabpage 3: Border
+        // tabpage 4: Border
         ExcelBordersExporter.ExportBorders(this, excelStyles, excelFileOut);
 
-        // tabpage 4: Font
+        // tabpage 5: Font
         ExcelFontsExporter.ExportFonts(this, excelStyles, excelFileOut);
 
 
@@ -93,6 +98,7 @@ public class ExcelProcessor : ExcelProcessorBase
     {
         try
         {
+            // flushes and save modifications, release resources
             excelFile.SpreadsheetDocument.Dispose();
             excelFile.SpreadsheetDocument = null;
         }

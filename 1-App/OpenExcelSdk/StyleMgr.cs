@@ -272,6 +272,8 @@ public class StyleMgr
         {
             index = i;
             var cellFormatFound = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt(i);
+
+            // it is the expected cell format?
             if (cellFormatFound.Alignment == cellFormat.Alignment &&
                 cellFormatFound.BorderId == cellFormat.BorderId &&
                 cellFormatFound.FillId == cellFormat.FillId &&
@@ -301,13 +303,18 @@ public class StyleMgr
         {
             index = i;
             var cellFormatFound = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt(i);
+
+            // it is the expected cell format?
             if (cellFormatFound.Alignment == cellFormat.Alignment &&
                 cellFormatFound.BorderId == cellFormat.BorderId &&
+
                 // fillId
                 cellFormatFound.FillId == fillId &&
+
                 cellFormatFound.Protection == cellFormat.Protection &&
                 cellFormatFound.FontId == cellFormat.FontId &&
                 cellFormatFound.NumberFormatId == cellFormat.NumberFormatId)
+                // yes, return it
                 return cellFormatFound;
         }
         return null;

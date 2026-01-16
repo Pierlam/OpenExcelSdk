@@ -1,4 +1,6 @@
-﻿using DocumentFormat.OpenXml.Spreadsheet;
+﻿using DocumentFormat.OpenXml.Office2016.Excel;
+using DocumentFormat.OpenXml.Packaging;
+using DocumentFormat.OpenXml.Spreadsheet;
 using OpenExcelSdk.System;
 using System;
 using System.Collections.Generic;
@@ -45,8 +47,13 @@ public class ColorMgr
             cellFormat = styleMgr.FindCellFormatWithFgColor(stylesPart, cellFormat, indexFillFound, out int index);
             if (cellFormat != null)
             {
+                // TODO: PB is HERE
                 excelCell.Cell.StyleIndex = (uint)index;
                 excelCell.CellFormat = cellFormat;
+
+                // not a save pb, no need to save it here
+                //WorksheetPart worksheetPart = excelSheet.ExcelFile.WorkbookPart.GetPartById(excelSheet.Sheet.Id) as WorksheetPart;
+                //worksheetPart.Worksheet.Save();
                 return GetCellColor(styleMgr, excelSheet, excelCell);
             }
         }
@@ -85,7 +92,7 @@ public class ColorMgr
             if (fgColor == null) continue;
 
             indexFillFound = i;
-            if (fgColor.Rgb.Equals(rgb)) return fill;
+                if (fgColor.Rgb.Equals(rgb)) return fill;
         }
 
         // not found

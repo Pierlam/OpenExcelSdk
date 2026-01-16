@@ -39,7 +39,7 @@ ExcelAllStylesExport ExportAllStyles()
 
     //string filename = @"Files\CellFormat.xlsx";
     string filename = @"Files\SetCellColorOut.xlsx";
-    string filenameOut = @"Out\ListStyles.xlsx";
+    string filenameOut = @"Out\ListStylesOut.xlsx";
 
     if (File.Exists(filenameOut))
         File.Delete(filenameOut);

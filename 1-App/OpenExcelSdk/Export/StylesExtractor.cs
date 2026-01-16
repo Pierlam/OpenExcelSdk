@@ -34,10 +34,8 @@ public class StylesExtractor
     /// <param name="filenameIn"></param>
     /// <param name="filenameOut"></param>
     /// <returns></returns>
-    public ExcelAllStylesExport Extract(string filenameIn)
+    public ExcelAllStylesExport Extract(ExcelFile excelFileIn)
     {
-        ExcelFile excelFileIn= _proc.OpenExcelFile(filenameIn);
-
         ExcelAllStylesExport excelStyles = new ExcelAllStylesExport();
 
 

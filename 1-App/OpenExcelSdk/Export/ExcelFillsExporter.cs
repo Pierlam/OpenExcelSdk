@@ -9,7 +9,12 @@ namespace OpenExcelSdk.Export;
 
 public class ExcelFillsExporter
 {
-    // tabpage two: Fills
+    /// <summary>
+    /// Export all fill in the TabPage 2
+    /// </summary>
+    /// <param name="excelProcessor"></param>
+    /// <param name="excelStyles"></param>
+    /// <param name="excelFileOut"></param>
     public static void ExportFills(ExcelProcessor excelProcessor, ExcelAllStylesExport excelStyles, ExcelFile excelFileOut)
     {
         ExcelSheet excelSheetOut = excelProcessor.CreateSheet(excelFileOut, "Fills");
@@ -27,20 +32,20 @@ public class ExcelFillsExporter
             excelProcessor.SetCellValue(excelSheetOut, "C" + rowIdx, fillExport.FillId);
             excelProcessor.SetCellValue(excelSheetOut, "D" + rowIdx, fillExport.PatternType);
 
-            if (fillExport.BgColor != null)
-            {
-                if (fillExport.BgColor.ThemeIndex > 0)
-                    excelProcessor.SetCellValue(excelSheetOut, "E" + rowIdx, fillExport.BgColor.ThemeIndex);
-
-                excelProcessor.SetCellValue(excelSheetOut, "F" + rowIdx, fillExport.BgColor.Rgb);
-            }
-
             if (fillExport.FgColor != null)
             {
                 if (fillExport.FgColor.ThemeIndex > 0)
-                    excelProcessor.SetCellValue(excelSheetOut, "G" + rowIdx, fillExport.FgColor.ThemeIndex);
+                    excelProcessor.SetCellValue(excelSheetOut, "E" + rowIdx, fillExport.FgColor.ThemeIndex);
 
-                excelProcessor.SetCellValue(excelSheetOut, "H" + rowIdx, fillExport.FgColor.Rgb);
+                excelProcessor.SetCellValue(excelSheetOut, "F" + rowIdx, fillExport.FgColor.Rgb);
+            }
+
+            if (fillExport.BgColor != null)
+            {
+                if (fillExport.BgColor.ThemeIndex > 0)
+                    excelProcessor.SetCellValue(excelSheetOut, "G" + rowIdx, fillExport.BgColor.ThemeIndex);
+
+                excelProcessor.SetCellValue(excelSheetOut, "H" + rowIdx, fillExport.BgColor.Rgb);
             }
 
             excelProcessor.SetCellValue(excelSheetOut, "I" + rowIdx, fillExport.ListGradient.Count);
@@ -63,10 +68,10 @@ public class ExcelFillsExporter
         proc.SetCellValue(excelSheet, "B1", "SheetName");
         proc.SetCellValue(excelSheet, "C1", "FillId");
         proc.SetCellValue(excelSheet, "D1", "PatternType");
-        proc.SetCellValue(excelSheet, "E1", "BgColor.ThemeIdx");
-        proc.SetCellValue(excelSheet, "F1", "BgColor");
-        proc.SetCellValue(excelSheet, "G1", "FgColor.ThemeIdx");
-        proc.SetCellValue(excelSheet, "H1", "FgColor");
+        proc.SetCellValue(excelSheet, "E1", "FgColor.ThemeIdx");
+        proc.SetCellValue(excelSheet, "F1", "FgColor");
+        proc.SetCellValue(excelSheet, "G1", "BgColor.ThemeIdx");
+        proc.SetCellValue(excelSheet, "H1", "BgColor");
         proc.SetCellValue(excelSheet, "I1", "NbGradient");
     }
 

@@ -15,8 +15,7 @@ public class ExcelStylesExporter
 
     public static void Export(ExcelProcessor excelProcessor, ExcelAllStylesExport excelStyles, ExcelFile excelFileOut)
     {
-        // the first sheet exists already
-        ExcelSheet excelSheetOut = excelProcessor.GetSheetAt(excelFileOut, 0);
+        ExcelSheet excelSheetOut = excelProcessor.CreateSheet(excelFileOut, "Styles - CellFormat");
 
         // create the out header
         CreateOutHeader(excelProcessor, excelSheetOut);
@@ -43,15 +42,15 @@ public class ExcelStylesExporter
             else
             {
 
-                if (fillExport.BgColor != null)
-                {
-                    excelProcessor.SetCellValue(excelSheetOut, "G" + rowIdx, fillExport.BgColor.Rgb);
-                }
-
                 if (fillExport.FgColor != null)
                 {
-                    excelProcessor.SetCellValue(excelSheetOut, "H" + rowIdx, fillExport.FgColor.Rgb);
+                    excelProcessor.SetCellValue(excelSheetOut, "G" + rowIdx, fillExport.FgColor.Rgb);
                 }
+
+                //if (fillExport.BgColor != null)
+                //{
+                //    excelProcessor.SetCellValue(excelSheetOut, "H" + rowIdx, fillExport.BgColor.Rgb);
+                //}
             }
 
             excelProcessor.SetCellValue(excelSheetOut, "I" + rowIdx, styleExport.BorderId);
@@ -75,8 +74,8 @@ public class ExcelStylesExporter
         proc.SetCellValue(excelSheet, "D1", "NumberFormatId");
         proc.SetCellValue(excelSheet, "E1", "NumberFormat");
         proc.SetCellValue(excelSheet, "F1", "FillId");
-        proc.SetCellValue(excelSheet, "G1", "Fill.BgColor");
-        proc.SetCellValue(excelSheet, "H1", "Fill.FgColor");
+        proc.SetCellValue(excelSheet, "G1", "Fill.FgColor");
+        //proc.SetCellValue(excelSheet, "H1", "Fill.BgColor");
         proc.SetCellValue(excelSheet, "I1", "BorderId");
         proc.SetCellValue(excelSheet, "J1", "FontId");
     }
