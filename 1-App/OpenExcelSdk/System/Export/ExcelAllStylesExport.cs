@@ -8,9 +8,8 @@ namespace OpenExcelSdk.System.Export;
 
 /// <summary>
 /// All styles of an Excel file.
-/// 
 /// </summary>
-public class ExcelStyles
+public class ExcelAllStylesExport
 {
     /// <summary>
     /// Sheet table list.

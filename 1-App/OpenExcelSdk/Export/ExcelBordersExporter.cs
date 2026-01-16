@@ -9,7 +9,7 @@ namespace OpenExcelSdk.Export;
 
 public class ExcelBordersExporter
 {
-    public static void ExportBorders(ExcelProcessor excelProcessor, ExcelStyles excelStyles, ExcelFile excelFileOut)
+    public static void ExportBorders(ExcelProcessor excelProcessor, ExcelAllStylesExport excelStyles, ExcelFile excelFileOut)
     {
         ExcelSheet excelSheetOut = excelProcessor.CreateSheet(excelFileOut, "Borders");
 

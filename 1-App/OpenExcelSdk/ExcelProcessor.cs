@@ -31,10 +31,10 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="filenameIn"></param>
     /// <param name="filenameOut"></param>
     /// <returns></returns>
-    public ExcelStyles ExportStyles(string filenameIn, string filenameOut)
+    public ExcelAllStylesExport ExportAllStyles(string filenameIn, string filenameOut)
     {
         // extract the styles from the input file
-        ExcelStyles excelStyles = _stylesExtractor.Extract(filenameIn);
+        ExcelAllStylesExport excelStyles = _stylesExtractor.Extract(filenameIn);
 
         ExcelFile excelFileOut = CreateExcelFile(filenameOut, "Styles");
 

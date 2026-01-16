@@ -10,7 +10,7 @@ namespace OpenExcelSdk.Export;
 public class ExcelFillsExporter
 {
     // tabpage two: Fills
-    public static void ExportFills(ExcelProcessor excelProcessor, ExcelStyles excelStyles, ExcelFile excelFileOut)
+    public static void ExportFills(ExcelProcessor excelProcessor, ExcelAllStylesExport excelStyles, ExcelFile excelFileOut)
     {
         ExcelSheet excelSheetOut = excelProcessor.CreateSheet(excelFileOut, "Fills");
 

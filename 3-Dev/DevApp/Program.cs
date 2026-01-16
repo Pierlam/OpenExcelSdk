@@ -33,7 +33,7 @@ void ConvertDouble()
     double valDouble = double.Parse(value);
 }
 
-ExcelStyles ExportStyles()
+ExcelAllStylesExport ExportStyles()
 {
     ExcelProcessor proc = new ExcelProcessor();
 
@@ -45,7 +45,7 @@ ExcelStyles ExportStyles()
         File.Delete(filenameOut);
 
     // export
-    return proc.ExportStyles(filename, filenameOut);
+    return proc.ExportAllStyles(filename, filenameOut);
 }
 
 Console.WriteLine("=> OpenExcelSdk DevApp:");
@@ -67,6 +67,6 @@ Console.WriteLine("=> OpenExcelSdk DevApp:");
 //var Rgb = HexBinaryValue.FromString("#00FF00");
 
 
-ExcelStyles excelStyles =ExportStyles();
+ExcelAllStylesExport excelStyles =ExportStyles();
 
 Console.WriteLine("=> Ok, Ends.");

@@ -13,7 +13,7 @@ namespace OpenExcelSdk.Export;
 public class ExcelStylesExporter
 {
 
-    public static void Export(ExcelProcessor excelProcessor, ExcelStyles excelStyles, ExcelFile excelFileOut)
+    public static void Export(ExcelProcessor excelProcessor, ExcelAllStylesExport excelStyles, ExcelFile excelFileOut)
     {
         // the first sheet exists already
         ExcelSheet excelSheetOut = excelProcessor.GetSheetAt(excelFileOut, 0);

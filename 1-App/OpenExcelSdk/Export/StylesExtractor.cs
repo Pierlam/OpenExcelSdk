@@ -34,11 +34,11 @@ public class StylesExtractor
     /// <param name="filenameIn"></param>
     /// <param name="filenameOut"></param>
     /// <returns></returns>
-    public ExcelStyles Extract(string filenameIn)
+    public ExcelAllStylesExport Extract(string filenameIn)
     {
         ExcelFile excelFileIn= _proc.OpenExcelFile(filenameIn);
 
-        ExcelStyles excelStyles = new ExcelStyles();
+        ExcelAllStylesExport excelStyles = new ExcelAllStylesExport();
 
 
         for(int i=0; i< _proc.GetSheetCount(excelFileIn);i++)
@@ -70,7 +70,7 @@ public class StylesExtractor
     /// </summary>
     /// <param name="excelSheetIn"></param>
     /// <param name="excelStyles"></param>
-    void ExportFills(ExcelSheet excelSheetIn, ExcelStyles excelStyles)
+    void ExportFills(ExcelSheet excelSheetIn, ExcelAllStylesExport excelStyles)
     {
         var stylesPart = excelSheetIn.ExcelFile.WorkbookPart.WorkbookStylesPart;
 
@@ -107,7 +107,7 @@ public class StylesExtractor
     /// </summary>
     /// <param name="excelSheetIn"></param>
     /// <param name="excelStyles"></param>
-    void ExportBorders(ExcelSheet excelSheetIn, ExcelStyles excelStyles)
+    void ExportBorders(ExcelSheet excelSheetIn, ExcelAllStylesExport excelStyles)
     {
         var stylesPart = excelSheetIn.ExcelFile.WorkbookPart.WorkbookStylesPart;
 
@@ -133,7 +133,7 @@ public class StylesExtractor
     /// </summary>
     /// <param name="excelSheetIn"></param>
     /// <param name="excelStyles"></param>
-    void ExportFonts(ExcelSheet excelSheetIn, ExcelStyles excelStyles)
+    void ExportFonts(ExcelSheet excelSheetIn, ExcelAllStylesExport excelStyles)
     {
         var stylesPart = excelSheetIn.ExcelFile.WorkbookPart.WorkbookStylesPart;
 
@@ -154,7 +154,7 @@ public class StylesExtractor
     /// </summary>
     /// <param name="excelSheetIn"></param>
     /// <param name="excelStyles"></param>
-    void ExportStylesSheet(ExcelSheet excelSheetIn, ExcelStyles excelStyles)
+    void ExportStylesSheet(ExcelSheet excelSheetIn, ExcelAllStylesExport excelStyles)
     {
         var stylesPart = excelSheetIn.ExcelFile.WorkbookPart.WorkbookStylesPart;
 
@@ -164,7 +164,7 @@ public class StylesExtractor
         }
     }
 
-    void ExportStyle(ExcelSheet excelSheetIn, ExcelStyles excelStyles, WorkbookStylesPart stylesPart, int i)
+    void ExportStyle(ExcelSheet excelSheetIn, ExcelAllStylesExport excelStyles, WorkbookStylesPart stylesPart, int i)
     {
 
         string rowIdx = (i + 2).ToString();

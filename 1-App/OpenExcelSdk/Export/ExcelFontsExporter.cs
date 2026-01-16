@@ -9,7 +9,7 @@ namespace OpenExcelSdk.Export;
 
 public class ExcelFontsExporter
 {
-    public static void ExportFonts(ExcelProcessor excelProcessor, ExcelStyles excelStyles, ExcelFile excelFileOut)
+    public static void ExportFonts(ExcelProcessor excelProcessor, ExcelAllStylesExport excelStyles, ExcelFile excelFileOut)
     {
         ExcelSheet excelSheetOut = excelProcessor.CreateSheet(excelFileOut, "Fonts");
 
