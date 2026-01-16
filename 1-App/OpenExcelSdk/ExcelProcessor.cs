@@ -26,7 +26,8 @@ public class ExcelProcessor : ExcelProcessorBase
     }
 
     /// <summary>
-    /// Export the styles of the excel file into an outpiut excel file.
+    /// Export all styles of the excel file into an output excel file.
+    /// Style: CellFormat, Fill, Border, Font. 
     /// </summary>
     /// <param name="filenameIn"></param>
     /// <param name="filenameOut"></param>
