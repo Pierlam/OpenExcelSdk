@@ -424,7 +424,7 @@ public class ExcelProcessor : ExcelProcessorBase
     public ExcelCell GetCellAt(ExcelSheet excelSheet, int colIdx, int rowIdx)
     {
         // convert the col and the rox to an excel address
-        return GetCellAt(excelSheet, ExcelUtils.ConvertAddress(colIdx, rowIdx));
+        return GetCellAt(excelSheet, ExcelCellAddressUtils.ConvertAddress(colIdx, rowIdx));
     }
 
     /// <summary>
@@ -443,7 +443,7 @@ public class ExcelProcessor : ExcelProcessorBase
             throw ExcelException.Create("GetCellAt", ExcelErrorCode.ObjectNull);
 
         // check the cell address
-        if (!ExcelUtils.GetColumnAndRowIndex(cellReference, out _, out _))
+        if (!ExcelCellAddressUtils.GetColumnAndRowIndex(cellReference, out _, out _))
             throw ExcelException.Create("GetCellAt", ExcelErrorCode.InvalidCellAddress, cellReference);
 
         try
@@ -456,7 +456,7 @@ public class ExcelProcessor : ExcelProcessorBase
             var excelCell = new ExcelCell(excelSheet, cell);
 
             // get the style of the cell
-            excelCell.CellFormat = ExcelUtils.GetCellFormat(excelSheet, excelCell);
+            excelCell.CellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, excelCell);
 
             return excelCell;
         }
@@ -604,10 +604,10 @@ public class ExcelProcessor : ExcelProcessorBase
     public ExcelCell CreateCell(ExcelSheet excelSheet, string cellReference)
     {
         // check the cell address
-        if (!ExcelUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
+        if (!ExcelCellAddressUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
             throw ExcelException.Create("CreateCell", ExcelErrorCode.InvalidCellAddress, cellReference);
 
-        string colName = ExcelUtils.GetColumnName(colIdx);
+        string colName = ExcelCellAddressUtils.GetColumnName(colIdx);
 
         return CreateCell(excelSheet, colName, (uint)rowIdx);
     }
@@ -622,7 +622,7 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <returns></returns>
     public ExcelCell CreateCell(ExcelSheet excelSheet, int colIdx, int rowIdx)
     {
-        string colName = ExcelUtils.GetColumnName(colIdx);
+        string colName = ExcelCellAddressUtils.GetColumnName(colIdx);
         return CreateCell(excelSheet, colName, (uint)rowIdx);
     }
 
@@ -640,7 +640,7 @@ public class ExcelProcessor : ExcelProcessorBase
     public bool RemoveCellAt(ExcelSheet excelSheet, string cellReference)
     {
         // check the cell address
-        if (!ExcelUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
+        if (!ExcelCellAddressUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
             throw ExcelException.Create("RemoveCellAt", ExcelErrorCode.InvalidCellAddress, cellReference);
 
         return RemoveCell(excelSheet, colIdx, rowIdx);
@@ -669,7 +669,7 @@ public class ExcelProcessor : ExcelProcessorBase
         }
         catch (Exception ex)
         {
-            throw ExcelException.Create("RemoveCell", ExcelErrorCode.UnableRemoveCell, ExcelUtils.ConvertAddress(colIdx, rowIdx), ex);
+            throw ExcelException.Create("RemoveCell", ExcelErrorCode.UnableRemoveCell, ExcelCellAddressUtils.ConvertAddress(colIdx, rowIdx), ex);
         }
     }
 
@@ -713,7 +713,7 @@ public class ExcelProcessor : ExcelProcessorBase
     public bool SetCellValue(ExcelSheet excelSheet, string cellReference, string value)
     {
         // check the cell address
-        if (!ExcelUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
+        if (!ExcelCellAddressUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
             throw ExcelException.Create("SetCellValue", ExcelErrorCode.InvalidCellAddress, cellReference);
 
         return SetCellValue(excelSheet, colIdx, rowIdx, value);
@@ -730,7 +730,7 @@ public class ExcelProcessor : ExcelProcessorBase
     public bool SetCellValue(ExcelSheet excelSheet, string cellReference, int value)
     {
         // check the cell address
-        if (!ExcelUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx)) 
+        if (!ExcelCellAddressUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx)) 
             throw ExcelException.Create("SetCellValue", ExcelErrorCode.InvalidCellAddress, cellReference);
 
         return SetCellValue(excelSheet, colIdx, rowIdx, value);
@@ -747,7 +747,7 @@ public class ExcelProcessor : ExcelProcessorBase
     public bool SetCellValue(ExcelSheet excelSheet, string cellReference, double value)
     {
         // check the cell address
-        if (!ExcelUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
+        if (!ExcelCellAddressUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
             throw ExcelException.Create("SetCellValue", ExcelErrorCode.InvalidCellAddress, cellReference);
 
         return SetCellValue(excelSheet, colIdx, rowIdx, value);
@@ -765,7 +765,7 @@ public class ExcelProcessor : ExcelProcessorBase
     public bool SetCellValue(ExcelSheet excelSheet, string cellReference, DateTime value, string numberFormat)
     {
         // check the cell address
-        if (!ExcelUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
+        if (!ExcelCellAddressUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
             throw ExcelException.Create("SetCellValue", ExcelErrorCode.InvalidCellAddress, cellReference);
 
         return SetCellValue(excelSheet, colIdx, rowIdx, value, numberFormat);
@@ -783,7 +783,7 @@ public class ExcelProcessor : ExcelProcessorBase
     public bool SetCellValue(ExcelSheet excelSheet, string cellReference, TimeOnly value, string numberFormat)
     {
         // check the cell address
-        if (!ExcelUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
+        if (!ExcelCellAddressUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
             throw ExcelException.Create("SetCellValue", ExcelErrorCode.InvalidCellAddress, cellReference);
 
         return SetCellValue(excelSheet, colIdx, rowIdx, value, numberFormat);
@@ -801,7 +801,7 @@ public class ExcelProcessor : ExcelProcessorBase
     public bool SetCellValue(ExcelSheet excelSheet, string cellReference, DateOnly value, string numberFormat)
     {
         // check the cell address
-        if (!ExcelUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
+        if (!ExcelCellAddressUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
             throw ExcelException.Create("SetCellValue", ExcelErrorCode.InvalidCellAddress, cellReference);
 
         return SetCellValue(excelSheet, colIdx, rowIdx, value, numberFormat);
@@ -841,7 +841,7 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, string value)
     {
-        string colName = ExcelUtils.GetColumnName(colIdx);
+        string colName = ExcelCellAddressUtils.GetColumnName(colIdx);
         ExcelCell excelCell = CreateCell(excelSheet, colName, (uint)rowIdx);
         return SetCellValue(excelSheet, excelCell, value);
     }
@@ -857,7 +857,7 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, int value)
     {
-        string colName = ExcelUtils.GetColumnName(colIdx);
+        string colName = ExcelCellAddressUtils.GetColumnName(colIdx);
         ExcelCell excelCell = CreateCell(excelSheet, colName, (uint)rowIdx);
         return SetCellValue(excelSheet, excelCell, value);
     }
@@ -873,7 +873,7 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, double value)
     {
-        string colName = ExcelUtils.GetColumnName(colIdx);
+        string colName = ExcelCellAddressUtils.GetColumnName(colIdx);
         ExcelCell excelCell = CreateCell(excelSheet, colName, (uint)rowIdx);
         return SetCellValue(excelSheet, excelCell, value);
     }
@@ -890,7 +890,7 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, DateOnly value, string numberFormat)
     {
-        string colName = ExcelUtils.GetColumnName(colIdx);
+        string colName = ExcelCellAddressUtils.GetColumnName(colIdx);
         ExcelCell excelCell = CreateCell(excelSheet, colName, (uint)rowIdx);
         return SetCellValue(excelSheet, excelCell, value, numberFormat);
     }
@@ -907,7 +907,7 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, DateTime value, string numberFormat)
     {
-        string colName = ExcelUtils.GetColumnName(colIdx);
+        string colName = ExcelCellAddressUtils.GetColumnName(colIdx);
         ExcelCell excelCell = CreateCell(excelSheet, colName, (uint)rowIdx);
         return SetCellValue(excelSheet, excelCell, value, numberFormat);
     }
@@ -924,7 +924,7 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, TimeOnly value, string numberFormat)
     {
-        string colName = ExcelUtils.GetColumnName(colIdx);
+        string colName = ExcelCellAddressUtils.GetColumnName(colIdx);
         ExcelCell excelCell = CreateCell(excelSheet, colName, (uint)rowIdx);
         return SetCellValue(excelSheet, excelCell, value, numberFormat);
     }
@@ -941,7 +941,7 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <returns></returns>
     public bool SetCellValue(ExcelSheet excelSheet, int colIdx, int rowIdx, double value, string numberFormat)
     {
-        string colName = ExcelUtils.GetColumnName(colIdx);
+        string colName = ExcelCellAddressUtils.GetColumnName(colIdx);
         ExcelCell excelCell = CreateCell(excelSheet, colName, (uint)rowIdx);
         return SetCellValue(excelSheet, excelCell, value, numberFormat);
     }
@@ -975,7 +975,7 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <returns></returns>
     public ExcelCellColor SetCellColor(ExcelSheet excelSheet, int colIdx, int rowIdx, string rgb)
     {
-        string colName = ExcelUtils.GetColumnName(colIdx);
+        string colName = ExcelCellAddressUtils.GetColumnName(colIdx);
         ExcelCell excelCell = CreateCell(excelSheet, colName, (uint)rowIdx);
         return SetCellColor(excelSheet, excelCell, rgb);
     }

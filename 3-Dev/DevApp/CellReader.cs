@@ -49,7 +49,7 @@ internal class CellReader
         cell = proc.GetCellAt(excelSheet, "B2");
         var cellValueType = proc.GetCellValue(excelSheet, cell);
         excelCellValue = proc.GetCellValue(excelSheet, cell);
-        cellFormat = ExcelUtils.GetCellFormat(excelSheet, cell);
+        cellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, cell);
         //cellFormat.BorderId
 
         //--B4: int, bgcolor
@@ -63,7 +63,7 @@ internal class CellReader
         cell = proc.GetCellAt(excelSheet, "B3");
         proc.SetCellColor(excelSheet, cell, "#FFFF00");
 
-        cellFormat = ExcelUtils.GetCellFormat(excelSheet, cell);
+        cellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, cell);
         if (cellFormat != null && cellFormat.BorderId != null)
         {
             uint fillId = cellFormat.FillId.Value;

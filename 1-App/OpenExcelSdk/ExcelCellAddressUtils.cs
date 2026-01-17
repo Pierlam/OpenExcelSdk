@@ -2,7 +2,10 @@
 
 namespace OpenExcelSdk;
 
-public class ExcelUtils
+/// <summary>
+/// Excel cell reference/Address utils.
+/// </summary>
+public class ExcelCellAddressUtils
 {
     /// <summary>
     /// Get the style/CellFormat of the cell, if it has one.

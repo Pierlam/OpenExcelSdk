@@ -40,7 +40,7 @@ public class ColorMgr
 
         var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
 
-        CellFormat cellFormat = ExcelUtils.GetCellFormat(excelSheet, excelCell);
+        CellFormat cellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, excelCell);
         if (fillFound != null)
         {
             // is there a CellFormat matching ?
@@ -109,7 +109,7 @@ public class ColorMgr
     /// <returns></returns>
     public static ExcelCellColor GetCellColor(StyleMgr styleMgr, ExcelSheet excelSheet, ExcelCell excelCell)
     {
-        CellFormat cellFormat = ExcelUtils.GetCellFormat(excelSheet, excelCell);
+        CellFormat cellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, excelCell);
         if (cellFormat == null) return null;
 
         Fill fill = ColorMgr.GetCellFill(excelSheet, excelCell);
@@ -197,7 +197,7 @@ public class ColorMgr
     /// <returns></returns>
     public static Fill GetCellFill(ExcelSheet excelSheet, ExcelCell excelCell)
     {
-        CellFormat cellFormat = ExcelUtils.GetCellFormat(excelSheet, excelCell);
+        CellFormat cellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, excelCell);
         if (cellFormat == null) return null;
 
         if (cellFormat.FillId == null) return null;

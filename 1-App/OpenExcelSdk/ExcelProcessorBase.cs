@@ -315,7 +315,7 @@ public class ExcelProcessorBase
             // the cell at the provided address exists
             ExcelCell excelCell = new ExcelCell(excelSheet, cell);
             // get the style of the cell
-            excelCell.CellFormat = ExcelUtils.GetCellFormat(excelSheet, excelCell);
+            excelCell.CellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, excelCell);
             return excelCell;
         }
 
