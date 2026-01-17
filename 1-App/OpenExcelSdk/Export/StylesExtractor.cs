@@ -36,31 +36,77 @@ public class StylesExtractor
     /// <returns></returns>
     public ExcelAllStylesExport Extract(ExcelFile excelFileIn)
     {
-        ExcelAllStylesExport excelStyles = new ExcelAllStylesExport();
+        ExcelAllStylesExport excelAllStyles = new ExcelAllStylesExport();
 
 
-        for(int i=0; i< _proc.GetSheetCount(excelFileIn);i++)
+        // export sharedStrings
+        ExportSharedStrings(excelFileIn, excelAllStyles);
+
+        int cellCount = 0;
+
+        for (int i=0; i< _proc.GetSheetCount(excelFileIn);i++)
         {
             ExcelSheet excelSheetIn = _proc.GetSheetAt(excelFileIn, i);
             ExcelSheetExport sheetTable = new ExcelSheetExport(i, excelSheetIn.Name);
-            excelStyles.ListSheet.Add(sheetTable);
+            excelAllStyles.ListSheets.Add(sheetTable);
+
+            // update cells counters
+            cellCount+= _proc.GetCellsCount(excelSheetIn);
 
             // export Fills
-            ExportFills(excelSheetIn, excelStyles);
+            if(!ExportFills(excelSheetIn, excelAllStyles))
+            {
+                continue;
+            }
 
             // export Borders
-            ExportBorders(excelSheetIn, excelStyles);
+            ExportBorders(excelSheetIn, excelAllStyles);
 
             // export fonts
-            ExportFonts(excelSheetIn, excelStyles);
+            ExportFonts(excelSheetIn, excelAllStyles);
 
             // export all styles/CellFormats
-            ExportStylesSheet(excelSheetIn, excelStyles);
+            ExportStylesSheet(excelSheetIn, excelAllStyles);
         }
+
+        excelAllStyles.CellsTotalCount= cellCount;
 
         _proc.CloseExcelFile(excelFileIn);
 
-        return excelStyles;
+        return excelAllStyles;
+    }
+
+    /// <summary>
+    /// Export Shared Strings.
+    /// </summary>
+    /// <param name="excelFileIn"></param>
+    /// <param name="excelStyles"></param>
+    void ExportSharedStrings(ExcelFile excelFileIn, ExcelAllStylesExport excelAllStyles)
+    {
+        // For shared strings, look up the value in the shared strings table.
+        var stringTable = excelFileIn.WorkbookPart.GetPartsOfType<SharedStringTablePart>().FirstOrDefault();
+
+        if(stringTable==null)
+        {
+            excelAllStyles.ListError.Add("No SharedStringTablePart found in the Excel file.");
+            return;
+        }
+
+        excelAllStyles.SharedStringsTotalCount = stringTable.SharedStringTable.Elements().Count();
+
+        // Iterate through all the items in the SharedStringTable. If the text already exists, return its index.
+        int i = 0;
+        foreach (SharedStringItem item in stringTable.SharedStringTable.Elements<SharedStringItem>())
+        {
+            if(i>= excelAllStyles.SharedStringsMaxLoadCount)
+            {
+                break;
+            }
+            ExcelSharedStringExport stringExport= new ExcelSharedStringExport(i, item.InnerText);
+            excelAllStyles.ListSharedStrings.Add(stringExport); 
+            i++;
+        }
+
     }
 
     /// <summary>
@@ -68,21 +114,22 @@ public class StylesExtractor
     /// </summary>
     /// <param name="excelSheetIn"></param>
     /// <param name="excelStyles"></param>
-    void ExportFills(ExcelSheet excelSheetIn, ExcelAllStylesExport excelStyles)
+    bool ExportFills(ExcelSheet excelSheetIn, ExcelAllStylesExport excelStyles)
     {
         var stylesPart = excelSheetIn.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        if(stylesPart==null)
+        {
+            excelStyles.ListError.Add($"No WorkbookStylesPart found in the Excel file for sheet {excelSheetIn.Name}.");
+            return false;
+        }
 
         for (int i = 0; i < stylesPart.Stylesheet.Fills.Elements().Count(); i++)
         {
             Fill fill = (Fill)excelSheetIn.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet.Fills.ElementAt(i);
 
-            ExcelColor bgColor = ColorMgr.GetCellBackgroundColor(_styleMgr, excelSheetIn, fill);
-            // bg color is set, not expected
-            //if (bgColor != null) continue;
-
             ExcelColor fgColor = ColorMgr.GetCellForegroundColor(_styleMgr, excelSheetIn, fill);
-            //if (fgColor == null) continue;
 
+            ExcelColor bgColor = ColorMgr.GetCellBackgroundColor(_styleMgr, excelSheetIn, fill);
 
             //-XXDEBUG:
             if (fill.GradientFill != null)
@@ -97,7 +144,7 @@ public class StylesExtractor
             ExcelFillExport fillExport = new ExcelFillExport(excelSheetIn.Index, i, fill.PatternFill.PatternType, bgColor, fgColor);
             excelStyles.ListFills.Add(fillExport);
         }
-
+        return true;
     }
 
     /// <summary>
@@ -178,7 +225,7 @@ public class StylesExtractor
         }
 
         ExcelStyleExport styleExport = new ExcelStyleExport(excelSheetIn.Index, i, (int)cellFormat.NumberFormatId.Value, numberFormat);
-        excelStyles.ListStyle.Add(styleExport);
+        excelStyles.ListStyles.Add(styleExport);
 
         if (cellFormat.ApplyFill != null)
         {

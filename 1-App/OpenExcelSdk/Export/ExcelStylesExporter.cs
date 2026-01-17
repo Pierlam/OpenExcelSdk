@@ -21,12 +21,12 @@ public class ExcelStylesExporter
         CreateOutHeader(excelProcessor, excelSheetOut);
 
         int i = 0;
-        foreach(ExcelStyleExport styleExport in excelStyles.ListStyle)
+        foreach(ExcelStyleExport styleExport in excelStyles.ListStyles)
         {
             string rowIdx = (i + 2).ToString();
 
             excelProcessor.SetCellValue(excelSheetOut, "A" + rowIdx, styleExport.SheetIndex);
-            excelProcessor.SetCellValue(excelSheetOut, "B" + rowIdx, excelStyles.ListSheet.FirstOrDefault(s => s.Index== styleExport.SheetIndex).Name);
+            excelProcessor.SetCellValue(excelSheetOut, "B" + rowIdx, excelStyles.ListSheets.FirstOrDefault(s => s.Index== styleExport.SheetIndex).Name);
             excelProcessor.SetCellValue(excelSheetOut, "C" + rowIdx, i);
             excelProcessor.SetCellValue(excelSheetOut, "D" + rowIdx, styleExport.NumberFormatId);
             excelProcessor.SetCellValue(excelSheetOut, "E" + rowIdx, styleExport.NumberFormat);

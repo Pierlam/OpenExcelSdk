@@ -2,6 +2,11 @@
 
 -Add export of all styles of an Excel.
 
+-Add new methods: GetRowCells(excelSheet, excelRow)
+
+-Add new methods: GetRowCells(excelSheet, rowIndex)
+
+
 -GetCellColor(cell)  Get the background and foreground cell color.
 
 

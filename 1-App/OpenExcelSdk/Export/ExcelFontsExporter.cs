@@ -22,7 +22,7 @@ public class ExcelFontsExporter
             string rowIdx = (i + 2).ToString();
 
             excelProcessor.SetCellValue(excelSheetOut, "A" + rowIdx, borderExport.SheetIndex);
-            excelProcessor.SetCellValue(excelSheetOut, "B" + rowIdx, excelStyles.ListSheet.FirstOrDefault(s => s.Index == borderExport.SheetIndex).Name);
+            excelProcessor.SetCellValue(excelSheetOut, "B" + rowIdx, excelStyles.ListSheets.FirstOrDefault(s => s.Index == borderExport.SheetIndex).Name);
             excelProcessor.SetCellValue(excelSheetOut, "C" + rowIdx, borderExport.BorderId);
         }
     }

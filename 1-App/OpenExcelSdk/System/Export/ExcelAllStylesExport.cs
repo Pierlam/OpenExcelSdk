@@ -12,15 +12,45 @@ namespace OpenExcelSdk.System.Export;
 public class ExcelAllStylesExport
 {
     /// <summary>
+    /// Total count of shared strings in the excel file.
+    /// </summary>
+    public int SharedStringsMaxLoadCount { get; set; } = 1000;
+
+    /// <summary>
+    /// Cells max load total, all sheets.
+    /// </summary>
+    public int CellsMaxLoadCount { get; set; } = 5000;
+
+    /// <summary>
+    /// Cells max load by sheet.
+    /// </summary>
+    public int CellsSheetMaxLoadCount { get; set; } = 1000;
+
+    /// <summary>
+    /// total count of shared strings in the excel file.
+    /// </summary>
+    public int SharedStringsTotalCount { get; set; } = 0;
+
+    /// <summary>
+    /// Total count of cells in the excel file.
+    /// </summary>
+    public int CellsTotalCount { get; set; } = 0;
+
+    /// <summary>
+    /// Not all shared strings are loaded.
+    /// </summary>
+    public List<ExcelSharedStringExport> ListSharedStrings { get; set; } = new List<ExcelSharedStringExport>();  
+
+    /// <summary>
     /// Sheet table list.
     /// SheetExport
     /// </summary>
-    public List<ExcelSheetExport> ListSheet { get; set; } = new List<ExcelSheetExport>();
+    public List<ExcelSheetExport> ListSheets { get; set; } = new List<ExcelSheetExport>();
 
     /// <summary>
     /// Style (CellFormat) table list.
     /// </summary>
-    public List<ExcelStyleExport> ListStyle { get; set; } = new List<ExcelStyleExport>();
+    public List<ExcelStyleExport> ListStyles { get; set; } = new List<ExcelStyleExport>();
 
     /// <summary>
     /// Fill list.
@@ -36,4 +66,10 @@ public class ExcelAllStylesExport
     /// Font list.
     /// </summary>
     public List<ExcelFontExport> ListFonts { get; set; } = new List<ExcelFontExport>();
+
+
+    /// <summary>
+    /// List of errors during the extraction.
+    /// </summary>
+    public List<string> ListError { get; set; } = new List<string>();
 }

@@ -28,7 +28,7 @@ public class ExcelFillsExporter
             string rowIdx = (i + 2).ToString();
 
             excelProcessor.SetCellValue(excelSheetOut, "A" + rowIdx, fillExport.SheetIndex);
-            excelProcessor.SetCellValue(excelSheetOut, "B" + rowIdx, excelStyles.ListSheet.FirstOrDefault(s => s.Index == fillExport.SheetIndex).Name);
+            excelProcessor.SetCellValue(excelSheetOut, "B" + rowIdx, excelStyles.ListSheets.FirstOrDefault(s => s.Index == fillExport.SheetIndex).Name);
             excelProcessor.SetCellValue(excelSheetOut, "C" + rowIdx, fillExport.FillId);
             excelProcessor.SetCellValue(excelSheetOut, "D" + rowIdx, fillExport.PatternType);
 

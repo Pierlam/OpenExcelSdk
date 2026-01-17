@@ -720,22 +720,6 @@ public class ExcelProcessorBase
         return ColorMgr.GetCellColor(_styleMgr, excelSheet, excelCell);
     }
 
-    /// <summary>
-    /// Get the style/CellFormat of the cell, if it has one.
-    /// It's an OpenXml object.
-    /// </summary>
-    /// <param name="excelSheet"></param>
-    /// <param name="excelCell"></param>
-    /// <returns></returns>
-    //public CellFormat GetCellFormat(ExcelSheet excelSheet, ExcelCell excelCell)
-    //{
-    //    if (excelCell.Cell.StyleIndex == null)
-    //        // no style, no cell format
-    //        return null;
-
-    //    var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
-    //    return (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
-    //}
 
     /// <summary>
     /// Return the count of custom number formats in the excel sheet. It's style on cell

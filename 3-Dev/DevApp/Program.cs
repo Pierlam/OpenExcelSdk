@@ -38,7 +38,8 @@ ExcelAllStylesExport ExportAllStyles()
     ExcelProcessor proc = new ExcelProcessor();
 
     //string filename = @"Files\CellFormat.xlsx";
-    string filename = @"Files\SetCellColorOut.xlsx";
+    //string filename = @"Files\SetCellColorOut.xlsx";
+    string filename = @"Out\WrongSave.xlsx";
     string filenameOut = @"Out\ListStylesOut.xlsx";
 
     if (File.Exists(filenameOut))
@@ -47,6 +48,28 @@ ExcelAllStylesExport ExportAllStyles()
     // export
     return proc.ExportAllStyles(filename, filenameOut);
 }
+
+
+void CreateWrongExcel()
+{
+    ExcelProcessor proc = new ExcelProcessor();
+
+    string filename = @"Out\Wrong.xlsx";
+
+    if (File.Exists(filename))
+        File.Delete(filename);
+
+    ExcelFile excelFile = proc.CreateExcelFile(filename);
+
+    ExcelSheet excelSheet = proc.GetFirstSheet(excelFile);
+    proc.SetCellValue(excelSheet, "B3", 34);
+
+    proc.SetCellValue(excelSheet, "A2+", 34);
+
+
+    proc.CloseExcelFile(excelFile);
+}
+
 
 Console.WriteLine("=> OpenExcelSdk DevApp:");
 
@@ -67,6 +90,8 @@ Console.WriteLine("=> OpenExcelSdk DevApp:");
 //var Rgb = HexBinaryValue.FromString("#00FF00");
 
 
-ExcelAllStylesExport excelStyles =ExportAllStyles();
+CreateWrongExcel();
+
+//ExcelAllStylesExport excelStyles =ExportAllStyles();
 
 Console.WriteLine("=> Ok, Ends.");
