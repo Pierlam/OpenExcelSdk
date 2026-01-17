@@ -17,13 +17,15 @@ public class ExcelFontsExporter
         CreateOutHeader(excelProcessor, excelSheetOut);
 
         int i = 0;
-        foreach (ExcelBorderExport borderExport in excelStyles.ListBorders)
+        foreach (ExcelFontExport fontExport in excelStyles.ListFonts)
         {
             string rowIdx = (i + 2).ToString();
 
-            excelProcessor.SetCellValue(excelSheetOut, "A" + rowIdx, borderExport.SheetIndex);
-            excelProcessor.SetCellValue(excelSheetOut, "B" + rowIdx, excelStyles.ListSheets.FirstOrDefault(s => s.Index == borderExport.SheetIndex).Name);
-            excelProcessor.SetCellValue(excelSheetOut, "C" + rowIdx, borderExport.BorderId);
+            excelProcessor.SetCellValue(excelSheetOut, "A" + rowIdx, fontExport.SheetIndex);
+            excelProcessor.SetCellValue(excelSheetOut, "B" + rowIdx, excelStyles.ListSheets.FirstOrDefault(s => s.Index == fontExport.SheetIndex).Name);
+            excelProcessor.SetCellValue(excelSheetOut, "C" + rowIdx, fontExport.FontId);
+
+            i++;
         }
     }
 

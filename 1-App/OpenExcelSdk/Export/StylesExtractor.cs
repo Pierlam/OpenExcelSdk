@@ -162,11 +162,11 @@ public class StylesExtractor
 
             ExcelBorderExport borderExport = new ExcelBorderExport(excelSheetIn.Index, i);
 
-            borderExport.LeftBorder = border.LeftBorder;
-            borderExport.RightBorder = border.RightBorder;
-            borderExport.TopBorder= border.TopBorder;
-            borderExport.BottomBorder= border.BottomBorder;
-            borderExport.DiagonalBorder= border.DiagonalBorder;
+            borderExport.LeftBorder = ExcelCellBorderUtils.CreateCellBorder(border.LeftBorder);
+            borderExport.RightBorder = ExcelCellBorderUtils.CreateCellBorder(border.RightBorder);
+            borderExport.TopBorder= ExcelCellBorderUtils.CreateCellBorder(border.TopBorder);
+            borderExport.BottomBorder= ExcelCellBorderUtils.CreateCellBorder(border.BottomBorder);
+            borderExport.DiagonalBorder= ExcelCellBorderUtils.CreateCellBorder(border.DiagonalBorder);
 
             excelStyles.ListBorders.Add(borderExport);
 
@@ -188,9 +188,7 @@ public class StylesExtractor
 
             ExcelFontExport fontExport = new ExcelFontExport(excelSheetIn.Index, i);
 
-
             excelStyles.ListFonts.Add(fontExport);
-
         }
     }
 

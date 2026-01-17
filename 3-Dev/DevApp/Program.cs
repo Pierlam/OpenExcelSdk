@@ -37,10 +37,10 @@ ExcelAllStylesExport ExportAllStyles()
 {
     ExcelProcessor proc = new ExcelProcessor();
 
-    //string filename = @"Files\CellFormat.xlsx";
+    string filename = @"Files\CellFormat.xlsx";
     //string filename = @"Files\SetCellColorOut.xlsx";
-    string filename = @"Out\WrongSave.xlsx";
-    string filenameOut = @"Out\ListStylesOut.xlsx";
+    //string filename = @"Out\WrongSave.xlsx";
+    string filenameOut = @"Out\ListStyles.xlsx";
 
     if (File.Exists(filenameOut))
         File.Delete(filenameOut);
@@ -90,8 +90,8 @@ Console.WriteLine("=> OpenExcelSdk DevApp:");
 //var Rgb = HexBinaryValue.FromString("#00FF00");
 
 
-CreateWrongExcel();
+//CreateWrongExcel();
 
-//ExcelAllStylesExport excelStyles =ExportAllStyles();
+ExcelAllStylesExport excelStyles =ExportAllStyles();
 
 Console.WriteLine("=> Ok, Ends.");

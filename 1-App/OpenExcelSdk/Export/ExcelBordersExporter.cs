@@ -27,8 +27,7 @@ public class ExcelBordersExporter
 
             if (borderExport.LeftBorder != null)
             {
-                if (borderExport.LeftBorder.Style != null)
-                    excelProcessor.SetCellValue(excelSheetOut, "D" + rowIdx, borderExport.LeftBorder.Style.ToString());
+                    excelProcessor.SetCellValue(excelSheetOut, "D" + rowIdx, borderExport.LeftBorder.BorderStyle.ToString());
 
                 //if (borderExport.LeftBorder.Color != null)
                 //    excelProcessor.SetCellValue(excelSheetOut, "E" + rowIdx, borderExport.LeftBorder.Color.ToString());
@@ -36,22 +35,25 @@ public class ExcelBordersExporter
 
             if (borderExport.RightBorder != null)
             {
-                if (borderExport.RightBorder.Style != null)
-                    excelProcessor.SetCellValue(excelSheetOut, "E" + rowIdx, borderExport.RightBorder.Style.ToString());
+                    excelProcessor.SetCellValue(excelSheetOut, "E" + rowIdx, borderExport.RightBorder.BorderStyle.ToString());
             }
 
             if (borderExport.TopBorder != null)
             {
-                if (borderExport.TopBorder.Style != null)
-                    excelProcessor.SetCellValue(excelSheetOut, "F" + rowIdx, borderExport.TopBorder.Style.ToString());
+                    excelProcessor.SetCellValue(excelSheetOut, "F" + rowIdx, borderExport.TopBorder.BorderStyle.ToString());
             }
 
             if (borderExport.BottomBorder != null)
             {
-                if (borderExport.BottomBorder.Style != null)
-                    excelProcessor.SetCellValue(excelSheetOut, "G" + rowIdx, borderExport.BottomBorder.Style.ToString());
+                    excelProcessor.SetCellValue(excelSheetOut, "G" + rowIdx, borderExport.BottomBorder.BorderStyle.ToString());
             }
 
+            if (borderExport.DiagonalBorder!= null)
+            {
+                excelProcessor.SetCellValue(excelSheetOut, "H" + rowIdx, borderExport.DiagonalBorder.BorderStyle.ToString());
+            }
+
+            i++;
         }
 
         /// <summary>
@@ -69,6 +71,7 @@ public class ExcelBordersExporter
             proc.SetCellValue(excelSheet, "E1", "Right.Style");
             proc.SetCellValue(excelSheet, "F1", "Top.Style");
             proc.SetCellValue(excelSheet, "G1", "Bottom.Style");
+            proc.SetCellValue(excelSheet, "H1", "Diagonal.Style");
         }
 
     }

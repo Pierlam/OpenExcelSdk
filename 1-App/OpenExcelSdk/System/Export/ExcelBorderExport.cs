@@ -22,13 +22,13 @@ public class ExcelBorderExport
     /// OpenXml Object.
     /// TODO: replace by custom object.
     /// </summary>
-    public LeftBorder? LeftBorder { get; set; } = null;
+    public ExcelCellBorder? LeftBorder { get; set; } = null;
 
-    public RightBorder? RightBorder { get; set; } = null;
+    public ExcelCellBorder? RightBorder { get; set; } = null;
 
-    public TopBorder? TopBorder { get; set; } = null;
+    public ExcelCellBorder? TopBorder { get; set; } = null;
 
-    public BottomBorder? BottomBorder { get; set; } = null;
-    public DiagonalBorder? DiagonalBorder { get; set; } = null;
+    public ExcelCellBorder? BottomBorder { get; set; } = null;
+    public ExcelCellBorder? DiagonalBorder { get; set; } = null;
 
 }

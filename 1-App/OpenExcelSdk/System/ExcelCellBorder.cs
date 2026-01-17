@@ -16,28 +16,40 @@ public enum ExcelCellBorderType
     Diagonal
 }
 
+public enum ExcelCellBorderStyle
+{
+    None,
+    Thin,
+    Medium,
+    Dashed,
+    Dotted,
+    Thick,
+    Double,
+    Hair,
+    MediumDashed,
+    DashDot,
+    MediumDashDot,
+    DashDotDot,
+    MediumDashDotDot,
+    SlantDashDot
+}
+
 /// <summary>
 /// Excel Cell Border.
 /// e.g. Left, Right, Top, Bottom, Diagonal border
 /// </summary>
 public class ExcelCellBorder
 {
-    public ExcelCellBorder(object openXmlBorder)
+    public ExcelCellBorder(ExcelCellBorderType borderType , object openXmlBorder, ExcelCellBorderStyle borderStyle)
     {
         OpenXmlBorder= openXmlBorder;
-        if (openXmlBorder is LeftBorder)
-        { 
-            BorderType = ExcelCellBorderType.Left;
-             //((LeftBorder)openXmlBorder).Style
-        }
-
-        if (openXmlBorder is RightBorder) BorderType = ExcelCellBorderType.Right;
-        if (openXmlBorder is TopBorder) BorderType = ExcelCellBorderType.Top;
-        if (openXmlBorder is BottomBorder) BorderType = ExcelCellBorderType.Bottom;
-        if (openXmlBorder is DiagonalBorder) BorderType = ExcelCellBorderType.Diagonal;
+        BorderType= borderType;
+        BorderStyle= borderStyle;
     }
 
     public ExcelCellBorderType BorderType { get; set; }
 
     public object OpenXmlBorder { get; set; }
+
+    public ExcelCellBorderStyle BorderStyle { get; set; }
 }
