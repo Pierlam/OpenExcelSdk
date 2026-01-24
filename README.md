@@ -120,13 +120,27 @@ if(excelCellValue.IsEmpty) ...
 
 ```
 
+## Get cell color
+
+It's possible to get the color of a cell.
+
+```
+ExcelCellColor cellColor = proc.GetCellColor(excelSheet, "A2");
+
+if(cellColor.FgColor != null)
+{
+	Console.WriteLine("Cell foreground color: " + cellColor.FgColor.ColorName);
+}
+```
+
+
 ## Get cell currency
 
 Now it's possible to get the currency symbol of a cell when reading its value.
+
 ```
-ExcelCell excelCell= proc.GetCellAt(excelSheet, "B5");
 // get the type, the format and the value
-excelCellValue excelCellValue= proc.GetCellValue(excelSheet, excelCell);
+excelCellValue excelCellValue= proc.GetCellValue(excelSheet, "B5");
 
 if(cellValue.Currency !=null)
 {
@@ -187,6 +201,14 @@ proc.SetCellValue(excelSheet, "D12", new DateOnly(2025,10,12), "d/m/yyyy");
 
 If you set a value (string, int or double) without format in a existing cell, the defined format of the cell is used as much as possible.
 
+## Set cell color
+
+It's possible to get the color of a cell.
+
+```
+// set yellow color to cell A2 (will be the foreground color)
+proc.SetCellColor(excelSheet, "A2", "#FFFF00");
+```
 
 ## Get row/last row index
 
