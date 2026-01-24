@@ -155,7 +155,7 @@ public class ColorMgr
             double tint = bgColor.Tint != null ? bgColor.Tint.Value : 0;
 
             string rgb = styleMgr.GetThemeColor(excelSheet.ExcelFile.WorkbookPart, themeIndex, tint);
-            ExcelColor color = new ExcelColor(themeIndex, rgb);
+            ExcelColor color = new ExcelColor(themeIndex, rgb, tint);
             return color;
         }
         return null;
@@ -182,7 +182,7 @@ public class ColorMgr
 
             // std RGB value
             string rgb = styleMgr.GetThemeColor(excelSheet.ExcelFile.WorkbookPart, themeIndex, tint);
-            ExcelColor color = new ExcelColor(themeIndex, rgb);
+            ExcelColor color = new ExcelColor(themeIndex, rgb, tint);
             return color;
         }
         return null;

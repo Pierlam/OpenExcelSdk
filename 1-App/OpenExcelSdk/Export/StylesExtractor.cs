@@ -1,4 +1,5 @@
-﻿using DocumentFormat.OpenXml.Drawing.Charts;
+﻿using DocumentFormat.OpenXml.Drawing;
+using DocumentFormat.OpenXml.Drawing.Charts;
 using DocumentFormat.OpenXml.Office2010.Word;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Packaging;
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Fill = DocumentFormat.OpenXml.Spreadsheet.Fill;
 using NumberingFormat = DocumentFormat.OpenXml.Spreadsheet.NumberingFormat;
 
 namespace OpenExcelSdk.Export;
@@ -125,23 +127,25 @@ public class StylesExtractor
 
         for (int i = 0; i < stylesPart.Stylesheet.Fills.Elements().Count(); i++)
         {
-            Fill fill = (Fill)excelSheetIn.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet.Fills.ElementAt(i);
+            DocumentFormat.OpenXml.Spreadsheet.Fill fill = (Fill)excelSheetIn.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet.Fills.ElementAt(i);
 
             ExcelColor fgColor = ColorMgr.GetCellForegroundColor(_styleMgr, excelSheetIn, fill);
 
             ExcelColor bgColor = ColorMgr.GetCellBackgroundColor(_styleMgr, excelSheetIn, fill);
 
-            //-XXDEBUG:
+            ExcelFillExport fillExport = new ExcelFillExport(excelSheetIn.Index, i, fill.PatternFill.PatternType, bgColor, fgColor);
+
             if (fill.GradientFill != null)
             {
                 // DEBUG: ExcelGradientFill
                 int nbGradient = fill.GradientFill.Elements().Count();
-                //GradientFill gradientFill = new GradientFill();
-                //gradientFill.Degree =;
-                //gradientFill.de
+                foreach (DocumentFormat.OpenXml.Spreadsheet.GradientFill grad in fill.GradientFill.Elements())
+                {
+                    ExcelGradientFill excelGradientFill = new ExcelGradientFill(grad);
+                    fillExport.ListGradient.Add(excelGradientFill);
+                }
             }
 
-            ExcelFillExport fillExport = new ExcelFillExport(excelSheetIn.Index, i, fill.PatternFill.PatternType, bgColor, fgColor);
             excelStyles.ListFills.Add(fillExport);
         }
         return true;

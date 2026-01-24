@@ -34,21 +34,34 @@ public class ExcelFillsExporter
 
             if (fillExport.FgColor != null)
             {
-                if (fillExport.FgColor.ThemeIndex > 0)
-                    excelProcessor.SetCellValue(excelSheetOut, "E" + rowIdx, fillExport.FgColor.ThemeIndex);
+                excelProcessor.SetCellValue(excelSheetOut, "E" + rowIdx, fillExport.FgColor.Rgb);
 
-                excelProcessor.SetCellValue(excelSheetOut, "F" + rowIdx, fillExport.FgColor.Rgb);
+                if (fillExport.FgColor.ThemeIndex == 0)
+                    excelProcessor.SetCellValue(excelSheetOut, "F" + rowIdx, fillExport.FgColor.ARgb);
+                else
+                {
+                    excelProcessor.SetCellValue(excelSheetOut, "G" + rowIdx, fillExport.FgColor.ThemeIndex);
+                    excelProcessor.SetCellValue(excelSheetOut, "H" + rowIdx, fillExport.FgColor.Tint);
+                }
+
+
             }
 
             if (fillExport.BgColor != null)
             {
-                if (fillExport.BgColor.ThemeIndex > 0)
-                    excelProcessor.SetCellValue(excelSheetOut, "G" + rowIdx, fillExport.BgColor.ThemeIndex);
+                excelProcessor.SetCellValue(excelSheetOut, "I" + rowIdx, fillExport.BgColor.Rgb);
 
-                excelProcessor.SetCellValue(excelSheetOut, "H" + rowIdx, fillExport.BgColor.Rgb);
+                if (fillExport.BgColor.ThemeIndex == 0)
+                    excelProcessor.SetCellValue(excelSheetOut, "J" + rowIdx, fillExport.BgColor.ARgb);
+                else
+                {
+                    excelProcessor.SetCellValue(excelSheetOut, "K" + rowIdx, fillExport.BgColor.ThemeIndex);
+                    excelProcessor.SetCellValue(excelSheetOut, "L" + rowIdx, fillExport.BgColor.Tint);
+                }
             }
 
-            excelProcessor.SetCellValue(excelSheetOut, "I" + rowIdx, fillExport.ListGradient.Count);
+            if(fillExport.ListGradient.Count>0)
+                excelProcessor.SetCellValue(excelSheetOut, "M" + rowIdx, fillExport.ListGradient.Count);
 
             i++;
 
@@ -68,11 +81,20 @@ public class ExcelFillsExporter
         proc.SetCellValue(excelSheet, "B1", "SheetName");
         proc.SetCellValue(excelSheet, "C1", "FillId");
         proc.SetCellValue(excelSheet, "D1", "PatternType");
-        proc.SetCellValue(excelSheet, "E1", "FgColor.ThemeIdx");
-        proc.SetCellValue(excelSheet, "F1", "FgColor");
-        proc.SetCellValue(excelSheet, "G1", "BgColor.ThemeIdx");
-        proc.SetCellValue(excelSheet, "H1", "BgColor");
-        proc.SetCellValue(excelSheet, "I1", "NbGradient");
+
+        proc.SetCellValue(excelSheet, "E1", "FgColor.Rgb");
+        proc.SetCellValue(excelSheet, "F1", "FgColor.Argb");
+
+        proc.SetCellValue(excelSheet, "G1", "FgColor.ThemeIdx");
+        proc.SetCellValue(excelSheet, "H1", "FgColor.Tint");
+
+
+        proc.SetCellValue(excelSheet, "I1", "BgColor.Rgb");
+        proc.SetCellValue(excelSheet, "J1", "BgColor.Argb");
+        proc.SetCellValue(excelSheet, "K1", "BgColor.ThemeIdx");
+        proc.SetCellValue(excelSheet, "L1", "BgColor.Tint");
+
+        proc.SetCellValue(excelSheet, "M1", "NbGradient");
     }
 
 }

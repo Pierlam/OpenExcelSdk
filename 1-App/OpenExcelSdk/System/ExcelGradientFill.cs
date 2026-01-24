@@ -1,15 +1,13 @@
 ﻿using DocumentFormat.OpenXml.Spreadsheet;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OpenExcelSdk.System;
 
 public class ExcelGradientFill
 {
-    public ExcelGradientFill() { }
+    public ExcelGradientFill(GradientFill gradientFill) 
+    {
+        GradientFill = gradientFill;
+    }
 
 
     /// <summary>
@@ -17,7 +15,7 @@ public class ExcelGradientFill
     /// </summary>
     public GradientFill GradientFill { get; set; }
 
-    public double Degree     
+    public double Degree
     {
         get
         {

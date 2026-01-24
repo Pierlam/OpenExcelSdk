@@ -37,10 +37,14 @@ ExcelAllStylesExport ExportAllStyles()
 {
     ExcelProcessor proc = new ExcelProcessor();
 
-    string filename = @"Files\CellFormat.xlsx";
+    //string filename = @"Files\CellFormat.xlsx";
+    string filename = @"Files\currencies.xlsx";
     //string filename = @"Files\SetCellColorOut.xlsx";
     //string filename = @"Out\WrongSave.xlsx";
-    string filenameOut = @"Out\ListStyles.xlsx";
+
+
+    string filenameOut = @"Out\styles.xlsx";
+    //string filenameOut = @"Out\CellFormat-styles.xlsx";
 
     if (File.Exists(filenameOut))
         File.Delete(filenameOut);

@@ -1,5 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Drawing.Spreadsheet;
 using DocumentFormat.OpenXml.Spreadsheet;
+using OpenExcelSdk.System;
 using OpenExcelSdk.System.Export;
 using System;
 using System.Collections.Generic;
@@ -30,13 +31,18 @@ public class ExcelStylesExporter
             excelProcessor.SetCellValue(excelSheetOut, "C" + rowIdx, i);
             excelProcessor.SetCellValue(excelSheetOut, "D" + rowIdx, styleExport.NumberFormatId);
             excelProcessor.SetCellValue(excelSheetOut, "E" + rowIdx, styleExport.NumberFormat);
-            excelProcessor.SetCellValue(excelSheetOut, "F" + rowIdx, styleExport.FillId);
+
+            //--K: currency
+            Currency? currency = CurrencyMgr.CreateCurrency(styleExport.NumberFormat);
+            if (currency != null)
+                excelProcessor.SetCellValue(excelSheetOut, "F" + rowIdx, currency.Code + "-" + currency.Name);
+
+            excelProcessor.SetCellValue(excelSheetOut, "G" + rowIdx, styleExport.FillId);
 
             ExcelFillExport fillExport = excelStyles.ListFills.FirstOrDefault(f => f.FillId == styleExport.FillId);
 
             if (fillExport == null)
             {
-                excelProcessor.SetCellValue(excelSheetOut, "G" + rowIdx, "ERROR");
                 excelProcessor.SetCellValue(excelSheetOut, "H" + rowIdx, "ERROR");
             }
             else
@@ -44,13 +50,8 @@ public class ExcelStylesExporter
 
                 if (fillExport.FgColor != null)
                 {
-                    excelProcessor.SetCellValue(excelSheetOut, "G" + rowIdx, fillExport.FgColor.Rgb);
+                    excelProcessor.SetCellValue(excelSheetOut, "H" + rowIdx, fillExport.FgColor.Rgb);
                 }
-
-                //if (fillExport.BgColor != null)
-                //{
-                //    excelProcessor.SetCellValue(excelSheetOut, "H" + rowIdx, fillExport.BgColor.Rgb);
-                //}
             }
 
             excelProcessor.SetCellValue(excelSheetOut, "I" + rowIdx, styleExport.BorderId);
@@ -73,12 +74,10 @@ public class ExcelStylesExporter
         proc.SetCellValue(excelSheet, "C1", "StyleIndex");
         proc.SetCellValue(excelSheet, "D1", "NumberFormatId");
         proc.SetCellValue(excelSheet, "E1", "NumberFormat");
-        proc.SetCellValue(excelSheet, "F1", "FillId");
-        proc.SetCellValue(excelSheet, "G1", "Fill.FgColor");
-        //proc.SetCellValue(excelSheet, "H1", "Fill.BgColor");
+        proc.SetCellValue(excelSheet, "F1", "Currency");
+        proc.SetCellValue(excelSheet, "G1", "FillId");
+        proc.SetCellValue(excelSheet, "H1", "Fill.FgColor");
         proc.SetCellValue(excelSheet, "I1", "BorderId");
         proc.SetCellValue(excelSheet, "J1", "FontId");
     }
-
-
 }

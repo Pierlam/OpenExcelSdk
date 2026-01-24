@@ -1,4 +1,6 @@
-﻿namespace OpenExcelSdk;
+﻿using OpenExcelSdk.System;
+
+namespace OpenExcelSdk;
 
 /// <summary>
 /// Excel cell value, can manage all cases of type/value.
@@ -81,6 +83,11 @@ public class ExcelCellValue
     /// Set if the cell contains a formula.
     /// </summary>
     public string? Formula { get; set; } = null;
+
+    /// <summary>
+    /// Currency definition, if the cell is formatted as currency.
+    /// </summary>
+    public Currency? Currency { get; set; } = null;
 
     /// <summary>
     /// Set if the type of the cell value is a string.

@@ -11,16 +11,28 @@ namespace OpenExcelSdk.System;
 /// </summary>
 public class ExcelColor
 {
+    /// <summary>
+    /// No theme, only ARGB.
+    /// </summary>
+    /// <param name="argb"></param>
     public ExcelColor(string argb)
     {
         ARgb = argb;
         Rgb = "#" + GetRgb(argb);
     }
 
-    public ExcelColor(int themeIndex, string rgb)
+    /// <summary>
+    /// Initializes a new instance of the ExcelColor class with the specified theme index, RGB color value, and tint
+    /// adjustment.
+    /// </summary>
+    /// <param name="themeIndex">The zero-based index of the color theme to associate with this color. Must be non-negative.</param>
+    /// <param name="rgb">The RGB color value as a hexadecimal string (for example, "FF0000" for red). Cannot be null or empty.</param>
+    /// <param name="tint">The tint adjustment to apply to the color. Typically a value between -1.0 (darkest) and 1.0 (lightest).</param>
+    public ExcelColor(int themeIndex, string rgb, double tint)
     {
         ThemeIndex = themeIndex;
         Rgb= rgb;
+        Tint= tint;
     }
 
     /// <summary>
@@ -42,6 +54,13 @@ public class ExcelColor
     /// Theme index if the color is coming from the theme (predefined colors).
     /// </summary>
     public int ThemeIndex { get; set; } = -1;
+
+    /// <summary>
+    /// If tint is supplied, then it is applied to the RGB value of the color to determine the final color applied.
+    /// The tint value is stored as a double from −1.0 .. 1.0, where −1.0 means 100% darken and 1.0 means 100% lighten.Also, 0.0 means no change.
+    /// https://learn.microsoft.com/en-us/dotnet/api/documentformat.openxml.spreadsheet.colortype.tint?view=openxml-3.0.1
+    /// </summary>
+    public double Tint { get; set; } = 0.0;
 
     /// <summary>
     /// Set a color name if exists.

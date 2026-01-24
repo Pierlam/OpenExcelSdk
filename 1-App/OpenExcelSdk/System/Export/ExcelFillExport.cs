@@ -23,8 +23,13 @@ public class ExcelFillExport
     public int SheetIndex { get; set; }
     public int FillId { get; set; }
     public string PatternType { get; set; }
-    public ExcelColor? BgColor { get; set; } = null;
+
     public ExcelColor? FgColor { get; set; } = null;
+
+    /// <summary>
+    /// Often null.
+    /// </summary>
+    public ExcelColor? BgColor { get; set; } = null;
 
     /// <summary>
     /// Not yet managed.

@@ -1,4 +1,6 @@
 ﻿using DocumentFormat.OpenXml.Drawing.Spreadsheet;
+using DocumentFormat.OpenXml.Spreadsheet;
+using OpenExcelSdk.System;
 using OpenExcelSdk.System.Export;
 using System;
 using System.Collections.Generic;
@@ -75,60 +77,88 @@ public class ExcelCellExporter
 
         for (int i = 0; i < listCell.Count; i++)
         {
-            if (i> _excelAllStyles.CellsSheetMaxLoadCount) break;
-            if (i > _excelAllStyles.CellsMaxLoadCount) 
+            // limit the number of exported cells
+            if (i > _excelAllStyles.CellsSheetMaxLoadCount) break;
+            if (i > _excelAllStyles.CellsMaxLoadCount)
                 break;
 
-            string rowIdx = (i + rowNumOut+ 2).ToString();
+            string rowIdx = (i + rowNumOut + 2).ToString();
             excelProcessor.SetCellValue(excelSheetOut, "A" + rowIdx, sheetIdx);
             excelProcessor.SetCellValue(excelSheetOut, "B" + rowIdx, sheetName);
             excelProcessor.SetCellValue(excelSheetOut, "C" + rowIdx, rowNumIn);
             excelProcessor.SetCellValue(excelSheetOut, "D" + rowIdx, listCell[i].Cell.CellReference.Value);
 
             // cell raw value?
-            if(listCell[i].Cell.DataType != null)
+            if (listCell[i].Cell.DataType != null)
             {
                 excelProcessor.SetCellValue(excelSheetOut, "E" + rowIdx, listCell[i].Cell.DataType.ToString());
             }
 
-            if (listCell[i].Cell.InnerText!= null)
+            if (listCell[i].Cell.InnerText != null)
             {
-                if(int.TryParse(listCell[i].Cell.InnerText, out int intValue))
+                if (int.TryParse(listCell[i].Cell.InnerText, out int intValue))
                     excelProcessor.SetCellValue(excelSheetOut, "F" + rowIdx, intValue);
                 else
                     excelProcessor.SetCellValue(excelSheetOut, "F" + rowIdx, listCell[i].Cell.InnerText);
+            }
+
+            //--G: cell value
+            var cellType = excelProcessor.GetCellType(listCell[i].ExcelSheet, listCell[i]);
+            if (cellType == ExcelCellType.Integer || cellType == ExcelCellType.Double)
+            {
+                double cellValue = excelProcessor.GetCellValueAsDouble(listCell[i].ExcelSheet, listCell[i]);
+                excelProcessor.SetCellValue(excelSheetOut, "G" + rowIdx, cellValue);
+            }
+            else
+            { 
+                string cellValue = excelProcessor.GetCellValueAsString(listCell[i].ExcelSheet, listCell[i]);
+                excelProcessor.SetCellValue(excelSheetOut, "G" + rowIdx, cellValue);
+            }
+
+            //--I: formula
+            if(listCell[i].Cell.CellFormula != null)
+            {
+                excelProcessor.SetCellValue(excelSheetOut, "H" + rowIdx, listCell[i].Formula);
             }
 
             int styleIndex = 0;
             if (listCell[i].Cell.StyleIndex != null)
             {
                 styleIndex = (int)listCell[i].Cell.StyleIndex.Value;
-                excelProcessor.SetCellValue(excelSheetOut, "G" + rowIdx, styleIndex);
+                excelProcessor.SetCellValue(excelSheetOut, "I" + rowIdx, styleIndex);
 
                 var styleExport = _excelAllStyles.ListStyles.FirstOrDefault(s => s.StyleIndex == styleIndex);
 
                 if(styleExport.NumberFormatId!= 0)
-                    excelProcessor.SetCellValue(excelSheetOut, "H" + rowIdx, styleExport.NumberFormatId);
+                    excelProcessor.SetCellValue(excelSheetOut, "J" + rowIdx, styleExport.NumberFormatId);
 
-                excelProcessor.SetCellValue(excelSheetOut, "I" + rowIdx, styleExport.NumberFormat);
+                //--K: currency
+                Currency? currency = CurrencyMgr.CreateCurrency(styleExport.NumberFormat);
+                if(currency!=null)
+                    excelProcessor.SetCellValue(excelSheetOut, "K" + rowIdx, currency.Code+"-"+currency.Name);
+
 
                 if (styleExport.FillId != 0)
                 {
-                    excelProcessor.SetCellValue(excelSheetOut, "J" + rowIdx, styleExport.FillId);
+                    excelProcessor.SetCellValue(excelSheetOut, "L" + rowIdx, styleExport.FillId);
                     var exportFill=  _excelAllStyles.ListFills.FirstOrDefault(f => f.FillId == styleExport.FillId);
                     if(exportFill.FgColor!=null)
-                        excelProcessor.SetCellValue(excelSheetOut, "K" + rowIdx, exportFill.FgColor.Rgb);
+                        excelProcessor.SetCellValue(excelSheetOut, "M" + rowIdx, exportFill.FgColor.Rgb);
                 }
 
                 if (styleExport.BorderId!= 0)
                 {
-                    excelProcessor.SetCellValue(excelSheetOut, "L" + rowIdx, styleExport.BorderId);
+                    excelProcessor.SetCellValue(excelSheetOut, "N" + rowIdx, styleExport.BorderId);
                 }
 
                 if (styleExport.FontId != 0)
                 {
-                    excelProcessor.SetCellValue(excelSheetOut, "M" + rowIdx, styleExport.FontId);
+                    excelProcessor.SetCellValue(excelSheetOut, "O" + rowIdx, styleExport.FontId);
                 }
+
+                //--P: numberFormat
+                excelProcessor.SetCellValue(excelSheetOut, "P" + rowIdx, styleExport.NumberFormat);
+
             }
         }
 
@@ -150,14 +180,22 @@ public class ExcelCellExporter
         proc.SetCellValue(excelSheet, "D1", "CellRef");
         proc.SetCellValue(excelSheet, "E1", "DataType");
         proc.SetCellValue(excelSheet, "F1", "InnerText");
+        proc.SetCellValue(excelSheet, "G1", "Value");
 
-        proc.SetCellValue(excelSheet, "G1", "StyleIndex");
-        proc.SetCellValue(excelSheet, "H1", "NumberFormatId");
-        proc.SetCellValue(excelSheet, "I1", "NumberFormat");
-        proc.SetCellValue(excelSheet, "J1", "FillId");
-        proc.SetCellValue(excelSheet, "K1", "Fill.FgColor");
-        proc.SetCellValue(excelSheet, "L1", "BorderId");
-        proc.SetCellValue(excelSheet, "M1", "FontId");
+        proc.SetCellValue(excelSheet, "H1", "Formula");
+
+        proc.SetCellValue(excelSheet, "I1", "StyleIndex");
+        proc.SetCellValue(excelSheet, "J1", "NumberFormatId");
+
+        proc.SetCellValue(excelSheet, "K1", "Currency");
+
+        proc.SetCellValue(excelSheet, "L1", "FillId");
+        proc.SetCellValue(excelSheet, "M1", "Fill.FgColor");
+        proc.SetCellValue(excelSheet, "N1", "BorderId");
+        proc.SetCellValue(excelSheet, "O1", "FontId");
+
+        proc.SetCellValue(excelSheet, "P1", "NumberFormat");
+
     }
 
 }
