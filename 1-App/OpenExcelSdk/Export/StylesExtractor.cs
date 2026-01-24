@@ -251,6 +251,14 @@ public class StylesExtractor
         //    cellFormat.ApplyFont == null && cellFormat.ApplyProtection == null) return true;
     }
 
+
+    /// <summary>
+    /// Get the number format string from its id.
+    /// works also for buil-oin format like 44:currency.
+    /// </summary>
+    /// <param name="stylesPart"></param>
+    /// <param name="formatId"></param>
+    /// <returns></returns>
     string GetNumberFormat(WorkbookStylesPart stylesPart, int formatId)
     {
         if (stylesPart.Stylesheet.NumberingFormats == null) return string.Empty;

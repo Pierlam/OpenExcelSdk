@@ -28,6 +28,9 @@
     <None Update="10-Files\CreateSheet.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="10-Files\GetCellCurrency.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="10-Files\GetCellColors.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

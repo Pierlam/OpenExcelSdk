@@ -156,8 +156,10 @@ public class ExcelProcessorBase
         double valDouble;
         int valInt;
 
-        // is it a built-in format?
-        if (BuiltInNumberFormatMgr.GetFormatAndType(numberFormatId, out string numberFormat, out ExcelCellType cellType))
+        // try to get built-in format, for currency
+        _styleMgr.GetNumberFormat(excelSheet, (int)numberFormatId, out string numberFormatFound);
+
+        if (BuiltInNumberFormatMgr.GetFormatAndType(numberFormatId, numberFormatFound, out string numberFormat, out ExcelCellType cellType))
         {
             return ValueBuilder.CreateValue(excelCell, cellType, value, (int)numberFormatId, numberFormat);
         }

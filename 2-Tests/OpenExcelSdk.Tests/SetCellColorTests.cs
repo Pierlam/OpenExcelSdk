@@ -36,25 +36,23 @@ public class SetCellColorTests : TestBase
         int count = stylesPart.Stylesheet.CellFormats.Elements().Count();
 
         //--A2: is yellow, set yellow, same style
-        //ExcelCellColor cellColor = proc.SetCellColor(excelSheet, "A2", "#FFFF00");
-        //Assert.IsNotNull(cellColor);
-        //Assert.IsNull(cellColor.BgColor);
-        //Assert.IsNotNull(cellColor.FgColor);
-        //Assert.AreEqual("#FFFF00", cellColor.FgColor.Rgb);
-
-        //--A3: blue, set to yellow  -> PB
-        var cellColor = proc.SetCellColor(excelSheet, "A3", "#FFFF00");
+        ExcelCellColor cellColor = proc.SetCellColor(excelSheet, "A2", "#FFFF00");
         Assert.IsNotNull(cellColor);
         Assert.IsNull(cellColor.BgColor);
         Assert.IsNotNull(cellColor.FgColor);
-        //Assert.AreEqual("#FFFF00", cellColor.FgColor.Rgb);
+        Assert.AreEqual("#FFFF00", cellColor.FgColor.Rgb);
+
+        //--A3: blue, set to yellow  -> PB
+        cellColor = proc.SetCellColor(excelSheet, "A3", "#FFFF00");
+        Assert.IsNotNull(cellColor);
+        Assert.IsNull(cellColor.BgColor);
+        Assert.IsNotNull(cellColor.FgColor);
 
         //--A4: green, set to red -> OK
         cellColor = proc.SetCellColor(excelSheet, "A4", "#FF0000");
         Assert.IsNotNull(cellColor);
         Assert.IsNull(cellColor.BgColor);
         Assert.IsNotNull(cellColor.FgColor);
-        //Assert.AreEqual("#FF0000", cellColor.FgColor.Rgb);
 
         //--A5: null, set to yellow (cellFormat with same fill already exists)
         proc.CreateCell(excelSheet, "A5");
@@ -63,38 +61,28 @@ public class SetCellColorTests : TestBase
         Assert.IsNotNull(cellColor);
         Assert.IsNull(cellColor.BgColor);
         Assert.IsNotNull(cellColor.FgColor);
-        //Assert.AreEqual("#FFFF00", cellColor.FgColor.Rgb);
-
-        //XXX-DEBUG: save the changes
-        //proc.CloseExcelFile(excelFile);
 
         //--A6: null, set to green
-        //proc.CreateCell(excelSheet, "A6");
-        //cellColor = proc.SetCellColor(excelSheet, "A6", "#00FF00");
-        //Assert.IsNotNull(cellColor);
-        //Assert.IsNull(cellColor.BgColor);
-        //Assert.IsNotNull(cellColor.FgColor);
-        //Assert.AreEqual("#00FF00", cellColor.FgColor.Rgb);
+        proc.CreateCell(excelSheet, "A6");
+        cellColor = proc.SetCellColor(excelSheet, "A6", "#00FF00");
+        Assert.IsNotNull(cellColor);
+        Assert.IsNull(cellColor.BgColor);
+        Assert.IsNotNull(cellColor.FgColor);
+        Assert.AreEqual("#00FF00", cellColor.FgColor.Rgb);
 
         //--A7: border, no fill, set to orange: #FF9900
-        //cellColor = proc.SetCellColor(excelSheet, "A7", "#FF9900");
-        //Assert.IsNotNull(cellColor);
-        //Assert.IsNull(cellColor.BgColor);
-        //Assert.IsNotNull(cellColor.FgColor);
-        //Assert.AreEqual("#FF9900", cellColor.FgColor.Rgb);
+        cellColor = proc.SetCellColor(excelSheet, "A7", "#FF9900");
+        Assert.IsNotNull(cellColor);
+        Assert.IsNull(cellColor.BgColor);
+        Assert.IsNotNull(cellColor.FgColor);
+        Assert.AreEqual("#FF9900", cellColor.FgColor.Rgb);
 
         // save the changes
         proc.CloseExcelFile(excelFile);
 
-        //proc.ExportStyles(filename, PathFiles + "SetCellColor-Styles.xlsx");
-
         //==>check the excel content
         excelFile = proc.OpenExcelFile(filename);
         excelSheet = proc.GetSheetAt(excelFile, 0);
-
-        //--only one style must be created
-        //int countUpdate = stylesPart.Stylesheet.CellFormats.Elements().Count();
-        //Assert.AreEqual(count, countUpdate);
 
         //--A2: yellow
         cellColor= proc.GetCellColor(excelSheet, "A2");
@@ -130,6 +118,13 @@ public class SetCellColorTests : TestBase
         Assert.IsNull(cellColor.BgColor);
         Assert.IsNotNull(cellColor.FgColor);
         Assert.AreEqual("#00FF00", cellColor.FgColor.Rgb);
+
+        //--A7: orange
+        cellColor = proc.GetCellColor(excelSheet, "A7");
+        Assert.IsNotNull(cellColor);
+        Assert.IsNull(cellColor.BgColor);
+        Assert.IsNotNull(cellColor.FgColor);
+        Assert.AreEqual("#FF9900", cellColor.FgColor.Rgb);
 
     }
 

@@ -366,9 +366,9 @@ public class StyleMgr
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="formatId"></param>
-    /// <param name="dataFormat"></param>
+    /// <param name="numberFormat"></param>
     /// <returns></returns>
-    public bool GetCustomNumberFormat(ExcelSheet excelSheet, uint formatId, out string dataFormat)
+    public bool GetCustomNumberFormat(ExcelSheet excelSheet, uint formatId, out string numberFormat)
     {
         var stylesheet = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet;
         if (stylesheet.NumberingFormats != null)
@@ -377,14 +377,39 @@ public class StyleMgr
             {
                 if (nf.NumberFormatId.Value == formatId)
                 {
-                    dataFormat = nf.FormatCode.Value;
+                    numberFormat = nf.FormatCode.Value;
                     return true;
                 }
             }
         }
 
         // Built-in format
-        dataFormat = string.Empty;
+        numberFormat = string.Empty;
+        return false;
+    }
+
+    /// <summary>
+    /// Get the number format string from its id.
+    /// works also for buil-oin format like 44:currency.
+    /// </summary>
+    /// <param name="stylesPart"></param>
+    /// <param name="numberFormatId"></param>
+    /// <returns></returns>
+    public bool GetNumberFormat(ExcelSheet excelSheet, int numberFormatId, out string numberFormat)
+    {
+        numberFormat = null;
+        var stylesheet = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet;
+        if (stylesheet.NumberingFormats == null) return false;
+
+        foreach (NumberingFormat nf in stylesheet.NumberingFormats.Elements<NumberingFormat>())
+        {
+            if (nf.NumberFormatId.Value == numberFormatId)
+            {
+                numberFormat= nf.FormatCode.Value;
+                return true;
+            }
+        }
+
         return false;
     }
 
