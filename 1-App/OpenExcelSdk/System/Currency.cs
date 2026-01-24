@@ -47,9 +47,19 @@ public enum CurrencyName
 /// </summary>
 public class Currency
 {
-    public string Symbol { get; set; } 
+    /// <summary>
+    /// Currency symbol, e.g. $, €, ¥
+    /// </summary>
+    public string Symbol { get; set; }
+
+    /// <summary>
+    /// Currency code, e.g. USD, EUR
+    /// </summary>
     public CurrencyCode Code { get; set; }
 
+    /// <summary>
+    /// Currency name, e.g. UsDollar, Euro
+    /// </summary>
     public CurrencyName Name { get; set; }
 }
 
