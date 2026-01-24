@@ -8,30 +8,30 @@ Version version = assembly.GetName().Version;
 string vers = version.ToString();
 
 // check arguments
-if (args.Length==0)
+if (args.Length==0 || args[0].ToLower() == "-help" || args[0].ToLower() == "/?")
 {
     HelpPrinter.PrintHelp(vers);
     return;
 }
 
-// parse arguments
-string argLine = string.Join(" ", args);
+//if (args[0].ToLower() == "-help" || args[0].ToLower() == "/?")
+//{
+//    HelpPrinter.PrintHelp(vers);
+//    return;
+//}
 
-
-foreach (string s in args)
+if (args[0].ToLower() == "-debug")
 {
-    Console.WriteLine("arg : " + s);
+    foreach (string s in args)
+    {
+        Console.WriteLine("arg : " + s);
+    }
+    // Remove first element by skipping it
+    args = args.Skip(1).ToArray();
 }
-//Console.WriteLine("args : " + argLine);
-
-//--XXXEDEBUG:
-//string argLine = " -excel = \"CellFormat.xlsx\"  -out =  \"out\"  ";
-//string argLine = "-excel=\"file.xlsx\"  -out=\"out.xlsx\"";
-
-//argLine = "-excel=\"aaa\"";
 
 
-if (!ArgsParser.Parse(argLine, out ProgParams progParams, out string errMsg))
+if (!ArgsParser.Parse(args, out ProgParams progParams, out string errMsg))
 {
     Console.WriteLine(errMsg);
     return;

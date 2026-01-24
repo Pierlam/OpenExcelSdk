@@ -8,125 +8,51 @@ namespace OpenExcelExport;
 
 public class ArgsParser
 {
-    /// <summary>
-    /// Parse the arguments line.
-    /// </summary>
-    /// <param name="arg"></param>
-    /// <returns></returns>
-    public static bool Parse(string arg, out ProgParams progParams, out string errMsg)
+    public static bool Parse(string[] args, out ProgParams progParams, out string errMsg)
     {
         progParams= new ProgParams();
-        arg = arg.Trim();
 
-        string argEnd;
-
-        if (!CheckRemove(arg, "-excel", out argEnd, out errMsg))
-            return false;
-
-        RemoveSpace(argEnd, out argEnd);
-
-        if (!CheckRemove(argEnd, "=", out argEnd, out errMsg))
-            return false;
-
-        RemoveSpace(argEnd, out argEnd);
-
-        if (!CheckRemoveString(argEnd, out argEnd, out string filenameIn, out errMsg))
-            return false;
-
-        progParams.InputExcelFile = filenameIn;
-
-        if (!CheckRemoveSpace(argEnd, out argEnd, out errMsg))
-            return false;
-
-        if (!CheckRemove(argEnd, "-out", out argEnd, out errMsg))
-            return false;
-
-        RemoveSpace(argEnd, out argEnd);
-
-        if (!CheckRemove(argEnd, "=", out argEnd, out errMsg))
-            return false;
-
-        RemoveSpace(argEnd, out argEnd);
-
-        if (!CheckRemoveString(argEnd, out argEnd, out string filenameOut, out errMsg))
-            return false;
-
-        progParams.OutputExcelFile= filenameOut;
-        return true;
-    }
-
-
-    public static bool CheckRemove(string arg, string item, out string argEnd, out string errMsg)
-    {
-        argEnd= string.Empty;   
-        errMsg = string.Empty;
-
-        // the item should be here at the start
-        if (!arg.StartsWith(item))
+        if (args.Length!=4)
         {
-            errMsg= "Error, argument: " + item + " expected, but not found.";
+            errMsg= "Error, 4 arguments expected.";
+            progParams= null;
             return false;
         }
 
-        // remove the item
-        argEnd = arg.Substring(item.Length);
-
-        //if (argEnd.Length == 0)
-        //{
-        //    errMsg = "Error, argument: " + item + " expected, but not found.";
-        //    return false;
-        //}
-
-        return true;
-    }
-
-    public static bool CheckRemoveString(string arg, out string argEnd, out string paramString, out string errMsg)
-    {
-        argEnd = string.Empty;
-        errMsg = string.Empty;
-        paramString = string.Empty;
-
-        // get the start quote
-        if (!CheckRemove(arg, "'", out argEnd, out errMsg))
-            return false;
-
-        // get the string until the end quote
-        int quoteEndPos = argEnd.IndexOf("'");
-        if(quoteEndPos<0)
+        // -excel
+        if(args[0].ToLower()!="-excel")
         {
-            errMsg= "Error, missing end quote for string : " + argEnd;
+            errMsg= "Error, first argument should be -excel.";
+            progParams= null;
             return false;
         }
 
-        paramString= argEnd.Substring(0, quoteEndPos);
-        argEnd= argEnd.Substring(quoteEndPos + 1);
-        return true;
-    }
-
-    /// <summary>
-    /// At least one space should be here and removed.
-    /// </summary>
-    /// <param name="arg"></param>
-    /// <param name="argEnd"></param>
-    /// <param name="errMsg"></param>
-    /// <returns></returns>
-    public static bool CheckRemoveSpace(string arg, out string argEnd, out string errMsg)
-    {
-        argEnd = string.Empty;
-        errMsg = string.Empty;
-
-        if(arg.Length==0 || char.IsWhiteSpace(arg[0])==false)
+        // excel filename to analyze
+        if (args[1].Trim().Length == 0)
         {
-            errMsg= "Error, space expected, but not found, argument : " +arg;
+            errMsg = "Error, filename to analyze is empty.";
+            progParams = null;
             return false;
         }
-        argEnd= arg.Trim();
+        progParams.InputExcelFile = args[1].Trim();
+
+        // -out
+        if (args[2].ToLower() != "-out")
+        {
+            errMsg = "Error, Third argument should be -out.";
+            progParams = null;
+            return false;
+        }
+
+        // excel filename to analyze
+        if (args[3].Trim().Length == 0)
+        {
+            errMsg = "Error, output filename is empty.";
+            progParams = null;
+            return false;
+        }
+        progParams.OutputExcelFile = args[3].Trim();
+        errMsg=string.Empty;
         return true;
     }
-
-    public static void RemoveSpace(string arg, out string argEnd)
-    {
-        argEnd = arg.Trim();
-    }
-
 }
