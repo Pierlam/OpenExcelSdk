@@ -1,5 +1,7 @@
 ﻿using DevApp;
+using DocumentFormat.OpenXml;
 using OpenExcelSdk;
+using OpenExcelSdk.System.Export;
 
 void DevCloneStyle()
 {
@@ -31,6 +33,48 @@ void ConvertDouble()
     double valDouble = double.Parse(value);
 }
 
+ExcelAllStylesExport ExportAllStyles()
+{
+    ExcelProcessor proc = new ExcelProcessor();
+
+    //string filename = @"Files\CellFormat.xlsx";
+    string filename = @"Files\currencies.xlsx";
+    //string filename = @"Files\SetCellColorOut.xlsx";
+    //string filename = @"Out\WrongSave.xlsx";
+
+
+    string filenameOut = @"Out\styles.xlsx";
+    //string filenameOut = @"Out\CellFormat-styles.xlsx";
+
+    if (File.Exists(filenameOut))
+        File.Delete(filenameOut);
+
+    // export
+    return proc.ExportAllStyles(filename, filenameOut);
+}
+
+
+void CreateWrongExcel()
+{
+    ExcelProcessor proc = new ExcelProcessor();
+
+    string filename = @"Out\Wrong.xlsx";
+
+    if (File.Exists(filename))
+        File.Delete(filename);
+
+    ExcelFile excelFile = proc.CreateExcelFile(filename);
+
+    ExcelSheet excelSheet = proc.GetFirstSheet(excelFile);
+    proc.SetCellValue(excelSheet, "B3", 34);
+
+    proc.SetCellValue(excelSheet, "A2+", 34);
+
+
+    proc.CloseExcelFile(excelFile);
+}
+
+
 Console.WriteLine("=> OpenExcelSdk DevApp:");
 
 //CellReader.Read();
@@ -39,10 +83,19 @@ Console.WriteLine("=> OpenExcelSdk DevApp:");
 
 //DevCloneStyle();
 
-//CellReader.ReadCellFormats();
 
 //CellReader.CheckFilePb();
 
-EasierWay.TestFctLight();
+//EasierWay.TestFctLight();
+
+//CellReader.ReadCellFormats();
+
+
+//var Rgb = HexBinaryValue.FromString("#00FF00");
+
+
+//CreateWrongExcel();
+
+ExcelAllStylesExport excelStyles =ExportAllStyles();
 
 Console.WriteLine("=> Ok, Ends.");

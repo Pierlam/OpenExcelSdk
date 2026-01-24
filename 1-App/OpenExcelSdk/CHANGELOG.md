@@ -1,4 +1,20 @@
-﻿## 0.4.0 Release (2025-12-30)
+﻿## 0.5.0 Release (2026-01-24)
+
+-Add export of all styles of an Excel: ExcelProcessor.ExportAllStyles()
+
+-Add new methods: GetRowCells(excelSheet, excelRow)
+
+-Add new methods: GetRowCells(excelSheet, rowIndex)
+
+-Get currency symbol from cell, when call GetCellValue method.
+
+-GetCellColor(cell)  Get the background and foreground cell color.
+
+-Creation of the console applcation: OpenExcelExport.exe. 
+  published here : https://pierlam.github.io/OpenExcelExport/
+
+
+## 0.4.0 Release (2025-12-30)
 
 -Code Reworked, Simplification of several classes and methods.
 
@@ -10,4 +26,4 @@
 
 -Several Bugs fixed (number format,...).
 
--18 unit tests, all are green.
+-24 unit tests, all are green.

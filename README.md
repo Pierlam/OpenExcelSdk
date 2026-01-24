@@ -57,7 +57,7 @@ if(excelCellValue.CellType == ExcelCellType.String)
 } 
 ```
 
-# Package available on Nuget
+# source code, documentation and nuget
 
 OpenExcelSdk library is packaged as a nuget ready to use:
 
@@ -101,6 +101,8 @@ ExcelSheet excelSheet= proc.GetSheetByName(excelFile, "Sheet1");
 
 ## Get cell value, type and format
 
+The example below read a cell at B4 address, then get the type, the format and the value of the cell.
+
 ```
 // read B4 cell
 ExcelCell excelCell= proc.GetCellAt(excelSheet, "B4");
@@ -118,10 +120,30 @@ if(excelCellValue.IsEmpty) ...
 
 ```
 
+## Get cell currency
+
+Now it's possible to get the currency symbol of a cell when reading its value.
+```
+ExcelCell excelCell= proc.GetCellAt(excelSheet, "B5");
+// get the type, the format and the value
+excelCellValue excelCellValue= proc.GetCellValue(excelSheet, excelCell);
+
+if(cellValue.Currency !=null)
+{
+   Console.WriteLine("Cell currency symbol: " + cellValue.Currency.Symbol);
+   Console.WriteLine("Cell currency code: " + cellValue.Currency.Code);
+   Console.WriteLine("Cell currency name: " + cellValue.Currency.Name);
+}
+
+// will display for example:
+// Cell currency symbol: €
+// Cell currency code: EUR
+// Cell currency name: Euro
+```
 
 ## Read unexisting cell 
 
-Reading a cell which not exist jsut return a null value, it's not an error.
+Reading a cell which not exist just return a null value, it's not an error.
 
 ```
 // read B9 cell which not exists
@@ -163,19 +185,6 @@ proc.SetCellValue(excelSheet, "B9", 12.5, "0.00");
 proc.SetCellValue(excelSheet, "D12", new DateOnly(2025,10,12), "d/m/yyyy");
 ```
 
-You can use one of some predefined format declared in the class Definitions.cs.
-
-
-```
-// set a double value and format it with 2 decimals, e.g.: 12,30
-// Definitions.NumFmtNumberTwoDec2= "0.00"
-proc.SetCellValue(excelSheet, "B5", 12.3, Definitions.NumFmtNumberTwoDec2);
-
-// set a formated date
-// Definitions.NumFmtDayMonthYear14= "d/m/yyyy"
-proc.SetCellValue(excelSheet, "C4", new DateOnly(2025,12,28), Definitions.NumFmtDayMonthYear14);
-```
-
 If you set a value (string, int or double) without format in a existing cell, the defined format of the cell is used as much as possible.
 
 
@@ -203,6 +212,18 @@ Console.WriteLine("last row idx: " + lastRowIdx);
 ExcelRow row = proc.GetRowAt(excelSheet, 0);
 if (row==null)
 	Console.WriteLine("ERROR, unable to read the row");
+```
+
+it's also possible to get all cells of a row:
+
+```
+ // get all cells of the row at index 2
+ List<ExcelCell> cells = proc.GetRowCells(excelSheet, 2);
+ foreach(ExcelCell cell in cells)
+ {
+	excelCellValue cellValue = proc.GetCellValue(excelSheet, cell);
+	Console.WriteLine("Cell " + proc.GetCellAddress(cell) + " value: " + cellValue.ToString());
+ }
 ```
 
 
@@ -251,11 +272,35 @@ int count= proc.GetCustomNumberFormatsCount(excelSheet);
 
 ```
 
-## What is not managed
+## Export styles 
 
-The library offers many functions on cell but there are several functionalities which are not managed such as: Alignment Border, Fill, Font and Protection.  
+### how to
 
-But the background and foreground color (Fill) get/set will be the next feature implemented. 
+It's now possible to export all styles of an excel file.
+
+```
+ExcelProcessor proc = new ExcelProcessor();	
+string filename = @".\Files\data.xlsx";
+ExcelFile excelFile= proc.OpenExcelFile(filename);
+
+List<ExcelCellFormat> styles = proc.ExportAllStyles(excelFile);
+foreach(ExcelCellFormat style in styles)
+{
+	Console.WriteLine("ID:" + style.Id + " FormatCode:" + style.FormatCode);
+}
+```
+
+All styles of the Excel file will be exported : SharedString, Font, Fill, Border, CellFormat/NumberFormat.
+
+And also some cells with all details.
+
+
+### OpenExcelExport application
+
+A console application named OpenExcelExport is available to export excel file content to csv or json format.
+The application is open-source, more information here: https://pierlam.github.io/OpenExcelExport/
+
+The project is available in the solution. 
 
 
 ## Contact 

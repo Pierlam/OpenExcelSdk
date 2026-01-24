@@ -157,7 +157,7 @@ public class GetCellTypeAndValueTests : TestBase
 
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
-        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        cellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, cell);
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
         // 14: built-in format: dd/MM/yyyy
         Assert.AreEqual(14, (int)cellFormat.NumberFormatId.Value);
@@ -170,7 +170,7 @@ public class GetCellTypeAndValueTests : TestBase
 
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
-        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        cellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, cell);
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
         // 22: built-in format: dd/MM/yyyy HH:mm
         Assert.AreEqual(22, (int)cellFormat.NumberFormatId.Value);
@@ -182,7 +182,7 @@ public class GetCellTypeAndValueTests : TestBase
         Assert.AreEqual(new TimeOnly(09, 34, 56), excelCellValue.TimeOnlyValue);
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
-        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        cellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, cell);
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
         // 21: built-in format: HH:mm:ss
         Assert.AreEqual(21, (int)cellFormat.NumberFormatId.Value);
@@ -194,7 +194,7 @@ public class GetCellTypeAndValueTests : TestBase
         Assert.AreEqual(new DateTime(2025, 12, 10, 12, 34, 56), excelCellValue.DateTimeValue);
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
-        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        cellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, cell);
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
         //// custom format, >164
         Assert.AreEqual(165, (int)cellFormat.NumberFormatId.Value);

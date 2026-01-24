@@ -23,6 +23,8 @@ public enum ExcelErrorCode
     IndexMustBePositive,
     TypeWrong,
 
+     InvalidCellAddress,
+
     UnableGetCell,
     UnableGetRow,
 

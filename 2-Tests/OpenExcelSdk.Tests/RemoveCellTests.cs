@@ -20,11 +20,11 @@ public class RemoveCellTests : TestBase
         ExcelCellValue excelCellValue;
 
         //--B2: already null!
-        res = proc.RemoveCell(excelSheet, "B2");
+        res = proc.RemoveCellAt(excelSheet, "B2");
         Assert.IsTrue(res);
 
         //--B3:
-        res = proc.RemoveCell(excelSheet, "B3");
+        res = proc.RemoveCellAt(excelSheet, "B3");
         Assert.IsTrue(res);
 
         //--B4:

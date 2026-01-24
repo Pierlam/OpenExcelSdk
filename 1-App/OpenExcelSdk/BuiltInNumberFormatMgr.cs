@@ -1,4 +1,6 @@
-﻿namespace OpenExcelSdk;
+﻿using DocumentFormat.OpenXml.Packaging;
+
+namespace OpenExcelSdk;
 
 public class BuiltInNumberFormatMgr
 {
@@ -118,7 +120,8 @@ public class BuiltInNumberFormatMgr
         // 39 = '#,##0.00;(#,##0.00)'          ou "#,##0.00_);(#,##0.00)"
         // 40 = '#,##0.00;[Red](#,##0.00)'     ou  "#,##0.00_);[Red]"
 
-        if (format == "_(\"$\"* #,##0.00_);_(\"$\"* \\(#,##0.00\\);_(\"$\"* \"-\"??_);_(@_)")
+        //--44: e.g. "_(\"$\"* #,##0.00_);_(\"$\"* \\(#,##0.00\\);_(\"$\"* \"-\"??_);_(@_)"
+        if (format.StartsWith("_(\"") && format.Contains("\"* #,##0.00_);_(\"") && format.EndsWith("\"* \"-\"??_);_(@_)"))
         {
             formatId = 44;
             return true;
@@ -152,7 +155,7 @@ public class BuiltInNumberFormatMgr
     /// </summary>
     /// <param name="numFmtId"></param>
     /// <returns></returns>
-    public static bool GetFormatAndType(uint numFmtId, out string numberFormat, out ExcelCellType cellType)
+    public static bool GetFormatAndType(uint numFmtId, string numberFormatIn, out string numberFormat, out ExcelCellType cellType)
     {
         numberFormat = string.Empty;
         cellType = ExcelCellType.Undefined;
@@ -325,7 +328,13 @@ public class BuiltInNumberFormatMgr
         // 44 = '_("$"* #,##0.00_);_("$"* \(#,##0.00\);_("$"* "-"??_);_(@_)'  -> currency with 2 decimals
         if (numFmtId == 44)
         {
-            numberFormat = "_(\"$\"* #,##0.00_);_(\"$\"* \\(#,##0.00\\);_(\"$\"* \"-\"??_);_(@_)";
+            if (!string.IsNullOrWhiteSpace(numberFormatIn))
+                // can be provided from outside
+                numberFormat = numberFormatIn;
+            else
+                // set a default if not provided
+                numberFormat = "_(\"$\"* #,##0.00_);_(\"$\"* \\(#,##0.00\\);_(\"$\"* \"-\"??_);_(@_)";
+
             cellType = ExcelCellType.Double;
             return true;
         }

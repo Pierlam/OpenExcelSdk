@@ -137,7 +137,7 @@ public class SetCellValueTests : TestBase
         // check the style and the number format
         cell = proc.GetCellAt(excelSheet, 2, 13);
         Assert.IsNotNull(cell.Cell.StyleIndex);
-        var cellFormat = proc.GetCellFormat(excelSheet, cell);
+        var cellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, cell);
 
         // numberFormat must be null/0, no more a custom format
         Assert.IsNull(cellFormat.ApplyNumberFormat);
@@ -255,7 +255,7 @@ public class SetCellValueTests : TestBase
 
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
-        var cellFormat = proc.GetCellFormat(excelSheet, cell);
+        var cellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, cell);
 
         // numberFormat must be defined, is a built-in format
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
@@ -269,7 +269,7 @@ public class SetCellValueTests : TestBase
 
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
-        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        cellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, cell);
         // numberFormat must be defined, it is a built-in format
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
         Assert.AreEqual(2, (int)cellFormat.NumberFormatId.Value);
@@ -283,7 +283,7 @@ public class SetCellValueTests : TestBase
 
         // numberFormat must be defined, is a custom format > 164
         Assert.IsNotNull(cell.Cell.StyleIndex);
-        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        cellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, cell);
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
         Assert.IsTrue((int)cellFormat.NumberFormatId.Value > 163);
         StyleMgr styleMgr = new StyleMgr();
@@ -300,7 +300,7 @@ public class SetCellValueTests : TestBase
 
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
-        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        cellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, cell);
         // numberFormat must be defined, is a custom format > 164
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
         //Assert.AreEqual(2, (int)cellFormat.NumberFormatId.Value);
@@ -371,7 +371,7 @@ public class SetCellValueTests : TestBase
 
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
-        var cellFormat = proc.GetCellFormat(excelSheet, cell);
+        var cellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, cell);
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
         Assert.AreEqual(14, (int)cellFormat.NumberFormatId.Value);
 
@@ -382,7 +382,7 @@ public class SetCellValueTests : TestBase
         Assert.AreEqual(new DateOnly(2019, 05, 07), excelCellValue.DateOnlyValue);
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
-        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        cellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, cell);
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
         Assert.AreEqual(14, (int)cellFormat.NumberFormatId.Value);
         Assert.AreEqual(14, excelCellValue.NumberFormatId);
@@ -400,7 +400,7 @@ public class SetCellValueTests : TestBase
         Assert.AreEqual(new TimeOnly(10, 34, 56), excelCellValue.TimeOnlyValue);
         // check the style and the number format
         Assert.IsNotNull(cell.Cell.StyleIndex);
-        cellFormat = proc.GetCellFormat(excelSheet, cell);
+        cellFormat = ExcelCellAddressUtils.GetCellFormat(excelSheet, cell);
         // "hh:mm:ss"
         Assert.AreEqual("1", cellFormat.ApplyNumberFormat);
         Assert.AreEqual("hh:mm:ss", excelCellValue.NumberFormat);

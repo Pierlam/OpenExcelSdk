@@ -1,7 +1,29 @@
-﻿namespace OpenExcelSdk;
+﻿using DocumentFormat.OpenXml.Spreadsheet;
 
-public class ExcelUtils
+namespace OpenExcelSdk;
+
+/// <summary>
+/// Excel cell reference/Address utils.
+/// </summary>
+public class ExcelCellAddressUtils
 {
+    /// <summary>
+    /// Get the style/CellFormat of the cell, if it has one.
+    /// It's an OpenXml object.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="excelCell"></param>
+    /// <returns></returns>
+    public static CellFormat GetCellFormat(ExcelSheet excelSheet, ExcelCell excelCell)
+    {
+        if (excelCell.Cell.StyleIndex == null)
+            // no style, no cell format
+            return null;
+
+        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        return (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
+    }
+
     /// <summary>
     /// Convert to a standard excel address.
     /// exp: 1,1 -> A1
@@ -18,6 +40,37 @@ public class ExcelUtils
     }
 
     /// <summary>
+    /// Return column and row index from a cell address.
+    /// e.g. B2 -> colIdx=2, rowIdx=2
+    /// </summary>
+    /// <param name="cellReference"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <returns></returns>
+    public static bool GetColumnAndRowIndex(string cellReference, out int colIdx, out int rowIdx)
+    {
+        colIdx = 0;
+        rowIdx = 0;
+
+        if (string.IsNullOrWhiteSpace(cellReference))
+        {
+            return false;
+        }
+
+        cellReference= cellReference.Trim();  
+        
+        colIdx = GetColumnIndex(cellReference);
+        if(colIdx == 0) return false;
+
+        rowIdx = GetRowIndex(cellReference);
+        if (rowIdx == 0) return false;
+
+        // max col: XFD, max row: 1048576
+        return CheckMaxColAndRowValue(colIdx, rowIdx);
+    }
+
+
+    /// <summary>
     /// Get the column index.
     /// exp: B2 -> return 2.
     /// </summary>
@@ -26,6 +79,7 @@ public class ExcelUtils
     public static int GetColumnIndex(string cellReference)
     {
         if (string.IsNullOrWhiteSpace(cellReference)) return 0;
+
         string columnAddress = string.Empty;
         int i = 0;
         while (true)
@@ -42,6 +96,8 @@ public class ExcelUtils
         }
 
         if (columnAddress == string.Empty) return 0;
+
+        columnAddress= columnAddress.ToUpper();
 
         // convert the col to an int
         int columnNumber = 0;
@@ -61,7 +117,10 @@ public class ExcelUtils
     public static int GetRowIndex(string cellReference)
     {
         if (string.IsNullOrWhiteSpace(cellReference)) return 0;
+
         int i = 0;
+
+        // scan letters part, e.g. A
         while (true)
         {
             if (i >= cellReference.Length) break;
@@ -72,6 +131,8 @@ public class ExcelUtils
             }
             break;
         }
+
+        // scan digits part, e.g. 12
         string rowStr = string.Empty;
         while (true)
         {
@@ -84,6 +145,9 @@ public class ExcelUtils
             }
             break;
         }
+
+        // next char are not digit
+        if (i < cellReference.Length) return 0;
 
         int row = 0;
         if (!int.TryParse(rowStr, out row)) return 0;

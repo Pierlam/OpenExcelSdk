@@ -1,0 +1,101 @@
+﻿using OpenExcelSdk.System.Export;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace OpenExcelSdk.Export;
+
+public class ExcelFillsExporter
+{
+    /// <summary>
+    /// Export all fill in the TabPage 2
+    /// </summary>
+    /// <param name="excelProcessor"></param>
+    /// <param name="excelStyles"></param>
+    /// <param name="excelFileOut"></param>
+    public static void ExportFills(ExcelProcessor excelProcessor, ExcelAllStylesExport excelStyles, ExcelFile excelFileOut)
+    {
+        ExcelSheet excelSheetOut = excelProcessor.CreateSheet(excelFileOut, "Fills");
+
+        // create the out header
+        CreateOutHeader(excelProcessor, excelSheetOut);
+
+        int i = 0;
+        foreach (ExcelFillExport fillExport in excelStyles.ListFills)
+        {
+            string rowIdx = (i + 2).ToString();
+
+            excelProcessor.SetCellValue(excelSheetOut, "A" + rowIdx, fillExport.SheetIndex);
+            excelProcessor.SetCellValue(excelSheetOut, "B" + rowIdx, excelStyles.ListSheets.FirstOrDefault(s => s.Index == fillExport.SheetIndex).Name);
+            excelProcessor.SetCellValue(excelSheetOut, "C" + rowIdx, fillExport.FillId);
+            excelProcessor.SetCellValue(excelSheetOut, "D" + rowIdx, fillExport.PatternType);
+
+            if (fillExport.FgColor != null)
+            {
+                excelProcessor.SetCellValue(excelSheetOut, "E" + rowIdx, fillExport.FgColor.Rgb);
+
+                if (fillExport.FgColor.ThemeIndex == 0)
+                    excelProcessor.SetCellValue(excelSheetOut, "F" + rowIdx, fillExport.FgColor.ARgb);
+                else
+                {
+                    excelProcessor.SetCellValue(excelSheetOut, "G" + rowIdx, fillExport.FgColor.ThemeIndex);
+                    excelProcessor.SetCellValue(excelSheetOut, "H" + rowIdx, fillExport.FgColor.Tint);
+                }
+
+
+            }
+
+            if (fillExport.BgColor != null)
+            {
+                excelProcessor.SetCellValue(excelSheetOut, "I" + rowIdx, fillExport.BgColor.Rgb);
+
+                if (fillExport.BgColor.ThemeIndex == 0)
+                    excelProcessor.SetCellValue(excelSheetOut, "J" + rowIdx, fillExport.BgColor.ARgb);
+                else
+                {
+                    excelProcessor.SetCellValue(excelSheetOut, "K" + rowIdx, fillExport.BgColor.ThemeIndex);
+                    excelProcessor.SetCellValue(excelSheetOut, "L" + rowIdx, fillExport.BgColor.Tint);
+                }
+            }
+
+            if(fillExport.ListGradient.Count>0)
+                excelProcessor.SetCellValue(excelSheetOut, "M" + rowIdx, fillExport.ListGradient.Count);
+
+            i++;
+
+        }
+
+    }
+
+
+        /// <summary>
+        /// Create the out header
+        /// </summary>
+        /// <param name="proc"></param>
+        /// <param name="excelSheet"></param>
+        static void CreateOutHeader(ExcelProcessor proc, ExcelSheet excelSheet)
+    {
+        proc.SetCellValue(excelSheet, "A1", "SheetIdx");
+        proc.SetCellValue(excelSheet, "B1", "SheetName");
+        proc.SetCellValue(excelSheet, "C1", "FillId");
+        proc.SetCellValue(excelSheet, "D1", "PatternType");
+
+        proc.SetCellValue(excelSheet, "E1", "FgColor.Rgb");
+        proc.SetCellValue(excelSheet, "F1", "FgColor.Argb");
+
+        proc.SetCellValue(excelSheet, "G1", "FgColor.ThemeIdx");
+        proc.SetCellValue(excelSheet, "H1", "FgColor.Tint");
+
+
+        proc.SetCellValue(excelSheet, "I1", "BgColor.Rgb");
+        proc.SetCellValue(excelSheet, "J1", "BgColor.Argb");
+        proc.SetCellValue(excelSheet, "K1", "BgColor.ThemeIdx");
+        proc.SetCellValue(excelSheet, "L1", "BgColor.Tint");
+
+        proc.SetCellValue(excelSheet, "M1", "NbGradient");
+    }
+
+}
+

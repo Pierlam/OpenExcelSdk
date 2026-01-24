@@ -6,6 +6,15 @@
 /// </summary>
 public class ValueBuilder
 {
+    /// <summary>
+    /// Create a ExcelCellValue object from cell type and value.
+    /// </summary>
+    /// <param name="excelCell"></param>
+    /// <param name="cellType"></param>
+    /// <param name="value"></param>
+    /// <param name="numberFormatId"></param>
+    /// <param name="numberFormat"></param>
+    /// <returns></returns>
     public static ExcelCellValue CreateValue(ExcelCell excelCell, ExcelCellType cellType, string value, int numberFormatId, string numberFormat)
     {
         ExcelCellValue excelCellValue;
@@ -18,11 +27,16 @@ public class ValueBuilder
             return excelCellValue;
         }
 
+
         if (cellType == ExcelCellType.Integer)
         {
             excelCellValue = ValueBuilder.CreateValueInteger(value, (int)numberFormatId, numberFormat);
             if (excelCellValue == null) return null;
             excelCellValue.Formula = excelCell.Cell.CellFormula?.Text;
+
+            // manage currency format
+            excelCellValue.Currency= CurrencyMgr.CreateCurrency(numberFormat);
+
             return excelCellValue;
         }
 
@@ -31,6 +45,10 @@ public class ValueBuilder
             excelCellValue = ValueBuilder.CreateValueDouble(value, (int)numberFormatId, numberFormat);
             if (excelCellValue == null) return null;
             excelCellValue.Formula = excelCell.Cell.CellFormula?.Text;
+
+            // manage currency format
+            excelCellValue.Currency = CurrencyMgr.CreateCurrency(numberFormat);
+
             return excelCellValue;
         }
 
