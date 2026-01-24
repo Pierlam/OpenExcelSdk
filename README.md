@@ -5,7 +5,7 @@ OpenExcelSdk is an open-source backend .NET library to use Excel (xlsx) very eas
 It's written in C#/NET8 with VS2026. The code is covered by 18 unit tests to ensure the non-regression of incoming evolutions.
 
 The only dependency is OpenXML SDK, the official Microsoft library to work with Excel files.
-The last available version 3.3.0 is used.
+The last available version 3.4.1 is used.
 
 OpenXML SDK is a big library to manage Excel, Word and Power-Point documents.
 OpenExcelSdk is focus only on Excel documents.
@@ -57,7 +57,7 @@ if(excelCellValue.CellType == ExcelCellType.String)
 } 
 ```
 
-# source code, documentation and nuget
+# Source code, documentation and nuget
 
 OpenExcelSdk library is packaged as a nuget ready to use:
 
@@ -72,14 +72,20 @@ Github wiki:
 https://github.com/Pierlam/OpenExcelSdk/wiki
 
 
-# Main functions
+# Features
 
-There are many available functions to get sheet, by index or by name, to read and write cell value type and format.
+There are many available features to get sheet, by index or by name, to read and write cell value type and format, and cell color.
 
 Take a look on ExcelProcessor main class which have many methods.
 
 Manage basic type are: string, integer, double, DateOnly, DateTime and TimeOnly.
 Set a value to a cell is possible for each of these types.
+
+```
+// entry point to reach all functions
+ExcelProcessor proc = new ExcelProcessor();
+```
+
 
 ## Get a sheet
 
@@ -296,33 +302,29 @@ int count= proc.GetCustomNumberFormatsCount(excelSheet);
 
 ## Export styles 
 
-### how to
+### How to do
 
 It's now possible to export all styles of an excel file.
+All styles of the Excel file will be exported : SharedString, Font, Fill, Border, CellFormat/NumberFormat both in a object model (ExcelAllStylesExport) and also in a excel file.
 
 ```
 ExcelProcessor proc = new ExcelProcessor();	
-string filename = @".\Files\data.xlsx";
-ExcelFile excelFile= proc.OpenExcelFile(filename);
 
-List<ExcelCellFormat> styles = proc.ExportAllStyles(excelFile);
-foreach(ExcelCellFormat style in styles)
-{
-	Console.WriteLine("ID:" + style.Id + " FormatCode:" + style.FormatCode);
-}
+ExcelAllStylesExport allStyles = proc.ExportAllStyles("data.xlsx", "styles.xlsx");
 ```
 
-All styles of the Excel file will be exported : SharedString, Font, Fill, Border, CellFormat/NumberFormat.
-
-And also some cells with all details.
 
 
-### OpenExcelExport application
 
-A console application named OpenExcelExport is available to export excel file content to csv or json format.
+## OpenExcelExport application
+
+Based on OpenExcelSdk library, and specially on export style feature, a console application named OpenExcelExport is available to export excel file content to a output Excel.
+
+The project is available in the solution, named OpenExcelExport.
+
 The application is open-source, more information here: https://pierlam.github.io/OpenExcelExport/
 
-The project is available in the solution. 
+On this web site you can download the application ready to use, packaged as a zip file.
 
 
 ## Contact 
