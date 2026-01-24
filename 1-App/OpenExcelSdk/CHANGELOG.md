@@ -2,17 +2,22 @@
 
 -Add export of all styles of an Excel: ExcelProcessor.ExportAllStyles()
 
--Add new methods: GetRowCells(excelSheet, excelRow)
+-Add GetRowCells(excelSheet, excelRow)
 
--Add new methods: GetRowCells(excelSheet, rowIndex)
+-Add GetRowCells(excelSheet, rowIndex)
 
 -Get currency symbol from cell, when call GetCellValue method.
 
--GetCellColor(cell)  Get the background and foreground cell color.
+-Add GetCellColor(cell)  Get the cell color.
 
--Creation of the console applcation: OpenExcelExport.exe. 
+-Add SetCellColor(cell)  Set a color to a cell.
+
+-Creation of the console application: OpenExcelExport.exe. 
   published here : https://pierlam.github.io/OpenExcelExport/
 
+-Update OpenXML SDK to the lastest available version: 3.4.1
+
+-24 unit tests, all are green.
 
 ## 0.4.0 Release (2025-12-30)
 
@@ -26,4 +31,4 @@
 
 -Several Bugs fixed (number format,...).
 
--24 unit tests, all are green.
+-18 unit tests, all are green.
