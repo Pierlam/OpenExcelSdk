@@ -16,14 +16,26 @@ public class ExcelAbstractExporter
 
         int numline = 1;
         excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "Title");
-        excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), "OpenExcelSdk - Export styles");
+        excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), "OpenExcelSdk - Export Excel styles");
 
         numline++;
         excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "Version");
         excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), 1);
 
         numline++;
-        excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "Ref");
+        excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "Author");
+        excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), "Pierlam");
+
+        numline++;
+        excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "Contact");
+        excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), "pierlam-project@outlook.com");
+
+        numline++;
+        excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "App WebSite");
+        excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), "https://pierlam.github.io/OpenExcelExport/");
+
+        numline++;
+        excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "Nuget Lib");
         excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), "https://www.nuget.org/packages/OpenExcelSdk");
 
         numline++;

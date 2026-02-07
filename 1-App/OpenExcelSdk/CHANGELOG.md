@@ -1,4 +1,7 @@
-﻿## 0.5.0 Release (2026-01-24)
+﻿## 0.6.0 Release (2026-XX-XX)
+
+
+## 0.5.0 Release (2026-01-24)
 
 -Add export of all styles of an Excel: ExcelProcessor.ExportAllStyles()
 
@@ -23,7 +26,7 @@
 
 -Code Reworked, Simplification of several classes and methods.
 
--Many ExceProcessor methods can now use friendly cell address like: A2.
+-Many ExcelProcessor methods can now use friendly cell address like: A2.
 
 -ExcelError class removed, replaced by a standard Exception class named ExcelException.
 
