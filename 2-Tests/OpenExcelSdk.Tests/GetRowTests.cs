@@ -76,14 +76,13 @@ public class GetRowTests: TestBase
         proc.CloseExcelFile(excelFile);
     }
 
-    // test GetRowCells
     [TestMethod]
-    public void GetRowCells()
+    public void GetRowCellsRowIndex()
     {
         bool res;
         ExcelProcessor proc = new ExcelProcessor();
 
-        string filename = PathFiles + "getRowCells.xlsx";
+        string filename = PathFiles + "getRowCellsRowIndex.xlsx";
         ExcelFile excelFile = proc.OpenExcelFile(filename);
 
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
@@ -110,4 +109,45 @@ public class GetRowTests: TestBase
 
         proc.CloseExcelFile(excelFile);
     }
+
+    [TestMethod]
+    public void GetRowCellsExcelRow()
+    {
+        bool res;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "getRowCellsExcelRow.xlsx";
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
+
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
+
+        // first row index is 1, 3 cells
+        ExcelRow excelRow= proc.GetRowAt(excelSheet, 1);
+        Assert.IsNotNull(excelRow);
+        List<ExcelCell> listCells = proc.GetRowCells(excelSheet, excelRow);
+        Assert.AreEqual(3, listCells.Count);
+
+        // row #2, 5 cells
+        excelRow = proc.GetRowAt(excelSheet, 2);
+        Assert.IsNotNull(excelRow);
+        listCells = proc.GetRowCells(excelSheet, excelRow);
+        Assert.AreEqual(5, listCells.Count);
+
+        // row #3, 1 cell
+        excelRow = proc.GetRowAt(excelSheet, 3);
+        Assert.IsNotNull(excelRow);
+        listCells = proc.GetRowCells(excelSheet, excelRow);
+        Assert.AreEqual(1, listCells.Count);
+
+        // row #4, no cell
+        excelRow = proc.GetRowAt(excelSheet, 4);
+        Assert.IsNull(excelRow);
+
+        // row -5, does not exist, but not an error, just return empty list
+        excelRow = proc.GetRowAt(excelSheet, -5);
+        Assert.IsNull(excelRow);
+
+        proc.CloseExcelFile(excelFile);
+    }
+
 }

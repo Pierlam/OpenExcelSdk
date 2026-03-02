@@ -28,7 +28,10 @@
     <None Update="10-Files\CreateSheet.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="10-Files\getRowCells.xlsx">
+    <None Update="10-Files\getRowCellsRowIndex.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="10-Files\getRowCellsExcelRow.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="10-Files\getRowCellsCount.xlsx">
