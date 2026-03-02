@@ -322,7 +322,7 @@ public class ExcelProcessor : ExcelProcessorBase
     #region Get row
 
     /// <summary>
-    /// Get a row from the sheet  by index base0.
+    /// Get a row from the sheet  by index base1.
     /// If the row doest not exists, it's not an error.
     /// Error occurs only if the access to the row fails.
     /// </summary>
@@ -335,13 +335,14 @@ public class ExcelProcessor : ExcelProcessorBase
         {
             var rows = excelSheet.Worksheet.Descendants<Row>();
             if (!rows.Any())
-                // row doest not exists, it's not an error
+                // row does not exists, it's not an error
                 return null;
 
-            if (rowIndex < 0 || rowIndex > rows.Count())
-                throw ExcelException.Create("GetRowAt", ExcelErrorCode.IndexWrong, rowIndex.ToString());
+            if (rowIndex < 1 || rowIndex > rows.Count())
+                // row does not exists, it's not an error
+                return null;
 
-            Row row = rows.ElementAt(rowIndex);
+            Row row = rows.ElementAt(rowIndex-1);
             return new ExcelRow(row);
         }
         catch (Exception ex)
@@ -365,6 +366,19 @@ public class ExcelProcessor : ExcelProcessorBase
     }
 
     /// <summary>
+    /// Return the number of cells of the row. If the row does not exists, return 0.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="rowIndex"></param>
+    /// <returns></returns>
+    public int GetRowCellsCount(ExcelSheet excelSheet, int rowIndex)
+    {
+        ExcelRow excelRow = GetRowAt(excelSheet, rowIndex);
+        if (excelRow == null) return 0;
+        return excelRow.Row.Elements<Cell>().Count();
+    }
+
+    /// <summary>
     /// Get cells of the row.
     /// </summary>
     /// <param name="excelRow"></param>
@@ -372,6 +386,8 @@ public class ExcelProcessor : ExcelProcessorBase
     public List<ExcelCell> GetRowCells(ExcelSheet excelSheet, ExcelRow excelRow)
     {
         List<ExcelCell> listCell =new List<ExcelCell>();
+
+        if(excelRow==null || excelRow.Row==null) return listCell;
 
         // Iterate through each cell in the row
         foreach (Cell cell in excelRow.Row.Elements<Cell>())
@@ -390,6 +406,8 @@ public class ExcelProcessor : ExcelProcessorBase
     public List<ExcelCell> GetRowCells(ExcelSheet excelSheet, int rowIndex)
     {
         List<ExcelCell> listCell = new List<ExcelCell>();
+
+        if(rowIndex < 1) return listCell;
 
         // Get the first worksheet
         SheetData sheetData = excelSheet.Worksheet.GetFirstChild<SheetData>();

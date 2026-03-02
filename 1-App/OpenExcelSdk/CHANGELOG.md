@@ -1,4 +1,10 @@
-﻿## 0.6.0 Release (2026-XX-XX)
+﻿## 0.6.0 Release (2026-03-XX)
+
+-GetRowAt(): Modify parameter rowIndex; now start from 1.
+
+-Add ExcelProcessor.GetRowCellsCount(sheet, rowIndex)
+
+-27 unit tests, all are green.
 
 
 ## 0.5.0 Release (2026-01-24)

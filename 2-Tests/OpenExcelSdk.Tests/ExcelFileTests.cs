@@ -37,7 +37,7 @@ public sealed class ExcelFileTests : TestBase
 
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
-        ExcelRow row = proc.GetRowAt(excelSheet, 0);
+        ExcelRow row = proc.GetRowAt(excelSheet, 1);
         Assert.IsNotNull(row);
 
         int lastRowIdx = proc.GetLastRowIndex(excelSheet);
