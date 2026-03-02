@@ -25,7 +25,7 @@ public class GetRowTests: TestBase
 
         ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
 
-        // first row index is 1
+        // first row index is 1, so 0 is a wrong row index, but not an error, just return null
         ExcelRow row = proc.GetRowAt(excelSheet, 0);
         Assert.IsNull(row);
 
