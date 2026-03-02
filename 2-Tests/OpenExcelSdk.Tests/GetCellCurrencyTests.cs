@@ -26,6 +26,11 @@ public class GetCellCurrencyTests : TestBase
         ExcelCell cell;
         ExcelCellValue cellValue;
 
+        //--A1: just a string, no currency
+        cellValue = proc.GetCellValue(excelSheet, "A1");
+        Assert.IsNotNull(cellValue);
+        Assert.IsNull(cellValue.Currency);
+
         //--B2: euro
         cellValue = proc.GetCellValue(excelSheet, "B2");
         Assert.IsNotNull(cellValue);
