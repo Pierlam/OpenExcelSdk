@@ -198,7 +198,7 @@ public class GetCellTypeAndValueTests : TestBase
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
         //// custom format, >164
         Assert.AreEqual(165, (int)cellFormat.NumberFormatId.Value);
-        styleMgr.GetCustomNumberFormat(excelSheet, cellFormat.NumberFormatId.Value, out dataFormat);
+        styleMgr.GetCustomNumberFormat(excelSheet, (int)cellFormat.NumberFormatId.Value, out dataFormat);
         Assert.AreEqual("dd/mm/yyyy\\ hh:mm:ss", dataFormat);
     }
 

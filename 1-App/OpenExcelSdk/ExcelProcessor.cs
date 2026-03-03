@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Drawing.Spreadsheet;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
@@ -706,7 +707,45 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <returns></returns>
     public bool SetCellValueEmpty(ExcelSheet excelSheet, string cellReference)
     {
-        ExcelCell excelCell = GetCellAt(excelSheet, cellReference);
+        // check the cell address
+        if (!ExcelCellAddressUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
+            throw ExcelException.Create("SetCellValueEmpty", ExcelErrorCode.InvalidCellAddress, cellReference);
+
+        return SetCellValueEmpty(excelSheet, colIdx, rowIdx);
+    }
+
+    /// <summary>
+    /// Empty/Clear a cell value.
+    /// Keep the format: Alignement colors, border, ...
+    /// If the cell contains a formula, remove it.
+    /// It the cell is null, do nothing.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="cellReference"></param>
+    /// <returns></returns>
+    public bool SetCellValueEmpty(ExcelSheet excelSheet, int colIdx, int rowIdx)
+    {
+        ExcelCell excelCell = GetCellAt(excelSheet, colIdx,rowIdx);
+        if (excelCell == null || excelCell.Cell == null)
+        {
+            // no cell at this address
+            return false;
+        }
+
+        return SetCellValueEmpty(excelSheet, excelCell);
+    }
+
+    /// <summary>
+    /// Empty/Clear a cell value.
+    /// Keep the format: Alignement colors, border, ...
+    /// If the cell contains a formula, remove it.
+    /// It the cell is null, do nothing.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="cellReference"></param>
+    /// <returns></returns>
+    public bool SetCellValueEmpty(ExcelSheet excelSheet, ExcelCell excelCell)
+    {
         if (excelCell == null || excelCell.Cell == null)
         {
             // no cell at this address
@@ -823,29 +862,6 @@ public class ExcelProcessor : ExcelProcessorBase
             throw ExcelException.Create("SetCellValue", ExcelErrorCode.InvalidCellAddress, cellReference);
 
         return SetCellValue(excelSheet, colIdx, rowIdx, value, numberFormat);
-    }
-
-    /// <summary>
-    /// Empty/Clear a cell value.
-    /// Keep the formating.
-    /// If the cell contains a formula, remove it.
-    /// It the cell is null, do nothing.
-    /// </summary>
-    /// <param name="excelSheet"></param>
-    /// <param name="colIdx"></param>
-    /// <param name="rowIdx"></param>
-    /// <returns></returns>
-    public bool SetCellValueEmpty(ExcelSheet excelSheet, int colIdx, int rowIdx)
-    {
-        ExcelCell excelCell = GetCellAt(excelSheet, colIdx, rowIdx);
-
-        if (excelCell == null || excelCell.Cell == null) return false;
-
-        excelCell.Cell.CellValue = new CellValue(string.Empty);
-
-        // remove formula if it's there
-        _styleMgr.RemoveFormula(excelSheet, excelCell);
-        return true;
     }
 
     /// <summary>
@@ -966,6 +982,88 @@ public class ExcelProcessor : ExcelProcessorBase
 
     #endregion Set cell value
 
+    #region Copy Cell 
+
+    /// <summary>
+    ///   Copy the value of a cell to another cell from a source excel file/sheet to a destination excel file/sheet.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="cellReference"></param>
+    /// <param name="excelFileDest"></param>
+    /// <param name="cellReferenceDest"></param>
+    /// <returns></returns>
+    public bool CopyCellValue(ExcelSheet excelSheet, string cellReference, ExcelSheet excelSheetDest, string cellReferenceDest)
+    {
+        ExcelCell excelCell = GetCellAt(excelSheet, cellReference);
+
+        // cell does not exist at source, so clear the destination cell 
+        if (excelCell == null) 
+        { 
+            return SetCellValueEmpty(excelSheetDest, cellReferenceDest);
+        }
+
+        ExcelCell excelCellDest = GetCellAt(excelSheetDest, cellReferenceDest);
+        if (excelCellDest == null)
+            excelCellDest =CreateCell(excelSheetDest, cellReferenceDest);
+
+        return CopyCellValue(excelSheet, excelCell, excelSheetDest, excelCellDest);
+    }
+
+    /// <summary>
+    ///   Copy the value of a cell to another cell from a source excel file/sheet to a destination excel file/sheet.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="cellReference"></param>
+    /// <param name="excelFileDest"></param>
+    /// <param name="cellReferenceDest"></param>
+    /// <returns></returns>
+    public bool CopyCellValue(ExcelSheet excelSheet, ExcelCell excelCell, ExcelSheet excelSheetDest, ExcelCell excelCellDest)
+    {
+        if (excelCell == null) return false;
+        if (excelCellDest == null) return false;
+
+        string numberFormat = string.Empty;
+        if (excelCell.CellFormat != null)
+        {
+            // is it a buit-in number format?
+            _styleMgr.GetNumberFormat(excelSheet, (int)excelCell.CellFormat.NumberFormatId.Value, out numberFormat);
+        }
+
+        ExcelCellValue excelCellValue = GetCellValue(excelSheet, excelCell);
+
+        // source cell is empty, clear the destination cell
+        if (excelCellValue.IsEmpty)
+        {
+            return SetCellValueEmpty(excelSheetDest, excelCellDest);
+        }
+
+        if (excelCellValue.CellType == ExcelCellType.String)
+        {
+            return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.StringValue);
+        }
+
+        if (excelCellValue.CellType == ExcelCellType.Integer)
+        {
+            return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.IntegerValue.Value);
+        }
+
+        if (excelCellValue.CellType == ExcelCellType.Double)
+        {
+            return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.DoubleValue.Value);
+        }
+
+        if (excelCellValue.CellType == ExcelCellType.DateOnly)
+        {
+            // get the number format ba
+            return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.DateOnlyValue.Value, numberFormat);
+        }
+
+        // todo: copy the style of the cell too, not only the value
+        return false;
+    }
+
+    #endregion
+
     #region Set Cell something else
 
     /// <summary>
@@ -999,4 +1097,5 @@ public class ExcelProcessor : ExcelProcessorBase
     }
 
     #endregion
+
 }

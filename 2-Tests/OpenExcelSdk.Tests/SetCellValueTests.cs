@@ -287,7 +287,7 @@ public class SetCellValueTests : TestBase
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
         Assert.IsTrue((int)cellFormat.NumberFormatId.Value > 163);
         StyleMgr styleMgr = new StyleMgr();
-        styleMgr.GetCustomNumberFormat(excelSheet, cellFormat.NumberFormatId.Value, out string numberFormat);
+        styleMgr.GetCustomNumberFormat(excelSheet, (int)cellFormat.NumberFormatId.Value, out string numberFormat);
         Assert.AreEqual("0.000", numberFormat);
 
         //--B5: int 1 450,00 €
@@ -304,7 +304,7 @@ public class SetCellValueTests : TestBase
         // numberFormat must be defined, is a custom format > 164
         Assert.IsNotNull(cellFormat.ApplyNumberFormat);
         //Assert.AreEqual(2, (int)cellFormat.NumberFormatId.Value);
-        styleMgr.GetCustomNumberFormat(excelSheet, cellFormat.NumberFormatId.Value, out numberFormat);
+        styleMgr.GetCustomNumberFormat(excelSheet, (int)cellFormat.NumberFormatId.Value, out numberFormat);
         Assert.AreEqual("#,##0.00\\ \"€\"", numberFormat);
     }
 

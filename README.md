@@ -360,3 +360,6 @@ https://learn.microsoft.com/en-us/office/open-xml/open-xml-sdk
 
 SpreadSheets, source code samples:
 https://learn.microsoft.com/en-us/office/open-xml/spreadsheet/overview
+
+OpenXML library SDK used, available on nuget:
+https://www.nuget.org/packages/DocumentFormat.OpenXml

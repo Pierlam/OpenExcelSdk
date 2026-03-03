@@ -156,21 +156,20 @@ public class ExcelProcessorBase
         double valDouble;
         int valInt;
 
-        // try to get built-in format, for currency
-        _styleMgr.GetNumberFormat(excelSheet, (int)numberFormatId, out string numberFormatFound);
-
-        if (BuiltInNumberFormatMgr.GetFormatAndType(numberFormatId, numberFormatFound, out string numberFormat, out ExcelCellType cellType))
-        {
-            return ValueBuilder.CreateValue(excelCell, cellType, value, (int)numberFormatId, numberFormat);
-        }
+        ExcelCellType cellType;
 
         // Try to get custom format if exists
-        if (_styleMgr.GetCustomNumberFormat(excelSheet, numberFormatId, out numberFormat))
+        if (_styleMgr.GetCustomNumberFormat(excelSheet, (int)numberFormatId, out string numberFormat))
         {
             // then determine the type from the data format: date, number,...
             cellType = GetCellTypeFromNumberFormat(numberFormat);
 
             return ValueBuilder.CreateValue(excelCell, cellType, value, (int)numberFormatId, numberFormat);
+        }
+
+        if (BuiltInNumberFormatMgr.GetFormatAndType(numberFormatId, numberFormat, out string numberFormatFound, out cellType))
+        {
+            return ValueBuilder.CreateValue(excelCell, cellType, value, (int)numberFormatId, numberFormatFound);
         }
 
         if (value == string.Empty)
@@ -475,6 +474,13 @@ public class ExcelProcessorBase
     }
 
     #endregion Set cell value
+
+
+    #region Copy Cell 
+
+
+    #endregion
+
 
     #region Set cell value and number format Id
 
