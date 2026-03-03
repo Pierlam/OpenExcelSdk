@@ -25,6 +25,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="10-Files\CopyCellValueStyleDest.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="10-Files\CopyCellValueStyle.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="10-Files\CopyCellValueNullBlankDest.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

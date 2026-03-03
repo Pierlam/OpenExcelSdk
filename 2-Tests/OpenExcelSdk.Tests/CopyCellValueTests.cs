@@ -76,52 +76,52 @@ public class CopyCellValueTests : TestBase
         proc.CloseExcelFile(excelFileDest);
 
         // then open the destination file and check the value of cell B1
-        ExcelFile excelFileChk = proc.OpenExcelFile(filenameDest);
-        ExcelSheet excelSheetChk = proc.GetSheetAt(excelFileChk, 0);
+        excelFile = proc.OpenExcelFile(filenameDest);
+        excelSheet = proc.GetSheetAt(excelFile, 0);
 
         //--B2: text
-        cell = proc.GetCellAt(excelSheetChk, "B2");
+        cell = proc.GetCellAt(excelSheet, "B2");
         Assert.IsNotNull(cell);
         excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.String, excelCellValue.CellType);
         Assert.AreEqual("text", excelCellValue.StringValue);
 
         //--B3: 12
-        cell = proc.GetCellAt(excelSheetChk, "B3");
+        cell = proc.GetCellAt(excelSheet, "B3");
         Assert.IsNotNull(cell);
         excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.Integer, excelCellValue.CellType);
         Assert.AreEqual(12, excelCellValue.IntegerValue);
 
         //--B6: hello
-        cell = proc.GetCellAt(excelSheetChk, "B6");
+        cell = proc.GetCellAt(excelSheet, "B6");
         Assert.IsNotNull(cell);
         excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.String, excelCellValue.CellType);
         Assert.AreEqual("hello", excelCellValue.StringValue);
 
         //--B8: hello
-        cell = proc.GetCellAt(excelSheetChk, "B8");
+        cell = proc.GetCellAt(excelSheet, "B8");
         Assert.IsNotNull(cell);
         excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.String, excelCellValue.CellType);
         Assert.AreEqual("hello", excelCellValue.StringValue);
 
         //--B9: 12
-        cell = proc.GetCellAt(excelSheetChk, "B9");
+        cell = proc.GetCellAt(excelSheet, "B9");
         Assert.IsNotNull(cell);
         excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.Integer, excelCellValue.CellType);
         Assert.AreEqual(12, excelCellValue.IntegerValue);
 
         //--B12: 12
-        cell = proc.GetCellAt(excelSheetChk, "B12");
+        cell = proc.GetCellAt(excelSheet, "B12");
         Assert.IsNotNull(cell);
         excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.Integer, excelCellValue.CellType);
         Assert.AreEqual(12, excelCellValue.IntegerValue);
 
-        proc.CloseExcelFile(excelFileChk);
+        proc.CloseExcelFile(excelFile);
     }
 
     /// <summary>
@@ -167,40 +167,40 @@ public class CopyCellValueTests : TestBase
         proc.CloseExcelFile(excelFileDest);
 
         // then open the destination file and check the value of cell B1
-        ExcelFile excelFileChk = proc.OpenExcelFile(filenameDest);
-        ExcelSheet excelSheetChk = proc.GetSheetAt(excelFileChk, 0);
+        excelFile = proc.OpenExcelFile(filenameDest);
+        excelSheet = proc.GetSheetAt(excelFile, 0);
 
-        cell = proc.GetCellAt(excelSheetChk, "B2");
+        cell = proc.GetCellAt(excelSheet, "B2");
         Assert.IsNotNull(cell);
         excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.DateOnly, excelCellValue.CellType);
         Assert.AreEqual(new DateOnly(2026,12,10), excelCellValue.DateOnlyValue);
 
-        cell = proc.GetCellAt(excelSheetChk, "B3");
+        cell = proc.GetCellAt(excelSheet, "B3");
         Assert.IsNotNull(cell);
         excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.DateOnly, excelCellValue.CellType);
         Assert.AreEqual(new DateOnly(2026, 12, 10), excelCellValue.DateOnlyValue);
 
-        cell = proc.GetCellAt(excelSheetChk, "B4");
+        cell = proc.GetCellAt(excelSheet, "B4");
         Assert.IsNotNull(cell);
         excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.DateOnly, excelCellValue.CellType);
         Assert.AreEqual(new DateOnly(2026, 12, 10), excelCellValue.DateOnlyValue);
 
-        cell = proc.GetCellAt(excelSheetChk, "B5");
+        cell = proc.GetCellAt(excelSheet, "B5");
         Assert.IsNotNull(cell);
         excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.DateOnly, excelCellValue.CellType);
         Assert.AreEqual(new DateOnly(2026, 12, 10), excelCellValue.DateOnlyValue);
 
-        cell = proc.GetCellAt(excelSheetChk, "B6");
+        cell = proc.GetCellAt(excelSheet, "B6");
         Assert.IsNotNull(cell);
         excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.DateOnly, excelCellValue.CellType);
         Assert.AreEqual(new DateOnly(2026, 12, 10), excelCellValue.DateOnlyValue);
 
-        proc.CloseExcelFile(excelFileChk);
+        proc.CloseExcelFile(excelFile);
 
     }
 
@@ -234,18 +234,86 @@ public class CopyCellValueTests : TestBase
         proc.CloseExcelFile(excelFileDest);
 
         // then open the destination file and check the value of cell B1
-        ExcelFile excelFileChk = proc.OpenExcelFile(filenameDest);
-        ExcelSheet excelSheetChk = proc.GetSheetAt(excelFileChk, 0);
+        excelFile = proc.OpenExcelFile(filenameDest);
+        excelSheet = proc.GetSheetAt(excelFile, 0);
 
-        cell = proc.GetCellAt(excelSheetChk, "B2");
+        cell = proc.GetCellAt(excelSheet, "B2");
         Assert.IsNull(cell);
 
         //--B3 has text, set to blank
-        cell = proc.GetCellAt(excelSheetChk, "B3");
+        cell = proc.GetCellAt(excelSheet, "B3");
         Assert.IsNotNull(cell);
-        excelCellValue = proc.GetCellValue(excelSheetChk, cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.IsTrue(excelCellValue.IsEmpty);
 
-        proc.CloseExcelFile(excelFileChk);
+        proc.CloseExcelFile(excelFile);
     }
+
+    [TestMethod]
+    public void CopyCellValueStyle()
+    {
+        bool res;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "CopyCellValueStyle.xlsx";
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
+
+        string filenameDest = PathFiles + "CopyCellValueStyleDest.xlsx";
+        ExcelFile excelFileDest = proc.OpenExcelFile(filenameDest);
+        ExcelSheet excelSheetDest = proc.GetSheetAt(excelFileDest, 0);
+
+        ExcelCell cell;
+        ExcelCellValue excelCellValue;
+
+        //--do action:
+
+        res = proc.CopyCellValue(excelSheet, "A2", excelSheetDest, "B2");
+        Assert.IsTrue(res);
+
+        res = proc.CopyCellValue(excelSheet, "A3", excelSheetDest, "B3");
+        Assert.IsTrue(res);
+
+        res = proc.CopyCellValue(excelSheet, "A4", excelSheetDest, "B4");
+        Assert.IsTrue(res);
+
+        res = proc.CopyCellValue(excelSheet, "A5", excelSheetDest, "B5");
+        Assert.IsTrue(res);
+
+        // close the files
+        proc.CloseExcelFile(excelFile);
+        proc.CloseExcelFile(excelFileDest);
+
+        // then open the destination file and check the value of cell B1
+        excelFile = proc.OpenExcelFile(filenameDest);
+        excelSheet = proc.GetSheetAt(excelFile, 0);
+
+
+        cell = proc.GetCellAt(excelSheet, "B2");
+        Assert.IsNotNull(cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.String, excelCellValue.CellType);
+        Assert.AreEqual("text", excelCellValue.StringValue);
+
+        cell = proc.GetCellAt(excelSheet, "B3");
+        Assert.IsNotNull(cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.Integer, excelCellValue.CellType);
+        Assert.AreEqual(12, excelCellValue.IntegerValue);
+
+        cell = proc.GetCellAt(excelSheet, "B4");
+        Assert.IsNotNull(cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
+        Assert.AreEqual(23.45, excelCellValue.DoubleValue);
+
+        cell = proc.GetCellAt(excelSheet, "B5");
+        Assert.IsNotNull(cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.DateOnly, excelCellValue.CellType);
+        Assert.AreEqual(new DateOnly(1997, 07, 03), excelCellValue.DateOnlyValue);
+
+        proc.CloseExcelFile(excelFile);
+    }
+
 }

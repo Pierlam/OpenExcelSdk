@@ -7,7 +7,7 @@
 -GetRowAt(): Modify parameter rowIndex; now start from 1.
 
 
--31 unit tests, all are green.
+-32 unit tests, all are green.
 
 
 ## 0.5.0 Release (2026-01-24)
