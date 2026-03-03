@@ -242,11 +242,13 @@ public class ExcelProcessorBase
 
         if (excelCell.Cell.DataType.Value == CellValues.SharedString)
         {
-            // SharedStringMgr
-            if (!SharedStringMgr.GetSharedStringValue(excelSheet, excelCell, out cellValue))
-                throw ExcelException.Create("GetCellStringValue", ExcelErrorCode.UnableGetCellStringValue);
+            // get the string from the shared table
+            SharedStringMgr.GetSharedStringValue(excelSheet, excelCell, out cellValue);
+            //    if (!SharedStringMgr.GetSharedStringValue(excelSheet, excelCell, out cellValue))
+            //    throw ExcelException.Create("GetCellStringValue", ExcelErrorCode.UnableGetCellStringValue);
 
             var excelCellValue = new ExcelCellValue(cellValue);
+            if(string.IsNullOrEmpty(cellValue)) excelCellValue.IsEmpty = true;
             excelCellValue.Formula = excelCell.Cell.CellFormula?.Text;
             return excelCellValue;
         }
@@ -258,15 +260,17 @@ public class ExcelProcessorBase
                 throw ExcelException.Create("GetCellStringValue", ExcelErrorCode.UnableGetCellStringValue);
 
             var excelCellValue = new ExcelCellValue(cellValue);
+            if (string.IsNullOrEmpty(cellValue)) excelCellValue.IsEmpty = true;
             excelCellValue.Formula = excelCell.Cell.CellFormula?.Text;
             return excelCellValue;
         }
 
         if (excelCell.Cell.DataType.Value == CellValues.String)
         {
-            string value = excelCell.Cell.InnerText;
-            if (value == null) value = string.Empty;
-            var excelCellValue = new ExcelCellValue(value);
+            cellValue = excelCell.Cell.InnerText;
+            if (cellValue == null) cellValue = string.Empty;
+            var excelCellValue = new ExcelCellValue(cellValue);
+            if (string.IsNullOrEmpty(cellValue)) excelCellValue.IsEmpty = true;
             excelCellValue.Formula = excelCell.Cell.CellFormula?.Text;
             return excelCellValue;
         }

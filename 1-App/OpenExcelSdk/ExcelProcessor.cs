@@ -1002,11 +1002,7 @@ public class ExcelProcessor : ExcelProcessorBase
             return SetCellValueEmpty(excelSheetDest, cellReferenceDest);
         }
 
-        ExcelCell excelCellDest = GetCellAt(excelSheetDest, cellReferenceDest);
-        if (excelCellDest == null)
-            excelCellDest =CreateCell(excelSheetDest, cellReferenceDest);
-
-        return CopyCellValue(excelSheet, excelCell, excelSheetDest, excelCellDest);
+        return CopyCellValue(excelSheet, excelCell, excelSheetDest, cellReferenceDest);
     }
 
     /// <summary>
@@ -1017,10 +1013,10 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="excelFileDest"></param>
     /// <param name="cellReferenceDest"></param>
     /// <returns></returns>
-    public bool CopyCellValue(ExcelSheet excelSheet, ExcelCell excelCell, ExcelSheet excelSheetDest, ExcelCell excelCellDest)
+    public bool CopyCellValue(ExcelSheet excelSheet, ExcelCell excelCell, ExcelSheet excelSheetDest, string cellReferenceDest)
     {
         if (excelCell == null) return false;
-        if (excelCellDest == null) return false;
+        //if (excelCellDest == null) return false;
 
         string numberFormat = string.Empty;
         if (excelCell.CellFormat != null)
@@ -1031,11 +1027,19 @@ public class ExcelProcessor : ExcelProcessorBase
 
         ExcelCellValue excelCellValue = GetCellValue(excelSheet, excelCell);
 
+        ExcelCell excelCellDest = GetCellAt(excelSheetDest, cellReferenceDest);
+
         // source cell is empty, clear the destination cell
         if (excelCellValue.IsEmpty)
         {
+            // destination cell is already null
+            if (excelCellDest == null) return true;
+
             return SetCellValueEmpty(excelSheetDest, excelCellDest);
         }
+
+        if (excelCellDest == null)
+            excelCellDest = CreateCell(excelSheetDest, cellReferenceDest);
 
         if (excelCellValue.CellType == ExcelCellType.String)
         {
@@ -1058,7 +1062,7 @@ public class ExcelProcessor : ExcelProcessorBase
             return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.DateOnlyValue.Value, numberFormat);
         }
 
-        // todo: copy the style of the cell too, not only the value
+        // cell value type not managed
         return false;
     }
 

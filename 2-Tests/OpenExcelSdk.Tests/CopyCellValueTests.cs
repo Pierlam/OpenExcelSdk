@@ -203,4 +203,49 @@ public class CopyCellValueTests : TestBase
         proc.CloseExcelFile(excelFileChk);
 
     }
+
+    [TestMethod]
+    public void CopyCellValueNullBlank()
+    {
+        bool res;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "CopyCellValueNullBlank.xlsx";
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
+
+        string filenameDest = PathFiles + "CopyCellValueNullBlankDest.xlsx";
+        ExcelFile excelFileDest = proc.OpenExcelFile(filenameDest);
+        ExcelSheet excelSheetDest = proc.GetSheetAt(excelFileDest, 0);
+
+        ExcelCell cell;
+        ExcelCellValue excelCellValue;
+
+        //--do action:
+
+        res = proc.CopyCellValue(excelSheet, "A2", excelSheetDest, "B2");
+        Assert.IsTrue(res);
+
+        res = proc.CopyCellValue(excelSheet, "A3", excelSheetDest, "B3");
+        Assert.IsTrue(res);
+
+        // close the files
+        proc.CloseExcelFile(excelFile);
+        proc.CloseExcelFile(excelFileDest);
+
+        // then open the destination file and check the value of cell B1
+        ExcelFile excelFileChk = proc.OpenExcelFile(filenameDest);
+        ExcelSheet excelSheetChk = proc.GetSheetAt(excelFileChk, 0);
+
+        cell = proc.GetCellAt(excelSheetChk, "B2");
+        Assert.IsNull(cell);
+
+        //--B3 has text, set to blank
+        cell = proc.GetCellAt(excelSheetChk, "B3");
+        Assert.IsNotNull(cell);
+        excelCellValue = proc.GetCellValue(excelSheetChk, cell);
+        Assert.IsTrue(excelCellValue.IsEmpty);
+
+        proc.CloseExcelFile(excelFileChk);
+    }
 }
