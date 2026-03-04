@@ -6,6 +6,7 @@ using DocumentFormat.OpenXml.Spreadsheet;
 using OpenExcelSdk.Export;
 using OpenExcelSdk.System;
 using OpenExcelSdk.System.Export;
+using System.Xml.Schema;
 
 namespace OpenExcelSdk;
 
@@ -1046,20 +1047,41 @@ public class ExcelProcessor : ExcelProcessorBase
             return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.StringValue);
         }
 
+        if (excelCellValue.Currency != null)
+        {
+            // copy the currency too
+            //SetCe
+        }
+
         if (excelCellValue.CellType == ExcelCellType.Integer)
         {
+            if (!string.IsNullOrEmpty(numberFormat))
+                return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.DoubleValue.Value, numberFormat);
+
             return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.IntegerValue.Value);
         }
 
         if (excelCellValue.CellType == ExcelCellType.Double)
         {
+            if (!string.IsNullOrEmpty(numberFormat))
+                return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.DoubleValue.Value, numberFormat);
+
             return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.DoubleValue.Value);
         }
 
         if (excelCellValue.CellType == ExcelCellType.DateOnly)
         {
-            // get the number format ba
             return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.DateOnlyValue.Value, numberFormat);
+        }
+
+        if (excelCellValue.CellType == ExcelCellType.DateTime)
+        {
+            return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.DateTimeValue.Value, numberFormat);
+        }
+
+        if (excelCellValue.CellType == ExcelCellType.TimeOnly)
+        {
+            return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.TimeOnlyValue.Value, numberFormat);
         }
 
         // cell value type not managed

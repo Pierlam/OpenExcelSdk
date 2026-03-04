@@ -54,6 +54,19 @@ ExcelAllStylesExport ExportAllStyles()
 }
 
 
+void ReadCurrency()
+{
+    ExcelProcessor proc = new ExcelProcessor();
+
+    string filename = @"Files\currencies.xlsx";
+
+    ExcelFile excelFile = proc.OpenExcelFile(filename);
+    ExcelSheet excelSheet = proc.GetFirstSheet(excelFile);
+    ExcelCellValue cellValue = proc.GetCellValue(excelSheet, "B2");
+
+    proc.CloseExcelFile(excelFile);
+}
+
 void CreateWrongExcel()
 {
     ExcelProcessor proc = new ExcelProcessor();
@@ -96,6 +109,8 @@ Console.WriteLine("=> OpenExcelSdk DevApp:");
 
 //CreateWrongExcel();
 
-ExcelAllStylesExport excelStyles =ExportAllStyles();
+//ExcelAllStylesExport excelStyles =ExportAllStyles();
+
+ReadCurrency();
 
 Console.WriteLine("=> Ok, Ends.");
