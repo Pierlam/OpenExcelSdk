@@ -42,10 +42,10 @@ public class CurrencyBuilder
     {
         return new Currency()
         {
-            Symbol = "$",
-            Code = CurrencyCode.USD,
+            Symbol = "¥",
+            Code = CurrencyCode.JPY,
             ExcelCode = "[$¥-411]",
-            Name = CurrencyName.UsDollar,
+            Name = CurrencyName.JapaneseYen,
             SymbolPosition = CurrencySymbolPosition.Before
         };
     }
