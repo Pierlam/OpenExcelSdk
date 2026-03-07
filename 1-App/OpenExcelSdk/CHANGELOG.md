@@ -1,6 +1,6 @@
 ﻿## 0.6.0 Release (2026-03-XX)
 
--Add ExcelProcessor.CopyCellValue() from a cell to another one in another excel file.
+-Add ExcelProcessor.CopyCellValue(); Copy a cell value to another one in another excel file.
 
 -Add ExcelProcessor.GetRowCellsCount(sheet, rowIndex)
 

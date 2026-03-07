@@ -695,7 +695,70 @@ public class ExcelProcessor : ExcelProcessorBase
 
     #endregion Remove cell
 
-    #region Set cell value
+    #region Set cell value currency
+
+    /// <summary>
+    /// Sets the value of a specified cell in the given Excel sheet, applying the specified currency format and name.
+    /// example: 123,45 €, currencyFormat= Currency, CurrencyName=Euro  
+    /// </summary>
+    /// <param name="excelSheet">The ExcelSheet object representing the sheet where the cell value will be set.</param>
+    /// <param name="cellReference">The address of the cell to be updated, specified in standard Excel format (for example, "A1").</param>
+    /// <param name="value">The numeric value to be set in the specified cell.</param>
+    /// <param name="currencyFormat">The format to be applied to the cell value, defining how the currency will be displayed.</param>
+    /// <param name="currencyName">The name of the currency to be used, which will be displayed alongside the value in the cell.</param>
+    /// <returns>true if the cell value was successfully set; otherwise, false.</returns>
+    public bool SetCellValueCurrency(ExcelSheet excelSheet, string cellReference, double value, int digitAfter, CurrencyFormat currencyFormat, CurrencyName currencyName)
+    {
+        // check the cell address
+        if (!ExcelCellAddressUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
+            throw ExcelException.Create("SetCellValueEmpty", ExcelErrorCode.InvalidCellAddress, cellReference);
+
+        return SetCellValueCurrency(excelSheet, colIdx, rowIdx, value, digitAfter, currencyFormat, currencyName);
+    }
+
+    /// <summary>
+    /// Sets the value of a specified cell in the given Excel sheet, applying the specified currency format and name.
+    /// example: 123,45 €, currencyFormat= Currency, CurrencyName=Euro  
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <param name="value"></param>
+    /// <param name="digitAfter"></param>
+    /// <param name="currencyFormat"></param>
+    /// <param name="currencyName"></param>
+    /// <returns></returns>
+    public bool SetCellValueCurrency(ExcelSheet excelSheet, int colIdx, int rowIdx, double value, int digitAfter, CurrencyFormat currencyFormat, CurrencyName currencyName)
+    {
+        string colName = ExcelCellAddressUtils.GetColumnName(colIdx);
+        // create the cell if it does not exist
+        ExcelCell excelCell = CreateCell(excelSheet, colName, (uint)rowIdx);
+
+        return SetCellValueCurrency(excelSheet, excelCell, value, digitAfter, currencyFormat, currencyName);
+
+    }
+
+    public bool SetCellValueCurrency(ExcelSheet excelSheet, ExcelCell excelCell, double value, int digitAfter, CurrencyFormat currencyFormat, CurrencyName currencyName)
+    {
+        if(excelCell == null || excelCell.Cell == null)
+        {
+            // no cell at this address
+            return false;
+        }
+
+        // format: Accounting -> exp: _-* #,##0.00\ "€"_-;\-* #,##0.00\ "€"_-;_-* "-"??\ "€"_-;_-@_-
+        // format: Currency -> exp:  #,##0.00\ "€"
+        if (CurrencyMgr.CreateNumberFormat(currencyFormat, currencyName, digitAfter, out string numberFormat))
+        { 
+            // unable to create the currency
+            return false;
+        }
+        return SetCellValue(excelSheet, excelCell, value, numberFormat);
+    }
+
+    #endregion
+
+    #region Set cell value empty
 
     /// <summary>
     /// Empty/Clear a cell value.
@@ -759,6 +822,10 @@ public class ExcelProcessor : ExcelProcessorBase
         _styleMgr.RemoveFormula(excelSheet, excelCell);
         return true;
     }
+
+    #endregion
+
+    #region Set cell value
 
     /// <summary>
     /// Set a string value in the cell.

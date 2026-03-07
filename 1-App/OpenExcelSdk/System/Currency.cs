@@ -21,6 +21,7 @@ public enum CurrencyCode
     CAD,
     CNY,
     NZD,
+    SGD,
     BTC
 }
 
@@ -37,8 +38,42 @@ public enum CurrencyName
     CanadianDollar,
     ChineseYuan,
     NewZealandDollar,
-
+    SingaporeDollar,
     Bitcoin
+}
+
+public enum CurrencySymbolPosition
+{
+
+    /// <summary>
+    /// The symbol is placed before the numeric value, which is a common convention for many currencies.
+    /// e.g. for many currency like dollar.
+    /// </summary>
+    Before,
+
+    /// <summary>
+    /// The symbol is placed after the numeric value, which is a common convention for many currencies.
+    /// e.g. for Euro.
+    /// </summary>
+    /// <remarks>This property is typically used to assess the outcome of an operation and may influence
+    /// subsequent actions or decisions based on its value.</remarks>
+    After
+}
+
+public enum CurrencyFormat
+{
+    /// <summary>
+    /// Represents a currency, including its code, symbol, and formatting conventions for monetary values.
+    /// e.g. NumberFormatId=164	#,##0.00\ "€"
+    /// negative value are displayed in red color.
+    /// </summary>
+    Currency,
+
+    /// <summary>
+    /// Currency Symbol is displayed on left side.
+    /// e.g. NumberFormatId=44	_-* #,##0.00\ "€"_-;\-* #,##0.00\ "€"_-;_-* "-"??\ "€"_-;_-@_-
+    /// </summary>
+    Accounting
 }
 
 
@@ -61,5 +96,13 @@ public class Currency
     /// Currency name, e.g. UsDollar, Euro
     /// </summary>
     public CurrencyName Name { get; set; }
+
+    /// <summary>
+    /// code used in excel format, e.g. for Euro: "€"
+    /// [$$-409]  for US Dollar, ...
+    /// </summary>
+    public string ExcelCode { get; set; }
+
+    public CurrencySymbolPosition SymbolPosition { get;set;  }= CurrencySymbolPosition.Before;
 }
 

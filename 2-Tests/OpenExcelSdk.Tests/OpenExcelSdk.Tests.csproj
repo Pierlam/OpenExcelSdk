@@ -79,6 +79,9 @@
     <None Update="10-Files\SetCellColor.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="10-Files\SetCellValueCurrency.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="10-Files\SetCellValueEmpty.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

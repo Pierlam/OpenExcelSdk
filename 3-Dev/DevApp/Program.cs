@@ -109,8 +109,8 @@ Console.WriteLine("=> OpenExcelSdk DevApp:");
 
 //CreateWrongExcel();
 
-//ExcelAllStylesExport excelStyles =ExportAllStyles();
+ExcelAllStylesExport excelStyles =ExportAllStyles();
 
-ReadCurrency();
+//ReadCurrency();
 
 Console.WriteLine("=> Ok, Ends.");
