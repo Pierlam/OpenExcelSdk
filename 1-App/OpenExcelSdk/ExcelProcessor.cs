@@ -707,13 +707,13 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="currencyFormat">The format to be applied to the cell value, defining how the currency will be displayed.</param>
     /// <param name="currencyName">The name of the currency to be used, which will be displayed alongside the value in the cell.</param>
     /// <returns>true if the cell value was successfully set; otherwise, false.</returns>
-    public bool SetCellValueCurrency(ExcelSheet excelSheet, string cellReference, double value, int digitAfter, CurrencyFormat currencyFormat, CurrencyName currencyName)
+    public bool SetCellValueCurrency(ExcelSheet excelSheet, string cellReference, double value, CurrencyFormat currencyFormat, CurrencyName currencyName, int digitAfter)
     {
         // check the cell address
         if (!ExcelCellAddressUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
             throw ExcelException.Create("SetCellValueEmpty", ExcelErrorCode.InvalidCellAddress, cellReference);
 
-        return SetCellValueCurrency(excelSheet, colIdx, rowIdx, value, digitAfter, currencyFormat, currencyName);
+        return SetCellValueCurrency(excelSheet, colIdx, rowIdx, value, currencyFormat, currencyName,digitAfter);
     }
 
     /// <summary>
@@ -728,17 +728,17 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="currencyFormat"></param>
     /// <param name="currencyName"></param>
     /// <returns></returns>
-    public bool SetCellValueCurrency(ExcelSheet excelSheet, int colIdx, int rowIdx, double value, int digitAfter, CurrencyFormat currencyFormat, CurrencyName currencyName)
+    public bool SetCellValueCurrency(ExcelSheet excelSheet, int colIdx, int rowIdx, double value, CurrencyFormat currencyFormat, CurrencyName currencyName, int digitAfter)
     {
         string colName = ExcelCellAddressUtils.GetColumnName(colIdx);
         // create the cell if it does not exist
         ExcelCell excelCell = CreateCell(excelSheet, colName, (uint)rowIdx);
 
-        return SetCellValueCurrency(excelSheet, excelCell, value, digitAfter, currencyFormat, currencyName);
+        return SetCellValueCurrency(excelSheet, excelCell, value, currencyFormat, currencyName, digitAfter);
 
     }
 
-    public bool SetCellValueCurrency(ExcelSheet excelSheet, ExcelCell excelCell, double value, int digitAfter, CurrencyFormat currencyFormat, CurrencyName currencyName)
+    public bool SetCellValueCurrency(ExcelSheet excelSheet, ExcelCell excelCell, double value,  CurrencyFormat currencyFormat, CurrencyName currencyName, int digitAfter)
     {
         if(excelCell == null || excelCell.Cell == null)
         {
@@ -748,7 +748,7 @@ public class ExcelProcessor : ExcelProcessorBase
 
         // format: Accounting -> exp: _-* #,##0.00\ "€"_-;\-* #,##0.00\ "€"_-;_-* "-"??\ "€"_-;_-@_-
         // format: Currency -> exp:  #,##0.00\ "€"
-        if (CurrencyMgr.CreateNumberFormat(currencyFormat, currencyName, digitAfter, out string numberFormat))
+        if (!CurrencyMgr.CreateNumberFormat(currencyFormat, currencyName, digitAfter, out string numberFormat))
         { 
             // unable to create the currency
             return false;

@@ -63,11 +63,32 @@ public enum CurrencySymbolPosition
 public enum CurrencyFormat
 {
     /// <summary>
-    /// Represents a currency, including its code, symbol, and formatting conventions for monetary values.
-    /// e.g. NumberFormatId=164	#,##0.00\ "€"
-    /// negative value are displayed in red color.
+    /// Represents a currency, including its symbol. 
+    /// Negative sign is displayed.
+    /// e.g.: #,##0.00\ "€"
     /// </summary>
     Currency,
+
+    /// <summary>
+    /// Represents a currency, including its symbol.
+    /// Negative numbers are displayed in red color. Negative sign is displayed.
+    /// e.g.: #,##0.00\ "€";[Red]\-#,##0.00\ "€"
+    /// </summary>
+    CurrencyRedNegative,
+
+    /// <summary>
+    /// Represents a currency, including its symbol.
+    /// Negative numbers are displayed in red color. Negative sign is not displayed.
+    /// e.g.: #,##0.00\ "€";[Red]#,##0.00\ "€"
+    /// </summary>
+    CurrencyRedNegativeNoSign,
+
+    /// <summary>
+    /// Represents a currency, including its symbol. 
+    /// Negative sign is displayed.
+    /// e.g.:  xxx 
+    /// </summary>
+    CurrencyLeftSpace,
 
     /// <summary>
     /// Currency Symbol is displayed on left side.
@@ -101,8 +122,18 @@ public class Currency
     /// code used in excel format, e.g. for Euro: "€"
     /// [$$-409]  for US Dollar, ...
     /// </summary>
-    public string ExcelCode { get; set; }
+    public string ExcelCode { get; set; }=string.Empty;
 
+    /// <summary>
+    /// Display format: Accounting, Currency, CurrencyRedNegative, CurrencyRedNegativeNoSign, CurrencyLeftSpace.
+    /// </summary>
+    public CurrencyFormat Format {  get; set; }= CurrencyFormat.Currency;
+
+    /// <summary>
+    /// Gets or sets the position of the currency symbol relative to the numeric amount.
+    /// e.g. for Euro, the symbol is typically placed after the amount (e.g., 100 €), while for US Dollar, the symbol is typically placed before the amount (e.g., $100).
+    /// </summary>
+    /// <remarks>The default value is <see cref="CurrencySymbolPosition.Before"/>, which places the currency
+    /// symbol before the amount. This property can be adjusted to match regional or formatting preferences.</remarks>
     public CurrencySymbolPosition SymbolPosition { get;set;  }= CurrencySymbolPosition.Before;
 }
-

@@ -137,79 +137,79 @@ public class CurrencyMgr
         // check for euro
         if (numberFormat.Contains("\"€") || numberFormat.Contains("[$€-") )
         {
-            return CurrencyBuilder.CreateEuro();
+            return CurrencyBuilder.CreateEuro(numberFormat);
         }
 
         // "[$$-409] check for dollar
         if (numberFormat.Contains("[$$-409]"))
         {
-            return CurrencyBuilder.CreateUsDollar();
+            return CurrencyBuilder.CreateUsDollar(numberFormat);
         }
 
         // [$¥-411]#,##0.00 japanese yen
         if (numberFormat.Contains("[$¥-411]"))
         {
-            return CurrencyBuilder.CreateJapaneseYen();
+            return CurrencyBuilder.CreateJapaneseYen(numberFormat);
         }
 
         // [$₩-412]#,##0.00 south korean won
         if (numberFormat.Contains("[$₩-412]"))
         {
-            return CurrencyBuilder.CreateSouthKoreanWon();
+            return CurrencyBuilder.CreateSouthKoreanWon(numberFormat);
         }
 
-        // [$CHF-417] swiss franc
-        if (numberFormat.Contains("[$CHF-417]"))
+        // [$CHF-417] or [$CHF] swiss franc
+        if (numberFormat.Contains("[$CHF-417]") || numberFormat.Contains("[$CHF]"))
         {
-            return CurrencyBuilder.CreateSwissFranc();
+            return CurrencyBuilder.CreateSwissFranc(numberFormat);
         }
 
         // [$¥-804]#,##0.00: chinese yuan
         if (numberFormat.Contains("[$¥-804]"))
         {
-            return CurrencyBuilder.CreateChineseYuan();
+            return CurrencyBuilder.CreateChineseYuan(numberFormat);
         }
 
         // [$£-809]#,##0.00 british pound
         if (numberFormat.Contains("[$£-809]"))
         {
-            return CurrencyBuilder.CreateBritishPound();
+            return CurrencyBuilder.CreateBritishPound(numberFormat);
         }
 
         // [$$-C09]#,##0.00: australian dollar
         if (numberFormat.Contains("[$$-C09]"))
         {
-            return CurrencyBuilder.CreateAustralianDollar();
+            return CurrencyBuilder.CreateAustralianDollar(numberFormat);
         }
 
         // [$$-1009]#,##0.00 Canadian dollar
         if (numberFormat.Contains("[$$-1009]"))
         {
-            return CurrencyBuilder.CreateCanadianDollar();
+            return CurrencyBuilder.CreateCanadianDollar(numberFormat);
         }
 
         //[$$-409]#,##0.00 new zealand dollar
         if (numberFormat.Contains("[$$-1409]"))
         {
-            return CurrencyBuilder.CreateNewZealandDollar();
+            return CurrencyBuilder.CreateNewZealandDollar(numberFormat);
         }
 
         //[$$-4809]#,##0.00 singapore dollar
         if (numberFormat.Contains("[$$-4809]"))
         {
-            return CurrencyBuilder.CreateSingaporeDollar();
+            return CurrencyBuilder.CreateSingaporeDollar(numberFormat);
         }
 
         // [$₿]: bitcoin
         if (numberFormat.Contains("[$₿]"))
         {
-            return CurrencyBuilder.CreateBitcoin();
+            return CurrencyBuilder.CreateBitcoin(numberFormat);
         }
 
         // "[$?-???] not yet managed
         if (numberFormat.Contains("[$"))
         {
-            return CurrencyBuilder.CreateNotDefined();
+            return CurrencyBuilder.CreateNotDefined(numberFormat);
         }
 
         // add more currencies as needed
@@ -224,55 +224,55 @@ public class CurrencyMgr
     public static Currency GetCurrency(CurrencyName currencyName)
     {
         if(currencyName== CurrencyName.Euro)
-            return CurrencyBuilder.CreateEuro();
+            return CurrencyBuilder.CreateEuro(string.Empty);
 
         if (currencyName == CurrencyName.UsDollar)
-            return CurrencyBuilder.CreateUsDollar();
+            return CurrencyBuilder.CreateUsDollar(string.Empty);
 
         if (currencyName == CurrencyName.JapaneseYen)
-            return CurrencyBuilder.CreateJapaneseYen();
+            return CurrencyBuilder.CreateJapaneseYen(string.Empty);
 
         if (currencyName == CurrencyName.SouthKoreanWon)
-            return CurrencyBuilder.CreateSouthKoreanWon();
+            return CurrencyBuilder.CreateSouthKoreanWon(string.Empty);
 
 
         // [$CHF-417] swiss franc
         if (currencyName == CurrencyName.SwissFranc)
-            return CurrencyBuilder.CreateSwissFranc();
+            return CurrencyBuilder.CreateSwissFranc(string.Empty);
 
         // [$¥-804]#,##0.00: chinese yuan
         if (currencyName == CurrencyName.ChineseYuan)
-            return CurrencyBuilder.CreateChineseYuan();
+            return CurrencyBuilder.CreateChineseYuan(string.Empty);
 
         // [$£-809]#,##0.00 british pound
         if (currencyName == CurrencyName.BritishPound)        
-            return CurrencyBuilder.CreateBritishPound();
+            return CurrencyBuilder.CreateBritishPound(string.Empty);
 
 
         // [$$-C09]#,##0.00: australian dollar
         if (currencyName == CurrencyName.AustralianDollar)
-            return CurrencyBuilder.CreateAustralianDollar();
+            return CurrencyBuilder.CreateAustralianDollar(string.Empty);
 
 
         // [$$-1009]#,##0.00 Canadian dollar
         if (currencyName == CurrencyName.CanadianDollar)
-            return CurrencyBuilder.CreateCanadianDollar();
+            return CurrencyBuilder.CreateCanadianDollar(string.Empty);
 
 
         //[$$-409]#,##0.00 new zeland dollar
         if (currencyName == CurrencyName.NewZealandDollar)
-            return CurrencyBuilder.CreateNewZealandDollar();
+            return CurrencyBuilder.CreateNewZealandDollar(string.Empty);
 
 
         //[$$-4809]#,##0.00 singapore dollar
         if (currencyName == CurrencyName.SingaporeDollar)
-            return CurrencyBuilder.CreateSingaporeDollar();
+            return CurrencyBuilder.CreateSingaporeDollar(string.Empty);
 
         // [$₿]: bitcoin
         if (currencyName == CurrencyName.Bitcoin)
-            return CurrencyBuilder.CreateBitcoin();
+            return CurrencyBuilder.CreateBitcoin(string.Empty);
 
         // currency not manaed
-        return CurrencyBuilder.CreateNotDefined();
+        return CurrencyBuilder.CreateNotDefined(string.Empty);
     }
 }

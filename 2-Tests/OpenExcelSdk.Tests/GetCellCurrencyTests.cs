@@ -143,5 +143,135 @@ public class GetCellCurrencyTests : TestBase
         Assert.IsNotNull(cellValue.Currency);
         Assert.AreEqual(CurrencyName.SouthKoreanWon, cellValue.Currency.Name);
         Assert.AreEqual(CurrencyCode.KWR, cellValue.Currency.Code);
+
+        proc.CloseExcelFile(excelFile);
     }
+
+
+    [TestMethod]
+    public void GetCellCurrencyRedNeg()
+    {
+        bool res;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "GetCellCurrencyRedNeg.xlsx";
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
+
+        ExcelSheet excelSheet = proc.GetFirstSheet(excelFile);
+
+        ExcelCell cell;
+        ExcelCellValue cellValue;
+
+        //--A2: -120,45 €  - currency;euro
+        cellValue = proc.GetCellValue(excelSheet, "A2");
+        Assert.IsNotNull(cellValue);
+        Assert.AreEqual(-120.45, cellValue.DoubleValue);
+        Assert.IsNotNull(cellValue.Currency);
+        Assert.AreEqual(CurrencyName.Euro, cellValue.Currency.Name);
+        Assert.AreEqual(CurrencyCode.EUR, cellValue.Currency.Code);
+        Assert.AreEqual(CurrencyFormat.Currency, cellValue.Currency.Format);
+
+        //--A3: -400 €  - currency;euro; red-neg; no sign
+        cellValue = proc.GetCellValue(excelSheet, "A3");
+        Assert.IsNotNull(cellValue);
+        Assert.AreEqual(-400, cellValue.DoubleValue);
+        Assert.IsNotNull(cellValue.Currency);
+        Assert.AreEqual(CurrencyName.Euro, cellValue.Currency.Name);
+        Assert.AreEqual(CurrencyCode.EUR, cellValue.Currency.Code);
+        Assert.AreEqual(CurrencyFormat.CurrencyRedNegativeNoSign, cellValue.Currency.Format);
+
+        //--A4: -870,00 € - currency;euro; red-neg
+        cellValue = proc.GetCellValue(excelSheet, "A4");
+        Assert.IsNotNull(cellValue);
+        Assert.AreEqual(-870, cellValue.DoubleValue);
+        Assert.IsNotNull(cellValue.Currency);
+        Assert.AreEqual(CurrencyName.Euro, cellValue.Currency.Name);
+        Assert.AreEqual(CurrencyCode.EUR, cellValue.Currency.Code);
+        Assert.AreEqual(CurrencyFormat.CurrencyRedNegative, cellValue.Currency.Format);
+
+        //--A5: -620,00 € - currency;right-space
+        cellValue = proc.GetCellValue(excelSheet, "A5");
+        Assert.IsNotNull(cellValue);
+        Assert.AreEqual(-620, cellValue.DoubleValue);
+        Assert.IsNotNull(cellValue.Currency);
+        Assert.AreEqual(CurrencyName.Euro, cellValue.Currency.Name);
+        Assert.AreEqual(CurrencyCode.EUR, cellValue.Currency.Code);
+        Assert.AreEqual(CurrencyFormat.CurrencyLeftSpace, cellValue.Currency.Format);
+
+
+        //--A6: -$353,00 - currency;USDollar
+        cellValue = proc.GetCellValue(excelSheet, "A6");
+        Assert.IsNotNull(cellValue);
+        Assert.AreEqual(-353, cellValue.DoubleValue);
+        Assert.IsNotNull(cellValue.Currency);
+        Assert.AreEqual(CurrencyName.UsDollar, cellValue.Currency.Name);
+        Assert.AreEqual(CurrencyCode.USD, cellValue.Currency.Code);
+        Assert.AreEqual(CurrencyFormat.Currency, cellValue.Currency.Format);
+
+        //--A7: - $353,00 - currency;USDollar;right-space
+        cellValue = proc.GetCellValue(excelSheet, "A7");
+        Assert.IsNotNull(cellValue);
+        Assert.AreEqual(-353, cellValue.DoubleValue);
+        Assert.IsNotNull(cellValue.Currency);
+        Assert.AreEqual(CurrencyName.UsDollar, cellValue.Currency.Name);
+        Assert.AreEqual(CurrencyCode.USD, cellValue.Currency.Code);
+        Assert.AreEqual(CurrencyFormat.CurrencyLeftSpace, cellValue.Currency.Format);
+
+        //--A8: -$709,00 - currency;USDollar; no-neg-sign
+        cellValue = proc.GetCellValue(excelSheet, "A8");
+        Assert.IsNotNull(cellValue);
+        Assert.AreEqual(-709, cellValue.DoubleValue);
+        Assert.IsNotNull(cellValue.Currency);
+        Assert.AreEqual(CurrencyName.UsDollar, cellValue.Currency.Name);
+        Assert.AreEqual(CurrencyCode.USD, cellValue.Currency.Code);
+        Assert.AreEqual(CurrencyFormat.CurrencyRedNegativeNoSign, cellValue.Currency.Format);
+
+        //--A9: -$288,00 - currency;USDollar; red-neg
+        cellValue = proc.GetCellValue(excelSheet, "A9");
+        Assert.IsNotNull(cellValue);
+        Assert.AreEqual(-288, cellValue.DoubleValue);
+        Assert.IsNotNull(cellValue.Currency);
+        Assert.AreEqual(CurrencyName.UsDollar, cellValue.Currency.Name);
+        Assert.AreEqual(CurrencyCode.USD, cellValue.Currency.Code);
+        Assert.AreEqual(CurrencyFormat.CurrencyRedNegative, cellValue.Currency.Format);
+
+        //--A10: -353,00 CHF - currency;SwissFranc
+        cellValue = proc.GetCellValue(excelSheet, "A10");
+        Assert.IsNotNull(cellValue);
+        Assert.AreEqual(-353, cellValue.DoubleValue);
+        Assert.IsNotNull(cellValue.Currency);
+        Assert.AreEqual(CurrencyName.SwissFranc, cellValue.Currency.Name);
+        Assert.AreEqual(CurrencyCode.CHF, cellValue.Currency.Code);
+        Assert.AreEqual(CurrencyFormat.Currency, cellValue.Currency.Format);
+
+        //--A11: -353,00 CHF - currency;Swiss Franc; right-space
+        cellValue = proc.GetCellValue(excelSheet, "A11");
+        Assert.IsNotNull(cellValue);
+        Assert.AreEqual(-353, cellValue.DoubleValue);
+        Assert.IsNotNull(cellValue.Currency);
+        Assert.AreEqual(CurrencyName.SwissFranc, cellValue.Currency.Name);
+        Assert.AreEqual(CurrencyCode.CHF, cellValue.Currency.Code);
+        Assert.AreEqual(CurrencyFormat.CurrencyLeftSpace, cellValue.Currency.Format);
+
+        //--A12: -709,00 CHF - currency;Swiss Franc; no-neg-sign
+        cellValue = proc.GetCellValue(excelSheet, "A12");
+        Assert.IsNotNull(cellValue);
+        Assert.AreEqual(-709, cellValue.DoubleValue);
+        Assert.IsNotNull(cellValue.Currency);
+        Assert.AreEqual(CurrencyName.SwissFranc, cellValue.Currency.Name);
+        Assert.AreEqual(CurrencyCode.CHF, cellValue.Currency.Code);
+        Assert.AreEqual(CurrencyFormat.CurrencyRedNegativeNoSign, cellValue.Currency.Format);
+
+        //--A13: -288,00 CHF - currency;Swiss France; red-neg
+        cellValue = proc.GetCellValue(excelSheet, "A13");
+        Assert.IsNotNull(cellValue);
+        Assert.AreEqual(-288, cellValue.DoubleValue);
+        Assert.IsNotNull(cellValue.Currency);
+        Assert.AreEqual(CurrencyName.SwissFranc, cellValue.Currency.Name);
+        Assert.AreEqual(CurrencyCode.CHF, cellValue.Currency.Code);
+        Assert.AreEqual(CurrencyFormat.CurrencyRedNegative, cellValue.Currency.Format);
+
+        proc.CloseExcelFile(excelFile);
+    }
+
 }

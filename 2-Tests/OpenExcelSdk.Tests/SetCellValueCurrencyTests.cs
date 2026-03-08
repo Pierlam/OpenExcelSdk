@@ -29,13 +29,21 @@ public class SetCellValueCurrencyTests : TestBase
         var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
         int count = stylesPart.Stylesheet.CellFormats.Elements().Count();
 
-        //--B2: 123,00 € with 2 decimals, accounting format
-        res = proc.SetCellValueCurrency(excelSheet, "B2", 12.34, 2, CurrencyFormat.Currency, CurrencyName.Euro);
+        //--B2: 12,34 € with 2 decimals, accounting format
+        res = proc.SetCellValueCurrency(excelSheet, "B2", 12.34, CurrencyFormat.Currency, CurrencyName.Euro, 2);
         Assert.IsTrue(res);
 
-        //--B3: $456,89 
+        //--B3: -392,78 €, 2 decimals, currency format  
 
-        //--B4: $678,34
+
+        //--B4: -550,00 € -> 550,00 €, red, 2 decimals, currency format
+
+
+        //--B5: -988,00 €, red, 2 decimals, currency format
+
+
+        //--B6: -8 900,00 €, 2 decimals, accounting format (neg sign on left the end, no red)
+
 
         // save the changes
         proc.CloseExcelFile(excelFile);
@@ -48,15 +56,24 @@ public class SetCellValueCurrencyTests : TestBase
         cell = proc.GetCellAt(excelSheet, "B2");
         Assert.IsNotNull(cell);
         excelCellValue = proc.GetCellValue(excelSheet, cell);
-        Assert.AreEqual(ExcelCellType.String, excelCellValue.CellType);
-        Assert.AreEqual("text", excelCellValue.StringValue);
+        Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
+        Assert.AreEqual(12.34, excelCellValue.DoubleValue);
+        Assert.IsNotNull(excelCellValue.Currency);
+        Assert.AreEqual("€", excelCellValue.Currency.Symbol);
+        Assert.AreEqual(CurrencyName.Euro, excelCellValue.Currency.Name);
+        Assert.AreEqual("\"€\"", excelCellValue.Currency.ExcelCode);
+        Assert.IsTrue(excelCellValue.NumberFormat.Contains("#0.00"));
+
+        //ici();
 
         //--B3: $456,89 
+
 
         //--B4: $678,34
 
         proc.CloseExcelFile(excelFile);
 
+        Assert.Fail("Test not implemented yet");
     }
 
 }

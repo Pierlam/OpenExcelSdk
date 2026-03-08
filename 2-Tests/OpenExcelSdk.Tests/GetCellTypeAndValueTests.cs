@@ -53,6 +53,8 @@ public class GetCellTypeAndValueTests : TestBase
         excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.String, excelCellValue.CellType);
         Assert.AreEqual("hello", excelCellValue.StringValue);
+        Assert.IsNull(excelCellValue.NumberFormat);
+        Assert.IsNull(excelCellValue.Currency);
 
         //--B3: string:wind, bgColor:yellow
         cell = proc.GetCellAt(excelSheet, 2, 3);
@@ -89,12 +91,16 @@ public class GetCellTypeAndValueTests : TestBase
         excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.Integer, excelCellValue.CellType);
         Assert.AreEqual(12, excelCellValue.IntegerValue);
+        Assert.IsNull(excelCellValue.NumberFormat);
+        Assert.IsNull(excelCellValue.Currency);
 
         //--B3: double
         cell = proc.GetCellAt(excelSheet, 2, 3);
         excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
         Assert.AreEqual(34.56, excelCellValue.DoubleValue);
+        Assert.IsNull(excelCellValue.NumberFormat);
+        Assert.IsNull(excelCellValue.Currency);
 
         // --B4: double, number format: 0.00, number format id: 2
         cell = proc.GetCellAt(excelSheet, 2, 4);
@@ -102,6 +108,7 @@ public class GetCellTypeAndValueTests : TestBase
         Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
         Assert.AreEqual(27.13, excelCellValue.DoubleValue);
         Assert.AreEqual("0.00", excelCellValue.NumberFormat);
+        Assert.IsNull(excelCellValue.Currency);
 
         //--B5: double, number format: 0%, number format id: 9
         cell = proc.GetCellAt(excelSheet, 2, 5);
@@ -109,12 +116,14 @@ public class GetCellTypeAndValueTests : TestBase
         Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
         // 12.5%  -> 0.125
         Assert.AreEqual(0.125, excelCellValue.DoubleValue);
+        Assert.IsNull(excelCellValue.Currency);
 
         //--B6: double+BgColor+border, 36.29
         cell = proc.GetCellAt(excelSheet, 2, 6);
         excelCellValue = proc.GetCellValue(excelSheet, cell);
         Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
         Assert.AreEqual(36.29, excelCellValue.DoubleValue);
+        Assert.IsNull(excelCellValue.Currency);
 
         //3	#,##0
         //4	#,##0.00
