@@ -21,8 +21,8 @@ public class CurrencyMgr
     public static bool CreateNumberFormat(CurrencyFormat currencyFormat, CurrencyName currencyName, int digitAfter, out string numberFormat)
     {
         // format: Currency -> exp:  #,##0.00\ "€"
-        if (currencyFormat == CurrencyFormat.Currency)
-            return CreateNumberFormatCurrency(currencyName, digitAfter, out numberFormat);
+        if (currencyFormat == CurrencyFormat.Currency || currencyFormat == CurrencyFormat.CurrencyRedNegative || currencyFormat == CurrencyFormat.CurrencyRedNegativeNoSign || currencyFormat == CurrencyFormat.CurrencyLeftSpace)
+            return CreateNumberFormatCurrency(currencyFormat, currencyName, digitAfter, out numberFormat);
 
         // format: Accounting -> exp: _-* #,##0.00\ "€"_-;\-* #,##0.00\ "€"_-;_-* "-"??\ "€"_-;_-@_-
         if (currencyFormat == CurrencyFormat.Accounting)
@@ -43,11 +43,10 @@ public class CurrencyMgr
     /// <param name="digitAfter">The number of decimal places to include in the formatted currency string. Must be a non-negative integer.</param>
     /// <param name="numberFormat">When this method returns, contains the resulting number format string for the specified currency.</param>
     /// <returns>true if the number format was successfully created; otherwise, false.</returns>
-    public static bool CreateNumberFormatCurrency(CurrencyName currencyName, int digitAfter, out string numberFormat)
+    public static bool CreateNumberFormatCurrency(CurrencyFormat currencyFormat, CurrencyName currencyName, int digitAfter, out string numberFormat)
     {
-        // [$$-409]#,##0.00
-        // #,##0.00\ "€"
-        // #,##0\ "€"
+        // default format: [$$-409]#,##0.00 -or- #,##0.00\ "€"  -or- #,##0\ "€"
+        
         numberFormat = "#,##0";
 
         Currency c = GetCurrency(currencyName);
@@ -60,18 +59,47 @@ public class CurrencyMgr
                 numberFormat += "0";
         }
 
-        // then add currency symbol, beofre or after the value
-        if(c.SymbolPosition== CurrencySymbolPosition.After)
+        // then add currency symbol, before or after the value
+        if (c.SymbolPosition == CurrencySymbolPosition.After)
         {
             // add space char + code e.g 
             numberFormat += "\\ " + c.ExcelCode;
-            return true;
-
+        }else
+        {
+            // currency symbol before the value
+            numberFormat = c.ExcelCode + numberFormat;
         }
 
-        // currency symbol before the value
-        numberFormat = c.ExcelCode+numberFormat;
-        return true;
+        //-default format: #,##0.00\ "€" -or- #,##0\ "€"
+        //-default format: [$$-409]#,##0.00 
+        if (currencyFormat == CurrencyFormat.Currency) return true;
+
+        //-Negative in red: #,##0.00\ "€";[Red]\-#,##0.00\ "€" 
+        if (currencyFormat == CurrencyFormat.CurrencyRedNegative)
+        {
+            numberFormat += ";[Red]\\-" + numberFormat;
+            return true;
+        }
+
+        //-Negative in red, no sign: #,##0.00\ "€";[Red]#,##0.00\ "€" 
+        //-Negative in red, no sign: [$$-409]#,##0.00;[Red][$$-409]#,##0.00
+        if (currencyFormat == CurrencyFormat.CurrencyRedNegativeNoSign)
+        {
+            numberFormat += ";[Red]" + numberFormat;
+            return true;
+        }
+
+        //-space on left side:  #,##0.00\ "€";\-#,##0.00\ "€"
+        //-Space on left side:  [$$-409]#,##0.00_ ;\-[$$-409]#,##0.00\
+        if (currencyFormat == CurrencyFormat.CurrencyLeftSpace)
+        {
+            numberFormat += ";\\-" + numberFormat;
+            return true;
+        }
+
+        // currency format not managed
+        numberFormat= string.Empty;
+        return false;
     }
 
     /// <summary>
@@ -102,6 +130,7 @@ public class CurrencyMgr
 
         // then add currency symbol, after the value
         // exp1: _-* #,##0.00\ "€"_-;\-* #,##0.00\ "€"_-;_-* "-"??\ "€"_-;_-@_-
+        // "_-[$$-409]* #,##0.00_ ;_-[$$-409]* \\-#,##0.00\\ ;_-[$$-409]* \"-\"??_ ;_-@_"
         if (c.SymbolPosition == CurrencySymbolPosition.After)
         {
             // add space char + code e.g 

@@ -38,13 +38,19 @@ ExcelAllStylesExport ExportAllStyles()
     ExcelProcessor proc = new ExcelProcessor();
 
     //string filename = @"Files\CellFormat.xlsx";
-    string filename = @"Files\currencies.xlsx";
+    //string filename = @"Files\currencies.xlsx";
+
+
+    string filename = @"Files\currencyAccounting.xlsx";
     //string filename = @"Files\SetCellColorOut.xlsx";
     //string filename = @"Out\WrongSave.xlsx";
 
 
     string filenameOut = @"Out\styles.xlsx";
     //string filenameOut = @"Out\CellFormat-styles.xlsx";
+
+
+    Console.WriteLine("=> ExportAllStyles, file: "  +filename);
 
     if (File.Exists(filenameOut))
         File.Delete(filenameOut);
@@ -58,7 +64,7 @@ void ReadCurrency()
 {
     ExcelProcessor proc = new ExcelProcessor();
 
-    string filename = @"Files\currencies.xlsx";
+    string filename = @"Files\currencyAccounting.xlsx";
 
     ExcelFile excelFile = proc.OpenExcelFile(filename);
     ExcelSheet excelSheet = proc.GetFirstSheet(excelFile);

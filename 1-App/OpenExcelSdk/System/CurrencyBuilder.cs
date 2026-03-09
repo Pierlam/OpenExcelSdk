@@ -215,7 +215,7 @@ public class CurrencyBuilder
         if (numberFormat.Contains("??"))
             return CurrencyFormat.Accounting;
 
-        //--Currency format, space on left side:  "#,##0.00\\ \"€\";\\-#,##0.00\\ \"€\"" -or- [$$-409]#,##0.00_ ;\-[$$-409]#,##0.00\
+        //--Currency format, space on left side:  #,##0.00\ "€";\-#,##0.00\ "€"" -or- [$$-409]#,##0.00_ ;\-[$$-409]#,##0.00\
         if (numberFormat.Contains("\\-"))
             return CurrencyFormat.CurrencyLeftSpace;
 

@@ -247,8 +247,8 @@ public class StylesExtractor
             styleExport.FontId = (int)cellFormat.FontId.Value;
         }
 
-        //if (cellFormat.ApplyAlignment == null && cellFormat.ApplyBorder == null && cellFormat.ApplyFill == null &&
-        //    cellFormat.ApplyFont == null && cellFormat.ApplyProtection == null) return true;
+        // cellFormat.ApplyAlignment 
+        // cellFormat.ApplyProtection 
     }
 
 

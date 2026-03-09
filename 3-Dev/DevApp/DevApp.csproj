@@ -18,6 +18,9 @@
     <None Update="Files\currencies.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Files\currencyAccounting.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Files\datLinesThenACellBlankOk.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -570,8 +570,7 @@ public class ExcelProcessorBase
         _styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatIdCell);
         if (numberFormatIdCell == (numberFormatId ?? 0)) return true;
 
-        // all other style than format (no border, no color,...) are null, clear the style
-        // of the cell
+        // all other style than format (no border, no color,...) are null, clear the style of the cell
         if (numberFormatId == null && _styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
         {
             // no format to set, all others style part style are null, so clear the style

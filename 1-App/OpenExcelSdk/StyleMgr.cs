@@ -334,8 +334,14 @@ public class StyleMgr
     {
         var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
 
+        // empty excel, create the NumberingFormats part
+        if (stylesPart.Stylesheet.NumberingFormats==null)
+        {
+            stylesPart.Stylesheet.NumberingFormats = new NumberingFormats();    
+        }
+
         // max id not yet calculated?
-        if (_customFormatIdMax == 0)
+        if (_customFormatIdMax == 0 && stylesPart.Stylesheet.NumberingFormats.Elements<NumberingFormat>().Count()>0)
         {
             // Get the maximum numFmtId from all NumberingFormat elements
             _customFormatIdMax = stylesPart.Stylesheet.NumberingFormats
@@ -343,6 +349,9 @@ public class StyleMgr
                 .Select(nf => nf.NumberFormatId.Value)
                 .Max();
         }
+
+        // start at 164, even if there is no custom format, because 0-163 are reserved by Excel
+        if (_customFormatIdMax == 0) _customFormatIdMax = 163;
 
         // use the new one
         _customFormatIdMax++;
@@ -409,9 +418,11 @@ public class StyleMgr
 
     public bool GetCustomNumberFormatId(ExcelSheet excelSheet, string dataFormat, out uint formatId)
     {
+        formatId = 0;
+
         var stylesheet = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet;
-        if (stylesheet.NumberingFormats != null)
-        {
+        if (stylesheet.NumberingFormats == null) return false;
+
             foreach (NumberingFormat nf in stylesheet.NumberingFormats.Elements<NumberingFormat>())
             {
                 if (nf.FormatCode.Value == dataFormat)
@@ -420,10 +431,7 @@ public class StyleMgr
                     return true;
                 }
             }
-        }
 
-        // Built-in format
-        formatId = 0;
         return false;
     }
 
