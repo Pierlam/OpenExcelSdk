@@ -1,4 +1,4 @@
-﻿## 0.6.0 Release (2026-03-XX)
+﻿## 0.6.0 Release (2026-03-12)
 
 -Add ExcelProcessor.CopyCellValue(); Copy a cell value to another one in another excel file.
 
@@ -7,6 +7,8 @@
 -GetRowAt(): Modify parameter rowIndex; now start from 1.
 
 -SetCellValueCurrency() 
+
+-Bugs fixing
 
 -41 unit tests, all are green.
 

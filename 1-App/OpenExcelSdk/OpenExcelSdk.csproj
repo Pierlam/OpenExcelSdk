@@ -19,6 +19,7 @@
 	<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 	<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	<PackageIcon>Lexerow-logo.jpg</PackageIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,6 +31,10 @@
 
   <ItemGroup>
     <PackageReference Include="DocumentFormat.OpenXml" Version="3.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <None Include="images\Lexerow-logo.jpg" Pack="true" PackagePath=""/>
   </ItemGroup>
 
 	<Target Name="InjectPackageReleaseNotesFromFile" BeforeTargets="GenerateNuspec" Condition="Exists('CHANGELOG.md')">

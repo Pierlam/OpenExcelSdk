@@ -2,7 +2,7 @@
 
 OpenExcelSdk is an open-source backend .NET library to use Excel (xlsx) very easily.
 
-It's written in C#/NET8 with VS2026. The code is covered by 18 unit tests to ensure the non-regression of incoming evolutions.
+It's written in C#/NET8 with VS2026. The code is covered by 41 unit tests to ensure the non-regression of incoming evolutions.
 
 The only dependency is OpenXML SDK, the official Microsoft library to work with Excel files.
 The last available version 3.4.1 is used.
@@ -73,7 +73,7 @@ https://github.com/Pierlam/OpenExcelSdk/wiki
 
 OpenExcelExport tool: 
 
-Command line application to export excel file content to a output Excel, based on OpenExcelSdk library, and specially on export style feature.
+Command line application to export excel file content to a output Excel, based on OpenExcelSdk library.
 
 https://pierlam.github.io/OpenExcelExport/
 
@@ -220,6 +220,24 @@ It's possible to get the color of a cell.
 // set yellow color to cell A2 (will be the foreground color)
 proc.SetCellColor(excelSheet, "A2", "#FFFF00");
 ```
+
+## Set cell value currency
+
+It's possible to set a value with a currency into a a cell.
+
+```
+//--B3: -392,78 € - 2 decimals
+proc.SetCellValueCurrency(excelSheet, "B3", -392.78, CurrencyFormat.Currency, CurrencyName.Euro, 2);
+```
+
+You can set a value as in currency format with the currency symbol, code and name. The display of the value will be formatted as a currency with the defined number of decimals.
+You can also set a value in accounting format, exactly like in Excel.
+
+```
+//--B7: $12,34  with 2 decimals, accounting format
+proc.SetCellValueCurrency(excelSheet, "B7", -12.34, CurrencyFormat.Accounting, CurrencyName.UsDollar, 2);
+```
+
 
 ## Get row/last row index
 
