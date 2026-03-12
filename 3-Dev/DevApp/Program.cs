@@ -39,12 +39,27 @@ ExcelAllStylesExport ExportAllStyles()
 
     //string filename = @"Files\CellFormat.xlsx";
     string filename = @"Files\currencies.xlsx";
+
+
+    //string filename = @"Files\currencyAccounting.xlsx";
+
+    //string filename = @"Files\SetCellValueCurrency_pb_accountingUS.xlsx";
+
+    //SetCellValueCurrency_Empty
+    //string filename = @"Files\SetCellValueCurrency_Empty.xlsx";
+
+    // SetCellValueCurrency_pb_accounting_reparé
+    //string filename = @"Files\SetCellValueCurrency_pb_accounting_reparé.xlsx";
+
     //string filename = @"Files\SetCellColorOut.xlsx";
     //string filename = @"Out\WrongSave.xlsx";
 
 
     string filenameOut = @"Out\styles.xlsx";
     //string filenameOut = @"Out\CellFormat-styles.xlsx";
+
+
+    Console.WriteLine("=> ExportAllStyles, file: "  +filename);
 
     if (File.Exists(filenameOut))
         File.Delete(filenameOut);
@@ -53,6 +68,19 @@ ExcelAllStylesExport ExportAllStyles()
     return proc.ExportAllStyles(filename, filenameOut);
 }
 
+
+void ReadCurrency()
+{
+    ExcelProcessor proc = new ExcelProcessor();
+
+    string filename = @"Files\currencyAccounting.xlsx";
+
+    ExcelFile excelFile = proc.OpenExcelFile(filename);
+    ExcelSheet excelSheet = proc.GetFirstSheet(excelFile);
+    ExcelCellValue cellValue = proc.GetCellValue(excelSheet, "B2");
+
+    proc.CloseExcelFile(excelFile);
+}
 
 void CreateWrongExcel()
 {
@@ -97,5 +125,7 @@ Console.WriteLine("=> OpenExcelSdk DevApp:");
 //CreateWrongExcel();
 
 ExcelAllStylesExport excelStyles =ExportAllStyles();
+
+//ReadCurrency();
 
 Console.WriteLine("=> Ok, Ends.");

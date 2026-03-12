@@ -334,8 +334,14 @@ public class StyleMgr
     {
         var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
 
+        // empty excel, create the NumberingFormats part
+        if (stylesPart.Stylesheet.NumberingFormats==null)
+        {
+            stylesPart.Stylesheet.NumberingFormats = new NumberingFormats();    
+        }
+
         // max id not yet calculated?
-        if (_customFormatIdMax == 0)
+        if (_customFormatIdMax == 0 && stylesPart.Stylesheet.NumberingFormats.Elements<NumberingFormat>().Count()>0)
         {
             // Get the maximum numFmtId from all NumberingFormat elements
             _customFormatIdMax = stylesPart.Stylesheet.NumberingFormats
@@ -343,6 +349,9 @@ public class StyleMgr
                 .Select(nf => nf.NumberFormatId.Value)
                 .Max();
         }
+
+        // start at 164, even if there is no custom format, because 0-163 are reserved by Excel
+        if (_customFormatIdMax == 0) _customFormatIdMax = 163;
 
         // use the new one
         _customFormatIdMax++;
@@ -361,63 +370,59 @@ public class StyleMgr
     }
 
     /// <summary>
-    /// Get number format string from formatId, only custom formats.
-    /// If built-in format, return false. Not saved in the Styles part!
+    /// Return the number format, can be custom: Id > 164
+    /// or a built-in one.
     /// </summary>
     /// <param name="excelSheet"></param>
     /// <param name="formatId"></param>
     /// <param name="numberFormat"></param>
     /// <returns></returns>
-    public bool GetCustomNumberFormat(ExcelSheet excelSheet, uint formatId, out string numberFormat)
+    public bool GetNumberFormat(ExcelSheet excelSheet, int formatId, out string numberFormat)
     {
-        var stylesheet = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet;
-        if (stylesheet.NumberingFormats != null)
-        {
-            foreach (NumberingFormat nf in stylesheet.NumberingFormats.Elements<NumberingFormat>())
-            {
-                if (nf.NumberFormatId.Value == formatId)
-                {
-                    numberFormat = nf.FormatCode.Value;
-                    return true;
-                }
-            }
-        }
+        if(GetCustomNumberFormat(excelSheet, formatId, out numberFormat))
+            return true;
 
-        // Built-in format
-        numberFormat = string.Empty;
-        return false;
+        return BuiltInNumberFormatMgr.GetFormatAndType((uint)formatId, string.Empty, out numberFormat, out _);
     }
 
     /// <summary>
-    /// Get the number format string from its id.
-    /// works also for buil-oin format like 44:currency.
+    /// Get number format string from formatId, only custom formats.
+    /// If built-in format, return false. Not saved in the Styles part!
+    /// But works for some buil-in format like 44:currency.
     /// </summary>
-    /// <param name="stylesPart"></param>
-    /// <param name="numberFormatId"></param>
+    /// <param name="excelSheet"></param>
+    /// <param name="formatId"></param>
+    /// <param name="numberFormat"></param>
     /// <returns></returns>
-    public bool GetNumberFormat(ExcelSheet excelSheet, int numberFormatId, out string numberFormat)
+    public bool GetCustomNumberFormat(ExcelSheet excelSheet, int formatId, out string numberFormat)
     {
-        numberFormat = null;
+        numberFormat = string.Empty;
+
         var stylesheet = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet;
         if (stylesheet.NumberingFormats == null) return false;
 
         foreach (NumberingFormat nf in stylesheet.NumberingFormats.Elements<NumberingFormat>())
         {
-            if (nf.NumberFormatId.Value == numberFormatId)
+            if (nf.NumberFormatId.Value == formatId)
             {
-                numberFormat= nf.FormatCode.Value;
+                numberFormat = nf.FormatCode.Value;
                 return true;
             }
         }
 
+        // not a custom number format
+        numberFormat = string.Empty;
         return false;
     }
 
+
     public bool GetCustomNumberFormatId(ExcelSheet excelSheet, string dataFormat, out uint formatId)
     {
+        formatId = 0;
+
         var stylesheet = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet;
-        if (stylesheet.NumberingFormats != null)
-        {
+        if (stylesheet.NumberingFormats == null) return false;
+
             foreach (NumberingFormat nf in stylesheet.NumberingFormats.Elements<NumberingFormat>())
             {
                 if (nf.FormatCode.Value == dataFormat)
@@ -426,10 +431,7 @@ public class StyleMgr
                     return true;
                 }
             }
-        }
 
-        // Built-in format
-        formatId = 0;
         return false;
     }
 

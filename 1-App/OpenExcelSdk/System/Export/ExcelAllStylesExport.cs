@@ -72,4 +72,10 @@ public class ExcelAllStylesExport
     /// List of errors during the extraction.
     /// </summary>
     public List<string> ListError { get; set; } = new List<string>();
+
+    /// <summary>
+    /// e.g.  No SharedStringTablePart found in the Excel file.
+    /// </summary>
+    public List<string> ListInfo { get; set; } = new List<string>();
+
 }

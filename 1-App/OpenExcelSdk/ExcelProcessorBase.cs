@@ -156,21 +156,20 @@ public class ExcelProcessorBase
         double valDouble;
         int valInt;
 
-        // try to get built-in format, for currency
-        _styleMgr.GetNumberFormat(excelSheet, (int)numberFormatId, out string numberFormatFound);
-
-        if (BuiltInNumberFormatMgr.GetFormatAndType(numberFormatId, numberFormatFound, out string numberFormat, out ExcelCellType cellType))
-        {
-            return ValueBuilder.CreateValue(excelCell, cellType, value, (int)numberFormatId, numberFormat);
-        }
+        ExcelCellType cellType;
 
         // Try to get custom format if exists
-        if (_styleMgr.GetCustomNumberFormat(excelSheet, numberFormatId, out numberFormat))
+        if (_styleMgr.GetCustomNumberFormat(excelSheet, (int)numberFormatId, out string numberFormat))
         {
             // then determine the type from the data format: date, number,...
             cellType = GetCellTypeFromNumberFormat(numberFormat);
 
             return ValueBuilder.CreateValue(excelCell, cellType, value, (int)numberFormatId, numberFormat);
+        }
+
+        if (BuiltInNumberFormatMgr.GetFormatAndType(numberFormatId, numberFormat, out string numberFormatFound, out cellType))
+        {
+            return ValueBuilder.CreateValue(excelCell, cellType, value, (int)numberFormatId, numberFormatFound);
         }
 
         if (value == string.Empty)
@@ -243,11 +242,13 @@ public class ExcelProcessorBase
 
         if (excelCell.Cell.DataType.Value == CellValues.SharedString)
         {
-            // SharedStringMgr
-            if (!SharedStringMgr.GetSharedStringValue(excelSheet, excelCell, out cellValue))
-                throw ExcelException.Create("GetCellStringValue", ExcelErrorCode.UnableGetCellStringValue);
+            // get the string from the shared table
+            SharedStringMgr.GetSharedStringValue(excelSheet, excelCell, out cellValue);
+            //    if (!SharedStringMgr.GetSharedStringValue(excelSheet, excelCell, out cellValue))
+            //    throw ExcelException.Create("GetCellStringValue", ExcelErrorCode.UnableGetCellStringValue);
 
             var excelCellValue = new ExcelCellValue(cellValue);
+            if(string.IsNullOrEmpty(cellValue)) excelCellValue.IsEmpty = true;
             excelCellValue.Formula = excelCell.Cell.CellFormula?.Text;
             return excelCellValue;
         }
@@ -259,15 +260,17 @@ public class ExcelProcessorBase
                 throw ExcelException.Create("GetCellStringValue", ExcelErrorCode.UnableGetCellStringValue);
 
             var excelCellValue = new ExcelCellValue(cellValue);
+            if (string.IsNullOrEmpty(cellValue)) excelCellValue.IsEmpty = true;
             excelCellValue.Formula = excelCell.Cell.CellFormula?.Text;
             return excelCellValue;
         }
 
         if (excelCell.Cell.DataType.Value == CellValues.String)
         {
-            string value = excelCell.Cell.InnerText;
-            if (value == null) value = string.Empty;
-            var excelCellValue = new ExcelCellValue(value);
+            cellValue = excelCell.Cell.InnerText;
+            if (cellValue == null) cellValue = string.Empty;
+            var excelCellValue = new ExcelCellValue(cellValue);
+            if (string.IsNullOrEmpty(cellValue)) excelCellValue.IsEmpty = true;
             excelCellValue.Formula = excelCell.Cell.CellFormula?.Text;
             return excelCellValue;
         }
@@ -476,6 +479,13 @@ public class ExcelProcessorBase
 
     #endregion Set cell value
 
+
+    #region Copy Cell 
+
+
+    #endregion
+
+
     #region Set cell value and number format Id
 
     /// <summary>
@@ -560,8 +570,7 @@ public class ExcelProcessorBase
         _styleMgr.GetCellNumberFormatId(excelSheet, excelCell, out uint numberFormatIdCell);
         if (numberFormatIdCell == (numberFormatId ?? 0)) return true;
 
-        // all other style than format (no border, no color,...) are null, clear the style
-        // of the cell
+        // all other style than format (no border, no color,...) are null, clear the style of the cell
         if (numberFormatId == null && _styleMgr.AllOthersStyleThanFormatAreNull(excelSheet, excelCell))
         {
             // no format to set, all others style part style are null, so clear the style

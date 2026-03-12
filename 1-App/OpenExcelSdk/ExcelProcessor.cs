@@ -1,10 +1,12 @@
 ﻿using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Drawing.Spreadsheet;
 using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Spreadsheet;
 using OpenExcelSdk.Export;
 using OpenExcelSdk.System;
 using OpenExcelSdk.System.Export;
+using System.Xml.Schema;
 
 namespace OpenExcelSdk;
 
@@ -87,7 +89,7 @@ public class ExcelProcessor : ExcelProcessorBase
         {
             // Open the document for editing.
             SpreadsheetDocument document = SpreadsheetDocument.Open(fileName, true);
-            return new ExcelFile(fileName, document);
+            return new ExcelFile(fileName, document); 
         }
         catch (Exception ex)
         {
@@ -322,7 +324,7 @@ public class ExcelProcessor : ExcelProcessorBase
     #region Get row
 
     /// <summary>
-    /// Get a row from the sheet  by index base0.
+    /// Get a row from the sheet  by index base1.
     /// If the row doest not exists, it's not an error.
     /// Error occurs only if the access to the row fails.
     /// </summary>
@@ -335,13 +337,14 @@ public class ExcelProcessor : ExcelProcessorBase
         {
             var rows = excelSheet.Worksheet.Descendants<Row>();
             if (!rows.Any())
-                // row doest not exists, it's not an error
+                // row does not exists, it's not an error
                 return null;
 
-            if (rowIndex < 0 || rowIndex > rows.Count())
-                throw ExcelException.Create("GetRowAt", ExcelErrorCode.IndexWrong, rowIndex.ToString());
+            if (rowIndex < 1 || rowIndex > rows.Count())
+                // row does not exists, it's not an error
+                return null;
 
-            Row row = rows.ElementAt(rowIndex);
+            Row row = rows.ElementAt(rowIndex-1);
             return new ExcelRow(row);
         }
         catch (Exception ex)
@@ -365,6 +368,19 @@ public class ExcelProcessor : ExcelProcessorBase
     }
 
     /// <summary>
+    /// Return the number of cells of the row. If the row does not exists, return 0.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="rowIndex"></param>
+    /// <returns></returns>
+    public int GetRowCellsCount(ExcelSheet excelSheet, int rowIndex)
+    {
+        ExcelRow excelRow = GetRowAt(excelSheet, rowIndex);
+        if (excelRow == null) return 0;
+        return excelRow.Row.Elements<Cell>().Count();
+    }
+
+    /// <summary>
     /// Get cells of the row.
     /// </summary>
     /// <param name="excelRow"></param>
@@ -372,6 +388,8 @@ public class ExcelProcessor : ExcelProcessorBase
     public List<ExcelCell> GetRowCells(ExcelSheet excelSheet, ExcelRow excelRow)
     {
         List<ExcelCell> listCell =new List<ExcelCell>();
+
+        if(excelRow==null || excelRow.Row==null) return listCell;
 
         // Iterate through each cell in the row
         foreach (Cell cell in excelRow.Row.Elements<Cell>())
@@ -390,6 +408,8 @@ public class ExcelProcessor : ExcelProcessorBase
     public List<ExcelCell> GetRowCells(ExcelSheet excelSheet, int rowIndex)
     {
         List<ExcelCell> listCell = new List<ExcelCell>();
+
+        if(rowIndex < 1) return listCell;
 
         // Get the first worksheet
         SheetData sheetData = excelSheet.Worksheet.GetFirstChild<SheetData>();
@@ -675,7 +695,70 @@ public class ExcelProcessor : ExcelProcessorBase
 
     #endregion Remove cell
 
-    #region Set cell value
+    #region Set cell value currency
+
+    /// <summary>
+    /// Sets the value of a specified cell in the given Excel sheet, applying the specified currency format and name.
+    /// example: 123,45 €, currencyFormat= Currency, CurrencyName=Euro  
+    /// </summary>
+    /// <param name="excelSheet">The ExcelSheet object representing the sheet where the cell value will be set.</param>
+    /// <param name="cellReference">The address of the cell to be updated, specified in standard Excel format (for example, "A1").</param>
+    /// <param name="value">The numeric value to be set in the specified cell.</param>
+    /// <param name="currencyFormat">The format to be applied to the cell value, defining how the currency will be displayed.</param>
+    /// <param name="currencyName">The name of the currency to be used, which will be displayed alongside the value in the cell.</param>
+    /// <returns>true if the cell value was successfully set; otherwise, false.</returns>
+    public bool SetCellValueCurrency(ExcelSheet excelSheet, string cellReference, double value, CurrencyFormat currencyFormat, CurrencyName currencyName, int digitAfter)
+    {
+        // check the cell address
+        if (!ExcelCellAddressUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
+            throw ExcelException.Create("SetCellValueEmpty", ExcelErrorCode.InvalidCellAddress, cellReference);
+
+        return SetCellValueCurrency(excelSheet, colIdx, rowIdx, value, currencyFormat, currencyName,digitAfter);
+    }
+
+    /// <summary>
+    /// Sets the value of a specified cell in the given Excel sheet, applying the specified currency format and name.
+    /// example: 123,45 €, currencyFormat= Currency, CurrencyName=Euro  
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="colIdx"></param>
+    /// <param name="rowIdx"></param>
+    /// <param name="value"></param>
+    /// <param name="digitAfter"></param>
+    /// <param name="currencyFormat"></param>
+    /// <param name="currencyName"></param>
+    /// <returns></returns>
+    public bool SetCellValueCurrency(ExcelSheet excelSheet, int colIdx, int rowIdx, double value, CurrencyFormat currencyFormat, CurrencyName currencyName, int digitAfter)
+    {
+        string colName = ExcelCellAddressUtils.GetColumnName(colIdx);
+        // create the cell if it does not exist
+        ExcelCell excelCell = CreateCell(excelSheet, colName, (uint)rowIdx);
+
+        return SetCellValueCurrency(excelSheet, excelCell, value, currencyFormat, currencyName, digitAfter);
+
+    }
+
+    public bool SetCellValueCurrency(ExcelSheet excelSheet, ExcelCell excelCell, double value,  CurrencyFormat currencyFormat, CurrencyName currencyName, int digitAfter)
+    {
+        if(excelCell == null || excelCell.Cell == null)
+        {
+            // no cell at this address
+            return false;
+        }
+
+        // format: Accounting -> exp: _-* #,##0.00\ "€"_-;\-* #,##0.00\ "€"_-;_-* "-"??\ "€"_-;_-@_-
+        // format: Currency -> exp:  #,##0.00\ "€"
+        if (!CurrencyMgr.CreateNumberFormat(currencyFormat, currencyName, digitAfter, out string numberFormat))
+        { 
+            // unable to create the currency
+            return false;
+        }
+        return SetCellValue(excelSheet, excelCell, value, numberFormat);
+    }
+
+    #endregion
+
+    #region Set cell value empty
 
     /// <summary>
     /// Empty/Clear a cell value.
@@ -688,7 +771,45 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <returns></returns>
     public bool SetCellValueEmpty(ExcelSheet excelSheet, string cellReference)
     {
-        ExcelCell excelCell = GetCellAt(excelSheet, cellReference);
+        // check the cell address
+        if (!ExcelCellAddressUtils.GetColumnAndRowIndex(cellReference, out int colIdx, out int rowIdx))
+            throw ExcelException.Create("SetCellValueEmpty", ExcelErrorCode.InvalidCellAddress, cellReference);
+
+        return SetCellValueEmpty(excelSheet, colIdx, rowIdx);
+    }
+
+    /// <summary>
+    /// Empty/Clear a cell value.
+    /// Keep the format: Alignement colors, border, ...
+    /// If the cell contains a formula, remove it.
+    /// It the cell is null, do nothing.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="cellReference"></param>
+    /// <returns></returns>
+    public bool SetCellValueEmpty(ExcelSheet excelSheet, int colIdx, int rowIdx)
+    {
+        ExcelCell excelCell = GetCellAt(excelSheet, colIdx,rowIdx);
+        if (excelCell == null || excelCell.Cell == null)
+        {
+            // no cell at this address
+            return false;
+        }
+
+        return SetCellValueEmpty(excelSheet, excelCell);
+    }
+
+    /// <summary>
+    /// Empty/Clear a cell value.
+    /// Keep the format: Alignement colors, border, ...
+    /// If the cell contains a formula, remove it.
+    /// It the cell is null, do nothing.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="cellReference"></param>
+    /// <returns></returns>
+    public bool SetCellValueEmpty(ExcelSheet excelSheet, ExcelCell excelCell)
+    {
         if (excelCell == null || excelCell.Cell == null)
         {
             // no cell at this address
@@ -701,6 +822,10 @@ public class ExcelProcessor : ExcelProcessorBase
         _styleMgr.RemoveFormula(excelSheet, excelCell);
         return true;
     }
+
+    #endregion
+
+    #region Set cell value
 
     /// <summary>
     /// Set a string value in the cell.
@@ -805,29 +930,6 @@ public class ExcelProcessor : ExcelProcessorBase
             throw ExcelException.Create("SetCellValue", ExcelErrorCode.InvalidCellAddress, cellReference);
 
         return SetCellValue(excelSheet, colIdx, rowIdx, value, numberFormat);
-    }
-
-    /// <summary>
-    /// Empty/Clear a cell value.
-    /// Keep the formating.
-    /// If the cell contains a formula, remove it.
-    /// It the cell is null, do nothing.
-    /// </summary>
-    /// <param name="excelSheet"></param>
-    /// <param name="colIdx"></param>
-    /// <param name="rowIdx"></param>
-    /// <returns></returns>
-    public bool SetCellValueEmpty(ExcelSheet excelSheet, int colIdx, int rowIdx)
-    {
-        ExcelCell excelCell = GetCellAt(excelSheet, colIdx, rowIdx);
-
-        if (excelCell == null || excelCell.Cell == null) return false;
-
-        excelCell.Cell.CellValue = new CellValue(string.Empty);
-
-        // remove formula if it's there
-        _styleMgr.RemoveFormula(excelSheet, excelCell);
-        return true;
     }
 
     /// <summary>
@@ -948,6 +1050,113 @@ public class ExcelProcessor : ExcelProcessorBase
 
     #endregion Set cell value
 
+    #region Copy Cell 
+
+    /// <summary>
+    ///   Copy the value of a cell to another cell from a source excel file/sheet to a destination excel file/sheet.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="cellReference"></param>
+    /// <param name="excelFileDest"></param>
+    /// <param name="cellReferenceDest"></param>
+    /// <returns></returns>
+    public bool CopyCellValue(ExcelSheet excelSheet, string cellReference, ExcelSheet excelSheetDest, string cellReferenceDest)
+    {
+        ExcelCell excelCell = GetCellAt(excelSheet, cellReference);
+
+        // cell does not exist at source, so clear the destination cell 
+        if (excelCell == null) 
+        { 
+            return SetCellValueEmpty(excelSheetDest, cellReferenceDest);
+        }
+
+        return CopyCellValue(excelSheet, excelCell, excelSheetDest, cellReferenceDest);
+    }
+
+    /// <summary>
+    ///   Copy the value of a cell to another cell from a source excel file/sheet to a destination excel file/sheet.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="cellReference"></param>
+    /// <param name="excelFileDest"></param>
+    /// <param name="cellReferenceDest"></param>
+    /// <returns></returns>
+    public bool CopyCellValue(ExcelSheet excelSheet, ExcelCell excelCell, ExcelSheet excelSheetDest, string cellReferenceDest)
+    {
+        if (excelCell == null) return false;
+        //if (excelCellDest == null) return false;
+
+        string numberFormat = string.Empty;
+        if (excelCell.CellFormat != null)
+        {
+            // is it a buit-in number format?
+            _styleMgr.GetNumberFormat(excelSheet, (int)excelCell.CellFormat.NumberFormatId.Value, out numberFormat);
+        }
+
+        ExcelCellValue excelCellValue = GetCellValue(excelSheet, excelCell);
+
+        ExcelCell excelCellDest = GetCellAt(excelSheetDest, cellReferenceDest);
+
+        // source cell is empty, clear the destination cell
+        if (excelCellValue.IsEmpty)
+        {
+            // destination cell is already null
+            if (excelCellDest == null) return true;
+
+            return SetCellValueEmpty(excelSheetDest, excelCellDest);
+        }
+
+        if (excelCellDest == null)
+            excelCellDest = CreateCell(excelSheetDest, cellReferenceDest);
+
+        if (excelCellValue.CellType == ExcelCellType.String)
+        {
+            return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.StringValue);
+        }
+
+        if (excelCellValue.Currency != null)
+        {
+            // copy the currency too
+            //SetCe
+        }
+
+        if (excelCellValue.CellType == ExcelCellType.Integer)
+        {
+            if (!string.IsNullOrEmpty(numberFormat))
+                return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.DoubleValue.Value, numberFormat);
+
+            return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.IntegerValue.Value);
+        }
+
+        if (excelCellValue.CellType == ExcelCellType.Double)
+        {
+            if (!string.IsNullOrEmpty(numberFormat))
+                return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.DoubleValue.Value, numberFormat);
+
+            return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.DoubleValue.Value);
+        }
+
+        if (excelCellValue.CellType == ExcelCellType.DateOnly)
+        {
+            return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.DateOnlyValue.Value, numberFormat);
+        }
+
+        if (excelCellValue.CellType == ExcelCellType.DateTime)
+        {
+            return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.DateTimeValue.Value, numberFormat);
+        }
+
+        if (excelCellValue.CellType == ExcelCellType.TimeOnly)
+        {
+            return SetCellValue(excelSheetDest, excelCellDest, excelCellValue.TimeOnlyValue.Value, numberFormat);
+        }
+
+        // cell value type not managed
+        return false;
+    }
+
+    #endregion
+
     #region Set Cell something else
 
     /// <summary>
@@ -981,4 +1190,5 @@ public class ExcelProcessor : ExcelProcessorBase
     }
 
     #endregion
+
 }

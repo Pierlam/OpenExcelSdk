@@ -341,7 +341,7 @@ public class BuiltInNumberFormatMgr
 
         // 45 = 'mm:ss'
         // 46 = '[h]:mm:ss'
-        // 47 = 'mmss.0'       ou "mm:ss.0"
+        // 47 = 'mmss.0'       or can be  "mm:ss.0"
         // 48 = '##0.0E+0'
         // 49 = '@'
 

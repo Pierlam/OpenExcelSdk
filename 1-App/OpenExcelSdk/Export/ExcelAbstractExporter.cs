@@ -9,6 +9,8 @@ namespace OpenExcelSdk.Export;
 
 public class ExcelAbstractExporter
 {
+    public static int numVersion = 2;
+
     public static void Export(ExcelProcessor excelProcessor, ExcelAllStylesExport excelStyles, ExcelFile excelFileIn, ExcelFile excelFileOut)
     {
         // the first sheet exists already
@@ -16,14 +18,26 @@ public class ExcelAbstractExporter
 
         int numline = 1;
         excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "Title");
-        excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), "OpenExcelSdk - Export styles");
+        excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), "OpenExcelSdk - Export Excel styles");
 
         numline++;
         excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "Version");
-        excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), 1);
+        excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), numVersion);
 
         numline++;
-        excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "Ref");
+        excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "Author");
+        excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), "Pierlam");
+
+        numline++;
+        excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "Contact");
+        excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), "pierlam-project@outlook.com");
+
+        numline++;
+        excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "App WebSite");
+        excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), "https://pierlam.github.io/OpenExcelExport/");
+
+        numline++;
+        excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "Nuget Lib");
         excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), "https://www.nuget.org/packages/OpenExcelSdk");
 
         numline++;
@@ -46,7 +60,9 @@ public class ExcelAbstractExporter
         // get cells count
         numline++;
         int nbcell = excelStyles.CellsTotalCount;
-        if(nbcell>excelStyles.CellsMaxLoadCount)nbcell= excelStyles.CellsMaxLoadCount;
+        if(nbcell==0) excelStyles.ListInfo.Add("No cell found in the file");
+
+        if (nbcell>excelStyles.CellsMaxLoadCount)nbcell= excelStyles.CellsMaxLoadCount;
         excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "Cells loaded");
         excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), nbcell);
 
@@ -79,11 +95,23 @@ public class ExcelAbstractExporter
         excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "Errors count");
         excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), excelStyles.ListError.Count);
 
-        for(int i=0;i< excelStyles.ListError.Count;i++)
+        numline++;
+        excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "Info count");
+        excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), excelStyles.ListInfo.Count);
+
+        for (int i=0;i< excelStyles.ListError.Count;i++)
         {
             numline++;
             excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "Error #" + (i + 1).ToString());
             excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), excelStyles.ListError[i]);
+        }
+
+        // display infos
+        for (int i = 0; i < excelStyles.ListInfo.Count; i++)
+        {
+            numline++;
+            excelProcessor.SetCellValue(excelSheet, "A" + numline.ToString(), "Info #" + (i + 1).ToString());
+            excelProcessor.SetCellValue(excelSheet, "B" + numline.ToString(), excelStyles.ListInfo[i]);
         }
     }
 }

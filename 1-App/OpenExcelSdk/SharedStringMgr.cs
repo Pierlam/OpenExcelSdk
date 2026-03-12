@@ -12,21 +12,26 @@ public class SharedStringMgr
     {
         stringValue = string.Empty;
 
+        if (excelCell.Cell == null) return false;
+        if (excelCell.Cell.CellValue == null) return false;
+        if (excelCell.Cell.CellValue.InnerText == null) return false;
+
         if (excelCell.Cell.DataType.Value != CellValues.SharedString) return false;
 
         // For shared strings, look up the value in the shared strings table.
         var stringTable = excelSheet.ExcelFile.WorkbookPart.GetPartsOfType<SharedStringTablePart>().FirstOrDefault();
 
         // If the shared string table is missing, something is wrong.
+        if (stringTable == null) return false;
+
         // Return the index that is in the cell.
         // Otherwise, look up the correct text in the table.
-        if (stringTable is not null)
-        {
-            string value = excelCell.Cell.CellValue.InnerText;
-            stringValue = stringTable.SharedStringTable.ElementAt(int.Parse(value)).InnerText;
-            return true;
-        }
-        return false;
+
+        if (!int.TryParse(excelCell.Cell.CellValue.InnerText, out int idx))
+            return false;
+
+        stringValue = stringTable.SharedStringTable.ElementAt(idx).InnerText;
+        return true;
     }
 
     /// <summary>
