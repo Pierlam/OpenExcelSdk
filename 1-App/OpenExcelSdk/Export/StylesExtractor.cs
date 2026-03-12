@@ -90,7 +90,7 @@ public class StylesExtractor
 
         if(stringTable==null)
         {
-            excelAllStyles.ListError.Add("No SharedStringTablePart found in the Excel file.");
+            excelAllStyles.ListInfo.Add("No SharedStringTablePart found in the Excel file.");
             return;
         }
 

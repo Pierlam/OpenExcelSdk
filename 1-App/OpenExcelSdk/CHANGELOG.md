@@ -6,8 +6,9 @@
 
 -GetRowAt(): Modify parameter rowIndex; now start from 1.
 
+-SetCellValueCurrency() 
 
--32 unit tests, all are green.
+-41 unit tests, all are green.
 
 
 ## 0.5.0 Release (2026-01-24)

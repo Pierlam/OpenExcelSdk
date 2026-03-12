@@ -38,7 +38,7 @@ ExcelAllStylesExport ExportAllStyles()
     ExcelProcessor proc = new ExcelProcessor();
 
     //string filename = @"Files\CellFormat.xlsx";
-    //string filename = @"Files\currencies.xlsx";
+    string filename = @"Files\currencies.xlsx";
 
 
     //string filename = @"Files\currencyAccounting.xlsx";
@@ -49,7 +49,7 @@ ExcelAllStylesExport ExportAllStyles()
     //string filename = @"Files\SetCellValueCurrency_Empty.xlsx";
 
     // SetCellValueCurrency_pb_accounting_reparé
-    string filename = @"Files\SetCellValueCurrency_pb_accounting_reparé.xlsx";
+    //string filename = @"Files\SetCellValueCurrency_pb_accounting_reparé.xlsx";
 
     //string filename = @"Files\SetCellColorOut.xlsx";
     //string filename = @"Out\WrongSave.xlsx";
