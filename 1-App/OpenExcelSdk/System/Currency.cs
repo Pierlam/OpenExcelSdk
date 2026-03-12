@@ -92,7 +92,7 @@ public enum CurrencyFormat
 
     /// <summary>
     /// Currency Symbol is displayed on left side.
-    /// e.g. NumberFormatId=44	_-* #,##0.00\ "€"_-;\-* #,##0.00\ "€"_-;_-* "-"??\ "€"_-;_-@_-
+    /// e.g. _-* #,##0.00\ "€"_-;\-* #,##0.00\ "€"_-;_-* "-"??\ "€"_-;_-@_-
     /// </summary>
     Accounting
 }

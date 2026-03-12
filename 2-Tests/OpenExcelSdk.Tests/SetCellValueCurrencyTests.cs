@@ -14,36 +14,6 @@ namespace OpenExcelSdk.Tests;
 public class SetCellValueCurrencyTests : TestBase
 {
     [TestMethod]
-    public void SetCellValueCurrency_DEBUG()
-    {
-        bool res;
-        ExcelProcessor proc = new ExcelProcessor();
-
-        string filename = PathFiles + "SetCellValueCurrency_DEBUG.xlsx";
-        ExcelFile excelFile = proc.OpenExcelFile(filename);
-
-        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
-
-        ExcelCell cell;
-        ExcelCellValue excelCellValue;
-
-        // to check style/CellFormat creation
-        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
-        int count = stylesPart.Stylesheet.CellFormats.Elements().Count();
-
-        //res = proc.SetCellValueCurrency(excelSheet, "B2", -12.34, CurrencyFormat.Accounting, CurrencyName.Euro, 2);
-
-        //==: US Dollar:
-        //--B7: $12,34  with 2 decimals, accounting format
-        res = proc.SetCellValueCurrency(excelSheet, "B7", 12.34, CurrencyFormat.Accounting, CurrencyName.UsDollar, 2);
-        Assert.IsTrue(res);
-
-        // save the changes
-        proc.CloseExcelFile(excelFile);
-
-    }
-
-    [TestMethod]
     public void SetCellValueCurrency()
     {
         bool res;
@@ -82,7 +52,7 @@ public class SetCellValueCurrencyTests : TestBase
         res = proc.SetCellValueCurrency(excelSheet, "B6", -62, CurrencyFormat.CurrencyRedNegative, CurrencyName.Euro, 2);
         Assert.IsTrue(res);
 
-        //==: US Dollar:  ->PB HERE
+        //==: US Dollar: 
         //--B7: $12,34  with 2 decimals, accounting format
         res = proc.SetCellValueCurrency(excelSheet, "B7", -12.34, CurrencyFormat.Accounting, CurrencyName.UsDollar, 2);
         Assert.IsTrue(res);
@@ -100,6 +70,21 @@ public class SetCellValueCurrencyTests : TestBase
         Assert.IsTrue(res);
 
         //==: Swiss Franc/CHF
+        //--B12: 
+        res = proc.SetCellValueCurrency(excelSheet, "B12", -12.34, CurrencyFormat.Accounting, CurrencyName.SwissFranc, 2);
+        Assert.IsTrue(res);
+
+        res = proc.SetCellValueCurrency(excelSheet, "B13", -392.78, CurrencyFormat.Currency, CurrencyName.SwissFranc, 2);
+        Assert.IsTrue(res);
+
+        res = proc.SetCellValueCurrency(excelSheet, "B14", -550, CurrencyFormat.CurrencyLeftSpace, CurrencyName.SwissFranc, 2);
+        Assert.IsTrue(res);
+
+        res = proc.SetCellValueCurrency(excelSheet, "B15", -71, CurrencyFormat.CurrencyRedNegativeNoSign, CurrencyName.SwissFranc, 2);
+        Assert.IsTrue(res);
+
+        res = proc.SetCellValueCurrency(excelSheet, "B16", -62, CurrencyFormat.CurrencyRedNegative, CurrencyName.SwissFranc, 2);
+        Assert.IsTrue(res);
 
 
         // save the changes
@@ -199,6 +184,18 @@ public class SetCellValueCurrencyTests : TestBase
 
 
         //==: Swiss Franc/CHF
+        cell = proc.GetCellAt(excelSheet, "B12");
+        Assert.IsNotNull(cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
+        Assert.AreEqual(-12.34, excelCellValue.DoubleValue);
+        Assert.IsNotNull(excelCellValue.Currency);
+        Assert.AreEqual("CHF", excelCellValue.Currency.Symbol);
+        Assert.AreEqual(CurrencyName.SwissFranc, excelCellValue.Currency.Name);
+        Assert.AreEqual(CurrencyCode.CHF, excelCellValue.Currency.Code);
+        Assert.AreEqual("[$CHF-417]", excelCellValue.Currency.ExcelCode);
+        Assert.IsTrue(excelCellValue.NumberFormat.Contains("#0.00"));
+        Assert.AreEqual(CurrencyFormat.Accounting, excelCellValue.Currency.Format);
 
         // todo: add others tests
 

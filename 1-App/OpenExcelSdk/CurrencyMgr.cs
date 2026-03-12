@@ -130,17 +130,17 @@ public class CurrencyMgr
 
         // then add currency symbol, after the value
         // exp1: _-* #,##0.00\ "€"_-;\-* #,##0.00\ "€"_-;_-* "-"??\ "€"_-;_-@_-
-        // "_-[$$-409]* #,##0.00_ ;_-[$$-409]* \\-#,##0.00\\ ;_-[$$-409]* \"-\"??_ ;_-@_"
+        // "_-[$$-409]* #,##0.00_ ;_-[$$-409]* \\-#,##0.00\\ ;_-[$$-409]* \"-\"??_ ;_-@_ "   -> last char is space!!
         if (c.SymbolPosition == CurrencySymbolPosition.After)
         {
             // add space char + code e.g 
-            numberFormat = "_-* " + numberFormat + "\\ " +c.ExcelCode + "_-;\\-* " + numberFormat + "\\ " + c.ExcelCode + "_-;_-* \"-\"??\\ " + c.ExcelCode+ "_-;_-@_-";
+            numberFormat = "_-* " + numberFormat + "\\ " +c.ExcelCode + "_-;\\-* " + numberFormat + "\\ " + c.ExcelCode + "_-;_-* \"-\"??\\ " + c.ExcelCode+ "_-;_-@_- ";
             return true;
         }
 
         // currency symbol before the value
-        // exp2: _-[$$-409]* #,##0.00_ ;_-[$$-409]* \-#,##0.00\ ;_-[$$-409]* "-"??_ ;_-@_
-        numberFormat = "_-" + c.ExcelCode+ "* " + numberFormat+ "_ ;_-" + c.ExcelCode+ "* \\-" + numberFormat+ "\\ ;_-" + c.ExcelCode+ "* \"-\"??_ ;_-@_";
+        // exp2: "_-[$$-409]* #,##0.00_ ;_-[$$-409]* \-#,##0.00\ ;_-[$$-409]* "-"??_ ;_-@_ "
+        numberFormat = "_-" + c.ExcelCode+ "* " + numberFormat+ "_ ;_-" + c.ExcelCode+ "* \\-" + numberFormat+ "\\ ;_-" + c.ExcelCode+ "* \"-\"??_ ;_-@_ ";
         return true;
     }
 

@@ -89,7 +89,7 @@ public class ExcelProcessor : ExcelProcessorBase
         {
             // Open the document for editing.
             SpreadsheetDocument document = SpreadsheetDocument.Open(fileName, true);
-            return new ExcelFile(fileName, document);
+            return new ExcelFile(fileName, document); 
         }
         catch (Exception ex)
         {
