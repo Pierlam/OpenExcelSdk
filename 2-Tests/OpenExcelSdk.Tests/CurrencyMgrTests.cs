@@ -69,28 +69,32 @@ public class CurrencyMgrTests
 
     /// <summary>
     /// _-* #,##0.00\ "€"_-;\-* #,##0.00\ "€"_-;_-* "-"??\ "€"_-;_-@_-
+    /// Don't forget the last char! which is a space char! 
     /// </summary>
     [TestMethod]
     public void SetCellValueAccountingEuro()
     {
         bool res = CurrencyMgr.CreateNumberFormat(CurrencyFormat.Accounting, CurrencyName.Euro, 0, out string numberFormat);
         Assert.IsTrue(res);
-        Assert.AreEqual("_-* #,##0\\ \"€\"_-;\\-* #,##0\\ \"€\"_-;_-* \"-\"??\\ \"€\"_-;_-@_-", numberFormat);
+        Assert.AreEqual("_-* #,##0\\ \"€\"_-;\\-* #,##0\\ \"€\"_-;_-* \"-\"??\\ \"€\"_-;_-@_- ", numberFormat);
 
         res = CurrencyMgr.CreateNumberFormat(CurrencyFormat.Accounting, CurrencyName.Euro, 2, out numberFormat);
         Assert.IsTrue(res);
-        Assert.AreEqual("_-* #,##0.00\\ \"€\"_-;\\-* #,##0.00\\ \"€\"_-;_-* \"-\"??\\ \"€\"_-;_-@_-", numberFormat);
+        Assert.AreEqual("_-* #,##0.00\\ \"€\"_-;\\-* #,##0.00\\ \"€\"_-;_-* \"-\"??\\ \"€\"_-;_-@_- ", numberFormat);
     }
 
+    /// <summary>
+    /// Don't forget the last char! which is a space char! 
+    /// </summary>
     [TestMethod]
     public void SetCellValueAccountingUsDollar()
     {
         bool res = CurrencyMgr.CreateNumberFormat(CurrencyFormat.Accounting, CurrencyName.UsDollar, 0, out string numberFormat);
         Assert.IsTrue(res);
-        Assert.AreEqual("_-[$$-409]* #,##0_ ;_-[$$-409]* \\-#,##0\\ ;_-[$$-409]* \"-\"??_ ;_-@_", numberFormat);
+        Assert.AreEqual("_-[$$-409]* #,##0_ ;_-[$$-409]* \\-#,##0\\ ;_-[$$-409]* \"-\"??_ ;_-@_ ", numberFormat);
 
         res = CurrencyMgr.CreateNumberFormat(CurrencyFormat.Accounting, CurrencyName.UsDollar, 2, out numberFormat);
         Assert.IsTrue(res);
-        Assert.AreEqual("_-[$$-409]* #,##0.00_ ;_-[$$-409]* \\-#,##0.00\\ ;_-[$$-409]* \"-\"??_ ;_-@_", numberFormat);
+        Assert.AreEqual("_-[$$-409]* #,##0.00_ ;_-[$$-409]* \\-#,##0.00\\ ;_-[$$-409]* \"-\"??_ ;_-@_ ", numberFormat);
     }
 }
