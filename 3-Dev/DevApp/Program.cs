@@ -33,6 +33,54 @@ void ConvertDouble()
     double valDouble = double.Parse(value);
 }
 
+
+void DataTableHasEmptyRow()
+{
+
+    ExcelProcessor proc = new ExcelProcessor();
+
+    // open an excel file
+    string filename = @"Files\datatableHasEmptyRow.xlsx";
+    ExcelFile excelFile = proc.OpenExcelFile(filename);
+
+    // get the first sheet of the excel file
+    ExcelSheet excelSheet = proc.GetFirstSheet(excelFile);
+
+    int lastRowIdx = proc.GetLastRowIndex(excelSheet);
+    Console.WriteLine($"LastRowIndex: {lastRowIdx}");
+
+    // Row #1 to Row #5: row #3 is empty
+
+    //--scan each row
+    for (int i = 1; i <= lastRowIdx; i++)
+    {
+        Console.WriteLine($"---");
+
+        // get the row by index, if the row doesn't exists, row is null, it's not an error
+        ExcelRow excelRow = proc.GetRowAt(excelSheet, i);
+
+        int rowIndex = -1;
+
+        List<ExcelCell> listCells= proc.GetRowCells(excelSheet, i);
+        if (listCells.Count > 0)
+        {
+            ExcelCellAddressUtils.GetColumnAndRowIndex(listCells[0].Cell.CellReference.Value, out int colIndex, out rowIndex);
+        }
+
+        // NO! dont't  scan cells like this wth GetRowAt
+        // get first cell of the row
+        ExcelCell excelCell = proc.GetCellAt(excelSheet,1,i); 
+        if (excelCell == null) 
+        {
+            Console.WriteLine($"Row #{i}, Num:{rowIndex}, Cell is null.");
+            continue;
+        }
+        Console.WriteLine($"Row #{i}, Num:{rowIndex}, Cell {excelCell.Cell.CellReference}, has a value");
+
+    }
+}        
+
+
 ExcelAllStylesExport ExportAllStyles()
 {
     ExcelProcessor proc = new ExcelProcessor();
@@ -48,8 +96,6 @@ ExcelAllStylesExport ExportAllStyles()
     //SetCellValueCurrency_Empty
     //string filename = @"Files\SetCellValueCurrency_Empty.xlsx";
 
-    // SetCellValueCurrency_pb_accounting_reparé
-    //string filename = @"Files\SetCellValueCurrency_pb_accounting_reparé.xlsx";
 
     //string filename = @"Files\SetCellColorOut.xlsx";
     //string filename = @"Out\WrongSave.xlsx";
@@ -124,7 +170,9 @@ Console.WriteLine("=> OpenExcelSdk DevApp:");
 
 //CreateWrongExcel();
 
-ExcelAllStylesExport excelStyles =ExportAllStyles();
+DataTableHasEmptyRow();
+
+//ExcelAllStylesExport excelStyles =ExportAllStyles();
 
 //ReadCurrency();
 
