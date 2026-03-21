@@ -1,4 +1,13 @@
-﻿## 0.6.0 Release (2026-03-12)
+﻿## 0.7.0 Release (2026-05-xx)
+
+-Next
+
+-Bugs fixing
+
+-41 unit tests, all are green.
+
+
+## 0.6.0 Release (2026-03-12)
 
 -Add ExcelProcessor.CopyCellValue(); Copy a cell value to another one in another excel file.
 

@@ -13,7 +13,7 @@ public class HelpPrinter
         Console.WriteLine();
         Console.WriteLine("=> OpenExcelExport - Excel styles exporter");
         Console.WriteLine();
-        Console.WriteLine("Version: " + vers + " by Pierlam, Jan 2026");
+        Console.WriteLine("Version: " + vers + " by Pierlam, March 2026");
         Console.WriteLine();
         Console.WriteLine("Website: https://pierlam.github.io/OpenExcelExport/");
         Console.WriteLine();

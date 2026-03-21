@@ -71,6 +71,11 @@ Github wiki:
 
 https://github.com/Pierlam/OpenExcelSdk/wiki
 
+Samples of use of the library are available here:
+
+https://github.com/Pierlam/OpenExcelSdkSamples/
+
+
 OpenExcelExport tool: 
 
 Command line application to export excel file content to a output Excel, based on OpenExcelSdk library.
