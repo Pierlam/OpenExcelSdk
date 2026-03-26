@@ -150,4 +150,47 @@ public class GetRowTests: TestBase
         proc.CloseExcelFile(excelFile);
     }
 
+
+    [TestMethod]
+    public void GetRowAddressOk()
+    {
+        bool res;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "GetRowAddressOk.xlsx";
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
+
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
+
+        // row #1: exists, row # 2 and #3, does not exist, row #4:exists, idx=2
+        ExcelRow excelRow = proc.GetRowAt(excelSheet, 2);
+
+        int rowAddr= proc.GetRowAddress(excelSheet, excelRow);
+        Assert.AreEqual(4, rowAddr);
+
+
+        // row #3 does not exist, but not an error, just return 0
+        excelRow = proc.GetRowAt(excelSheet, 3);
+        Assert.IsNull(excelRow);
+    }
+
+    [TestMethod]
+    public void GetLastRowAddressOk()
+    {
+        bool res;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "GetLastRowAddressOk.xlsx";
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
+
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
+
+        // row #1: exists, row # 2 and #3, does not exist, row #4:exists, idx=2
+        int rowAddress = proc.GetLastRowAddress(excelSheet);
+        Assert.AreEqual(4, rowAddress);
+
+        int rowIdx = proc.GetLastRowIndex(excelSheet);
+        Assert.AreEqual(2, rowIdx);
+    }
+
 }

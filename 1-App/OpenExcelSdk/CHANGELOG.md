@@ -1,10 +1,12 @@
 ﻿## 0.7.0 Release (2026-05-xx)
 
--Next
+-GetRowAddress(): Get the row address, not the index 
+
+-GetLastRowAddress(): Get the last row address, not the index
 
 -Bugs fixing
 
--41 unit tests, all are green.
+-43 unit tests, all are green.
 
 
 ## 0.6.0 Release (2026-03-12)

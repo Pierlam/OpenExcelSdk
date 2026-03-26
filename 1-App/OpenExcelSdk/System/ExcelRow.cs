@@ -13,4 +13,9 @@ public class ExcelRow
     /// Open Xml row object.
     /// </summary>
     public Row Row { get; set; }
+
+    public int GetRowIndex()
+    {
+        return (int)Row.RowIndex.Value;
+    }
 }
