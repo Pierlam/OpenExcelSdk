@@ -4,6 +4,8 @@
 
 -GetLastRowAddress(): Get the last row address, not the index
 
+-Remove some GetRowAt to GetRowAtIndex
+
 -Bugs fixing
 
 -43 unit tests, all are green.

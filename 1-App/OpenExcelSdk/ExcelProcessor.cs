@@ -349,7 +349,7 @@ public class ExcelProcessor : ExcelProcessorBase
         // Get the last row index
         int count= excelSheet.Rows.Count();
 
-        ExcelRow row = GetRowAt(excelSheet, count);
+        ExcelRow row = GetRowAtIndex(excelSheet, count);
         if (row == null) return 0;
         return GetRowAddress(excelSheet, row);
     }
@@ -382,7 +382,7 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="excelSheet"></param>
     /// <param name="rowIndex"></param>
     /// <returns></returns>
-    public ExcelRow GetRowAt(ExcelSheet excelSheet, int rowIndex)
+    public ExcelRow GetRowAtIndex(ExcelSheet excelSheet, int rowIndex)
     {
         try
         {
@@ -399,7 +399,7 @@ public class ExcelProcessor : ExcelProcessorBase
 
 
             // get the first cell, to have the row number (different from the row index)
-            ExcelCell excelCell = GetRowCells(excelSheet, rowIndex).FirstOrDefault();
+            ExcelCell excelCell = GetRowCellsAtAddress(excelSheet, rowIndex).FirstOrDefault();
 
             return new ExcelRow(row);
         }
@@ -415,9 +415,9 @@ public class ExcelProcessor : ExcelProcessorBase
     /// <param name="excelSheet"></param>
     /// <param name="rowIndex"></param>
     /// <returns></returns>
-    public int GetRowCellsCount(ExcelSheet excelSheet, int rowIndex)
+    public int GetRowCellsCountAtIndex(ExcelSheet excelSheet, int rowIndex)
     {
-        ExcelRow excelRow = GetRowAt(excelSheet, rowIndex);
+        ExcelRow excelRow = GetRowAtIndex(excelSheet, rowIndex);
         if (excelRow == null) return 0;
         return excelRow.Row.Elements<Cell>().Count();
     }
@@ -443,15 +443,15 @@ public class ExcelProcessor : ExcelProcessorBase
     }
 
     /// <summary>
-    /// Get cells of the row.
+    /// Get cells of the row, by address! base1.
     /// </summary>
     /// <param name="excelRow"></param>
     /// <returns></returns>
-    public List<ExcelCell> GetRowCells(ExcelSheet excelSheet, int rowIndex)
+    public List<ExcelCell> GetRowCellsAtAddress(ExcelSheet excelSheet, int rowAddr)
     {
         List<ExcelCell> listCell = new List<ExcelCell>();
 
-        if(rowIndex < 1) return listCell;
+        if(rowAddr < 1) return listCell;
 
         // Get the first worksheet
         SheetData sheetData = excelSheet.Worksheet.GetFirstChild<SheetData>();
@@ -459,7 +459,7 @@ public class ExcelProcessor : ExcelProcessorBase
 
         // Find the row by index
         Row row = sheetData.Elements<Row>()
-                           .FirstOrDefault(r => r.RowIndex == rowIndex);
+                           .FirstOrDefault(r => r.RowIndex == rowAddr);
         if(row== null)  
             return listCell;
 

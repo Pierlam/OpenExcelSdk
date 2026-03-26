@@ -112,7 +112,7 @@ internal class CellReader
         int lastRowIdx = proc.GetLastRowIndex(excelSheet);
         Console.WriteLine("last row idx: " + lastRowIdx);
 
-        ExcelRow row = proc.GetRowAt(excelSheet, 0);
+        ExcelRow row = proc.GetRowAtIndex(excelSheet, 0);
         if (row == null)
             Console.WriteLine("ERROR, unbale to read the row");
 

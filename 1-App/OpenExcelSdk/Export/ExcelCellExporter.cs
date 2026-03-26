@@ -49,7 +49,7 @@ public class ExcelCellExporter
         for (int i = 1; i <= lastRowIdx; i++)
         {
             // get cells of the row
-            List<ExcelCell> listCell=excelProcessor.GetRowCells(excelSheetIn, i);
+            List<ExcelCell> listCell=excelProcessor.GetRowCellsAtAddress(excelSheetIn, i);
             if (listCell.Count == 0) continue;
 
             rowNumOut= ExportCells(excelProcessor, excelSheetIn.Index, excelSheetIn.Name, i, rowNumOut, listCell, excelSheetOut, out cellCount);
