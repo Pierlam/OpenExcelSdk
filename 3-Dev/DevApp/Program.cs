@@ -49,7 +49,16 @@ void DataTableHasEmptyRow()
     int lastRowIdx = proc.GetLastRowIndex(excelSheet);
     Console.WriteLine($"LastRowIndex: {lastRowIdx}");
 
-    // Row #1 to Row #5: row #3 is empty
+    // Row #1 to Row #6: row #3 and row #5 are empty
+
+    int rowIndex = -1;
+
+    List <ExcelCell> listCells = proc.GetRowCells(excelSheet, lastRowIdx);
+    if (listCells.Count > 0)
+    {
+        ExcelCellAddressUtils.GetColumnAndRowAddress(listCells[0].Cell.CellReference.Value, out int colIndex, out rowIndex);
+    }
+
 
     //--scan each row
     for (int i = 1; i <= lastRowIdx; i++)
@@ -59,13 +68,6 @@ void DataTableHasEmptyRow()
         // get the row by index, if the row doesn't exists, row is null, it's not an error
         ExcelRow excelRow = proc.GetRowAt(excelSheet, i);
 
-        int rowIndex = -1;
-
-        List<ExcelCell> listCells= proc.GetRowCells(excelSheet, i);
-        if (listCells.Count > 0)
-        {
-            ExcelCellAddressUtils.GetColumnAndRowIndex(listCells[0].Cell.CellReference.Value, out int colIndex, out rowIndex);
-        }
 
         // NO! dont't  scan cells like this wth GetRowAt
         // get first cell of the row

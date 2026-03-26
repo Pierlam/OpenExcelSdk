@@ -58,6 +58,12 @@
     <None Update="10-Files\CopyCellValue.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="10-Files\GetLastRowAddressOk.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="10-Files\GetRowAddressOk.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="10-Files\GetCellCurrencyRedNeg.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

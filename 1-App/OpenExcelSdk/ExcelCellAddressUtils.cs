@@ -47,7 +47,7 @@ public class ExcelCellAddressUtils
     /// <param name="colIdx"></param>
     /// <param name="rowIdx"></param>
     /// <returns></returns>
-    public static bool GetColumnAndRowIndex(string cellReference, out int colIdx, out int rowIdx)
+    public static bool GetColumnAndRowAddress(string cellReference, out int colIdx, out int rowIdx)
     {
         colIdx = 0;
         rowIdx = 0;
@@ -59,10 +59,10 @@ public class ExcelCellAddressUtils
 
         cellReference= cellReference.Trim();  
         
-        colIdx = GetColumnIndex(cellReference);
+        colIdx = GetColumnAddress(cellReference);
         if(colIdx == 0) return false;
 
-        rowIdx = GetRowIndex(cellReference);
+        rowIdx = GetRowAddress(cellReference);
         if (rowIdx == 0) return false;
 
         // max col: XFD, max row: 1048576
@@ -72,11 +72,11 @@ public class ExcelCellAddressUtils
 
     /// <summary>
     /// Get the column index.
-    /// exp: B2 -> return 2.
+    /// exp: B34 -> return 2.
     /// </summary>
     /// <param name="cellReference"></param>
     /// <returns></returns>
-    public static int GetColumnIndex(string cellReference)
+    public static int GetColumnAddress(string cellReference)
     {
         if (string.IsNullOrWhiteSpace(cellReference)) return 0;
 
@@ -110,11 +110,12 @@ public class ExcelCellAddressUtils
     }
 
     /// <summary>
-    /// Get the row value from a cell address.
+    /// Get the row address from a cell address.
+    /// e.g. B12 -> return 12.
     /// </summary>
     /// <param name="cellReference"></param>
     /// <returns></returns>
-    public static int GetRowIndex(string cellReference)
+    public static int GetRowAddress(string cellReference)
     {
         if (string.IsNullOrWhiteSpace(cellReference)) return 0;
 
@@ -177,6 +178,14 @@ public class ExcelCellAddressUtils
         return value;
     }
 
+    /// <summary>
+    /// Column and row address has a high limit in excel file.
+    /// XFD -> max col address, which is 16384 in number.
+    /// 1,048,576 -> max row address.
+    /// </summary>
+    /// <param name="colIndex"></param>
+    /// <param name="rowIndex"></param>
+    /// <returns></returns>
     public static bool CheckMaxColAndRowValue(int colIndex, int rowIndex)
     {
         // XFD
