@@ -24,9 +24,6 @@
     <None Update="Files\scanDatatable.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Files\datatableHasEmptyRow.xlsx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Files\datLinesThenACellBlankOk.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -472,6 +472,22 @@ public class ExcelProcessor : ExcelProcessorBase
         return listCell;
     }
 
+    /// <summary>
+    /// Return the last cell col address of the row, base1.
+    /// </summary>
+    /// <param name="excelSheet"></param>
+    /// <param name="rowAddr"></param>
+    /// <returns></returns>
+    public int GetLastColAddress(ExcelSheet excelSheet, int rowAddr)
+    {
+        var listCells = GetRowCellsAtAddress(excelSheet, rowAddr);
+        if (!listCells.Any()) return 0;
+        // get the last cell
+        ExcelCell excelCell = listCells.LastOrDefault();
+        if (excelCell == null) return 0;
+        return ExcelCellAddressUtils.GetColumnAddress(excelCell.Cell.CellReference);
+    }
+
     #endregion Get row
 
     #region Get Cell

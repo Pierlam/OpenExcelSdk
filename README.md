@@ -243,7 +243,85 @@ You can also set a value in accounting format, exactly like in Excel.
 proc.SetCellValueCurrency(excelSheet, "B7", -12.34, CurrencyFormat.Accounting, CurrencyName.UsDollar, 2);
 ```
 
+## Scan cells of a datatable, row by row 
 
+There are There ways to scan cells of a datatable, row by row.
+
+### 1. Scan only existing rows and cells
+
+This is the default way to scan cells of a datatable, row by row. Only existing rows and cells will be scanned.
+
+```
+// get the index of the last row containing cells
+int lastRowIdx = proc.GetLastRowIndex(excelSheet);
+
+for (int r = 1; r <= lastRowIdx; r++)
+{
+    // get the row by index, if the row doesn't exists, row is null, it's not an error
+    ExcelRow excelRow = proc.GetRowAtIndex(excelSheet, r);
+
+    // get cells of the row
+    List<ExcelCell> listCells = proc.GetRowCells(excelSheet, excelRow);
+
+    // scan each cell of the row
+    foreach (ExcelCell cell in listCells) 
+    {
+            Console.WriteLine($"Cell addr: {cell.Cell.CellReference} has a value");
+    }
+}
+```
+
+### 2. Scan only all rows but only existing cells
+
+You can scan all rows of a datatable, even empty rows, but only existing cells will be scanned. 
+
+```
+int lastRowAddr = proc.GetLastRowAddress(excelSheet);
+
+//--scan each existing row
+for (int r = 1; r <= lastRowAddr; r++)
+{
+    // get cells of the row
+    List<ExcelCell> listCells = proc.GetRowCellsAtAddress(excelSheet, r);
+
+    // scan each cell of the row
+    foreach (ExcelCell cell in listCells)
+    {
+        Console.WriteLine($"Cell addr: {cell.Cell.CellReference}");
+    }
+}
+```
+
+
+### 3. Scan only all rows and all cells
+
+You can scan all rows of a datatable, even empty rows, and also all cells of each row, even empty cells.
+
+```
+int lastRowAddr = proc.GetLastRowAddress(excelSheet);
+
+//--scan each existing row
+for (int r = 1; r <= lastRowAddr; r++)
+{
+    int lastColAddr = proc.GetLastColAddress(excelSheet, r);
+
+    for(int c = 1; c <= lastColAddr; c++)
+    {
+        ExcelCell cell = proc.GetCellAt(excelSheet, c, r);
+        if (cell == null)
+        {
+            Console.WriteLine($"Cell addr: Col:{c}, Row{r}: cell is empty");
+        }
+        else
+        {
+            Console.WriteLine($"Cell addr: {cell.Cell.CellReference}: Cell has a value");
+        }
+    }
+}
+```
+
+
+#################
 ## Get row/last row index
 
 The code below get a the last row index, and also get a row at an index.

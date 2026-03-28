@@ -1,8 +1,12 @@
-﻿## 0.7.0 Release (2026-05-xx)
+﻿## 0.7.0 Release (2026-03-28)
 
--GetRowAddress(): Get the row address, not the index 
+-Add GetLastRowAddress(): Get the last row address.
 
--GetLastRowAddress(): Get the last row address, not the index
+-Add GetRowAddress(): Get the row at address, not the index.
+
+-Add GetRowCellsAtAddress(): Get the last row address, not the index
+
+-Add GetLastColAddress(): Get the last cell col address in the row
 
 -Remove some GetRowAt to GetRowAtIndex
 
@@ -17,9 +21,9 @@
 
 -Add ExcelProcessor.GetRowCellsCount(sheet, rowIndex)
 
--GetRowAt(): Modify parameter rowIndex; now start from 1.
+-Add GetRowAt(): Modify parameter rowIndex; now start from 1.
 
--SetCellValueCurrency() 
+-Add SetCellValueCurrency() 
 
 -Bugs fixing
 
