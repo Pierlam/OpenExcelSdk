@@ -21,7 +21,7 @@
     <None Update="Files\currencyAccounting.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Files\datatableHasEmptyRow.xlsx">
+    <None Update="Files\scanDatatable.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Files\datLinesThenACellBlankOk.xlsx">

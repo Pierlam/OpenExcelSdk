@@ -1,5 +1,6 @@
 ﻿using DevApp;
 using DocumentFormat.OpenXml;
+using DocumentFormat.OpenXml.Spreadsheet;
 using OpenExcelSdk;
 using OpenExcelSdk.System.Export;
 
@@ -34,13 +35,16 @@ void ConvertDouble()
 }
 
 
-void DataTableHasEmptyRow()
+// 4 Rows defined. lastRowAddress=6, RowAddr=3 and 5 are empty.
+void ScanDataTableWayOne()
 {
 
     ExcelProcessor proc = new ExcelProcessor();
 
+    Console.WriteLine("ScanDataTableWayOne: Scan only existing rows and cells");
+
     // open an excel file
-    string filename = @"Files\datatableHasEmptyRow.xlsx";
+    string filename = @"Files\scanDatatable.xlsx";
     ExcelFile excelFile = proc.OpenExcelFile(filename);
 
     // get the first sheet of the excel file
@@ -49,38 +53,193 @@ void DataTableHasEmptyRow()
     int lastRowIdx = proc.GetLastRowIndex(excelSheet);
     Console.WriteLine($"LastRowIndex: {lastRowIdx}");
 
-    // Row #1 to Row #6: row #3 and row #5 are empty
 
-    int rowIndex = -1;
-
-    List <ExcelCell> listCells = proc.GetRowCells(excelSheet, lastRowIdx);
-    if (listCells.Count > 0)
+    //--scan each existing row
+    for (int r = 1; r <= lastRowIdx; r++)
     {
-        ExcelCellAddressUtils.GetColumnAndRowAddress(listCells[0].Cell.CellReference.Value, out int colIndex, out rowIndex);
-    }
-
-
-    //--scan each row
-    for (int i = 1; i <= lastRowIdx; i++)
-    {
-        Console.WriteLine($"---");
+        Console.WriteLine("---");
+        Console.WriteLine($"Row idx:{r}");
 
         // get the row by index, if the row doesn't exists, row is null, it's not an error
-        ExcelRow excelRow = proc.GetRowAt(excelSheet, i);
+        ExcelRow excelRow = proc.GetRowAtIndex(excelSheet, r);
 
+        // get cells of the row
+        List<ExcelCell> listCells = proc.GetRowCells(excelSheet, excelRow);
 
-        // NO! dont't  scan cells like this wth GetRowAt
-        // get first cell of the row
-        ExcelCell excelCell = proc.GetCellAt(excelSheet,1,i); 
-        if (excelCell == null) 
+        // scan each cell of the row
+        foreach (ExcelCell cell in listCells) 
         {
-            Console.WriteLine($"Row #{i}, Num:{rowIndex}, Cell is null.");
-            continue;
+            Console.WriteLine($"Cell addr: {cell.Cell.CellReference} has a value");
         }
-        Console.WriteLine($"Row #{i}, Num:{rowIndex}, Cell {excelCell.Cell.CellReference}, has a value");
-
     }
-}        
+
+    proc.CloseExcelFile(excelFile);
+
+    /*
+=> OpenExcelSdk DevApp:
+ScanDataTableWayOne: Does NOT display empty rows and cells!
+LastRowIndex: 4
+---
+Row idx:1
+Cell addr: A1 has a value
+Cell addr: B1 has a value
+Cell addr: C1 has a value
+---
+Row idx:2
+Cell addr: A2 has a value
+Cell addr: B2 has a value
+Cell addr: C2 has a value
+---
+Row idx:3
+Cell addr: A4 has a value
+Cell addr: C4 has a value
+---
+Row idx:4
+Cell addr: A6 has a value
+Cell addr: B6 has a value
+=> Ok, Ends.
+    */
+}
+
+
+// 4 Rows defined. lastRowAddress=6, RowAddr=3 and 5 are empty.
+void ScanDataTableWayTwo()
+{
+
+    ExcelProcessor proc = new ExcelProcessor();
+
+    Console.WriteLine("ScanDataTableWayTwo: Display empty rows but not empty cells");
+
+    // open an excel file
+    string filename = @"Files\scanDatatable.xlsx";
+    ExcelFile excelFile = proc.OpenExcelFile(filename);
+
+    // get the first sheet of the excel file
+    ExcelSheet excelSheet = proc.GetFirstSheet(excelFile);
+
+    int lastRowAddr = proc.GetLastRowAddress(excelSheet);
+    Console.WriteLine($"LastRowAddress: {lastRowAddr}");
+
+
+    //--scan each existing row
+    for (int r = 1; r <= lastRowAddr; r++)
+    {
+        Console.WriteLine("---");
+        Console.WriteLine($"Row addr:{r}");
+
+        // get cells of the row
+        List<ExcelCell> listCells = proc.GetRowCellsAtAddress(excelSheet, r);
+
+        // scan each cell of the row
+        foreach (ExcelCell cell in listCells)
+        {
+            Console.WriteLine($"Cell addr: {cell.Cell.CellReference}");
+        }
+    }
+
+    proc.CloseExcelFile(excelFile);
+
+    /*
+     * ScanDataTableWayTwo: Display empty rows but not empty cells
+LastRowAddress: 6
+---
+Row addr:1
+Cell addr: A1
+Cell addr: B1
+Cell addr: C1
+---
+Row addr:2
+Cell addr: A2
+Cell addr: B2
+Cell addr: C2
+---
+Row addr:3
+---
+Row addr:4
+Cell addr: A4
+Cell addr: C4
+---
+Row addr:5
+---
+Row addr:6
+Cell addr: A6
+Cell addr: B6
+ */
+}
+
+// 4 Rows defined. lastRowAddress=6, RowAddr=3 and 5 are empty.
+void ScanDataTableWayThree()
+{
+
+    ExcelProcessor proc = new ExcelProcessor();
+
+    Console.WriteLine("ScanDataTableWayThree: Display empty rows and cells");
+
+    // open an excel file
+    string filename = @"Files\scanDatatable.xlsx";
+    ExcelFile excelFile = proc.OpenExcelFile(filename);
+
+    // get the first sheet of the excel file
+    ExcelSheet excelSheet = proc.GetFirstSheet(excelFile);
+
+    int lastRowAddr = proc.GetLastRowAddress(excelSheet);
+    Console.WriteLine($"LastRowAddress: {lastRowAddr}");
+
+
+    //--scan each existing row
+    for (int r = 1; r <= lastRowAddr; r++)
+    {
+        Console.WriteLine("---");
+        Console.WriteLine($"Row addr:{r}");
+
+        int lastColAddr = proc.GetLastColAddress(excelSheet, r);
+
+        for(int c = 1; c <= lastColAddr; c++)
+        {
+            ExcelCell cell = proc.GetCellAt(excelSheet, c, r);
+            if (cell == null)
+            {
+                Console.WriteLine($"Cell addr: Col:{c}, Row{r}: cell is empty");
+            }
+            else
+            {
+                Console.WriteLine($"Cell addr: {cell.Cell.CellReference}: Cell has a value");
+            }
+        }
+    }
+
+    proc.CloseExcelFile(excelFile);
+
+    /*
+ScanDataTableWayThree: Display empty rows and cells
+LastRowAddress: 6
+---
+Row addr:1
+Cell addr: A1: Cell has a value
+Cell addr: B1: Cell has a value
+Cell addr: C1: Cell has a value
+---
+Row addr:2
+Cell addr: A2: Cell has a value
+Cell addr: B2: Cell has a value
+Cell addr: C2: Cell has a value
+---
+Row addr:3
+---
+Row addr:4
+Cell addr: A4: Cell has a value
+Cell addr: Col:2, Row4: cell is empty
+Cell addr: C4: Cell has a value
+---
+Row addr:5
+---
+Row addr:6
+Cell addr: A6: Cell has a value
+Cell addr: B6: Cell has a value
+=> Ok, Ends.      
+     */
+}
+
 
 
 ExcelAllStylesExport ExportAllStyles()
@@ -172,7 +331,11 @@ Console.WriteLine("=> OpenExcelSdk DevApp:");
 
 //CreateWrongExcel();
 
-DataTableHasEmptyRow();
+//DataTableHasEmptyRow();
+
+ScanDataTableWayOne();
+//ScanDataTableWayTwo();
+//ScanDataTableWayThree();
 
 //ExcelAllStylesExport excelStyles =ExportAllStyles();
 
