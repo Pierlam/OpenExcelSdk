@@ -27,9 +27,10 @@ public class StyleMgr
     /// <returns></returns>
     public bool CreateCellFormatSetNumberFormatId(ExcelSheet excelSheet, ExcelCell excelCell, uint? numberFormatId)
     {
-        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        //var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        var stylesPart = GetStylePart(excelSheet.ExcelFile);
 
-        CellFormat? currCellFormat = null;
+        CellFormat ? currCellFormat = null;
         BooleanValue? applyNumberFormat = null;
 
         // the cell has a style, a CellFormat?
@@ -98,7 +99,8 @@ public class StyleMgr
     {
         index = 0;
 
-        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        //var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        var stylesPart = GetStylePart(excelSheet.ExcelFile);
 
         CellFormat? currCellFormat = null;
 
@@ -202,7 +204,9 @@ public class StyleMgr
         //--no style
         if (excelCell.Cell.StyleIndex == null) return true;
 
-        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        //var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        var stylesPart = GetStylePart(excelSheet.ExcelFile);
+
         var cellFormat = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
 
         if (cellFormat.NumberFormatId == null) return true;
@@ -223,7 +227,9 @@ public class StyleMgr
         if (excelCell.Cell.StyleIndex == null) return false;
 
         // get the style and then the cell format
-        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        //var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        var stylesPart = GetStylePart(excelSheet.ExcelFile);
+
         var cellFormat = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
 
         // no number format
@@ -245,7 +251,9 @@ public class StyleMgr
         if (excelCell.Cell.StyleIndex == null) return true;
 
         // get the style and then the cell format
-        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        //var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        var stylesPart = GetStylePart(excelSheet.ExcelFile);
+
         var cellFormat = (CellFormat)stylesPart.Stylesheet.CellFormats.ElementAt((int)excelCell.Cell.StyleIndex.Value);
 
         // all others styles are null
@@ -332,7 +340,8 @@ public class StyleMgr
     /// <returns></returns>
     public bool CreateCustomNumberFormat(ExcelSheet excelSheet, string format, out uint formatId)
     {
-        var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        //var stylesPart = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart;
+        var stylesPart = GetStylePart(excelSheet.ExcelFile);
 
         // empty excel, create the NumberingFormats part
         if (stylesPart.Stylesheet.NumberingFormats==null)
@@ -398,7 +407,9 @@ public class StyleMgr
     {
         numberFormat = string.Empty;
 
+        GetStylePart(excelSheet.ExcelFile);
         var stylesheet = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet;
+
         if (stylesheet.NumberingFormats == null) return false;
 
         foreach (NumberingFormat nf in stylesheet.NumberingFormats.Elements<NumberingFormat>())
@@ -420,7 +431,10 @@ public class StyleMgr
     {
         formatId = 0;
 
+        GetStylePart(excelSheet.ExcelFile);
+
         var stylesheet = excelSheet.ExcelFile.WorkbookPart.WorkbookStylesPart.Stylesheet;
+
         if (stylesheet.NumberingFormats == null) return false;
 
             foreach (NumberingFormat nf in stylesheet.NumberingFormats.Elements<NumberingFormat>())
@@ -444,6 +458,7 @@ public class StyleMgr
     public bool RemoveFormula(ExcelSheet excelSheet, ExcelCell excelCell)
     {
         if (excelCell.Cell.CellFormula == null) return true;
+        if(excelSheet.ExcelFile.WorkbookPart.CalculationChainPart==null) return true;
 
         CalculationChainPart calculationChainPart = excelSheet.ExcelFile.WorkbookPart.CalculationChainPart;
         CalculationChain calculationChain = calculationChainPart.CalculationChain;
@@ -466,6 +481,53 @@ public class StyleMgr
             excelSheet.ExcelFile.WorkbookPart.DeletePart(calculationChainPart);
 
         return true;
+    }
+
+    /// <summary>
+    /// Get or create the WorkbookStylesPart of the excel file.
+    /// </summary>
+    /// <param name="excelFile"></param>
+    /// <returns></returns>
+    public static WorkbookStylesPart GetStylePart(ExcelFile excelFile)
+    {
+        var stylesPart = excelFile.WorkbookPart.WorkbookStylesPart;
+        if(stylesPart!=null)return stylesPart;
+
+        // Add WorkbookStylesPart and create a basic stylesheet
+        stylesPart = excelFile.WorkbookPart.AddNewPart<WorkbookStylesPart>();
+        stylesPart.Stylesheet = StyleMgr.CreateStylesheet();
+        stylesPart.Stylesheet.Save();
+
+        return stylesPart;
+    }
+
+    /// <summary>
+    /// Creates a basic stylesheet with:
+    /// Index 0: Default style
+    /// Index 1: Bold font style
+    /// </summary>
+    public static Stylesheet CreateStylesheet()
+    {
+        Fonts fonts = new Fonts(
+            new Font(), // Index 0: default
+            new Font(new Bold()) // Index 1: bold
+        );
+
+        Fills fills = new Fills(
+            new Fill(new PatternFill() { PatternType = PatternValues.None }), // Index 0
+            new Fill(new PatternFill() { PatternType = PatternValues.Gray125 }) // Index 1
+        );
+
+        Borders borders = new Borders(
+            new Border() // Index 0: default border
+        );
+
+        CellFormats cellFormats = new CellFormats(
+            new CellFormat(), // Index 0: default
+            new CellFormat() { FontId = 1, FillId = 0, BorderId = 0, ApplyFont = true } // Index 1: bold
+        );
+
+        return new Stylesheet(fonts, fills, borders, cellFormats);
     }
 
     public int CreateFill(ExcelSheet excelSheet, string rgb)

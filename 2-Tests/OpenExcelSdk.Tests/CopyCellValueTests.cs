@@ -319,7 +319,78 @@ public class CopyCellValueTests : TestBase
     }
 
     [TestMethod]
-    public void CopyCellValueCuurency()
+    public void CopyCellValueStyleEmpty()
+    {
+        bool res;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "CopyCellValueStyle2.xlsx";
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
+
+
+        string filenameDest = PathFiles + "CopyCellValueStyleDest2.xlsx";
+
+        if(File.Exists(filenameDest)) File.Delete(filenameDest);
+
+        ExcelFile excelFileDest = proc.CreateExcelFile(filenameDest);        
+        ExcelSheet excelSheetDest = proc.GetSheetAt(excelFileDest, 0);
+
+        ExcelCell cell;
+        ExcelCellValue excelCellValue;
+
+        //--do action:
+
+        res = proc.CopyCellValue(excelSheet, "A2", excelSheetDest, "B2");
+        Assert.IsTrue(res);
+
+        res = proc.CopyCellValue(excelSheet, "A3", excelSheetDest, "B3");
+        Assert.IsTrue(res);
+
+        res = proc.CopyCellValue(excelSheet, "A4", excelSheetDest, "B4");
+        Assert.IsTrue(res);
+
+        res = proc.CopyCellValue(excelSheet, "A5", excelSheetDest, "B5");
+        Assert.IsTrue(res);
+
+        // close the files
+        proc.CloseExcelFile(excelFile);
+        proc.CloseExcelFile(excelFileDest);
+
+        // then open the destination file and check the value of cell B1
+        excelFile = proc.OpenExcelFile(filenameDest);
+        excelSheet = proc.GetSheetAt(excelFile, 0);
+
+
+        cell = proc.GetCellAt(excelSheet, "B2");
+        Assert.IsNotNull(cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.String, excelCellValue.CellType);
+        Assert.AreEqual("text", excelCellValue.StringValue);
+
+        cell = proc.GetCellAt(excelSheet, "B3");
+        Assert.IsNotNull(cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.Integer, excelCellValue.CellType);
+        Assert.AreEqual(12, excelCellValue.IntegerValue);
+
+        cell = proc.GetCellAt(excelSheet, "B4");
+        Assert.IsNotNull(cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
+        Assert.AreEqual(23.45, excelCellValue.DoubleValue);
+
+        cell = proc.GetCellAt(excelSheet, "B5");
+        Assert.IsNotNull(cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.DateOnly, excelCellValue.CellType);
+        Assert.AreEqual(new DateOnly(1997, 07, 03), excelCellValue.DateOnlyValue);
+
+        proc.CloseExcelFile(excelFile);
+    }
+
+    [TestMethod]
+    public void CopyCellValueCurrency()
     {
         bool res;
         ExcelProcessor proc = new ExcelProcessor();
@@ -330,6 +401,111 @@ public class CopyCellValueTests : TestBase
 
         string filenameDest = PathFiles + "CopyCellValueCurrencyDest.xlsx";
         ExcelFile excelFileDest = proc.OpenExcelFile(filenameDest);
+        ExcelSheet excelSheetDest = proc.GetSheetAt(excelFileDest, 0);
+
+        ExcelCell cell;
+        ExcelCellValue excelCellValue;
+
+        //--do action:
+
+        res = proc.CopyCellValue(excelSheet, "A2", excelSheetDest, "B2");
+        Assert.IsTrue(res);
+
+        res = proc.CopyCellValue(excelSheet, "A3", excelSheetDest, "B3");
+        Assert.IsTrue(res);
+
+        // 27€
+        res = proc.CopyCellValue(excelSheet, "A4", excelSheetDest, "B4");
+        Assert.IsTrue(res);
+
+        // 54 €
+        res = proc.CopyCellValue(excelSheet, "A5", excelSheetDest, "B5");
+        Assert.IsTrue(res);
+
+        res = proc.CopyCellValue(excelSheet, "A6", excelSheetDest, "B6");
+        Assert.IsTrue(res);
+
+        res = proc.CopyCellValue(excelSheet, "A7", excelSheetDest, "B7");
+        Assert.IsTrue(res);
+
+        // close the files
+        proc.CloseExcelFile(excelFile);
+        proc.CloseExcelFile(excelFileDest);
+
+        // then open the destination file and check the value of cell B1
+        excelFile = proc.OpenExcelFile(filenameDest);
+        excelSheet = proc.GetSheetAt(excelFile, 0);
+
+
+        cell = proc.GetCellAt(excelSheet, "B2");
+        Assert.IsNotNull(cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.String, excelCellValue.CellType);
+        Assert.AreEqual("hello", excelCellValue.StringValue);
+
+        cell = proc.GetCellAt(excelSheet, "B3");
+        Assert.IsNotNull(cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.Integer, excelCellValue.CellType);
+        Assert.AreEqual(12, excelCellValue.IntegerValue);
+
+        // 27 €
+        cell = proc.GetCellAt(excelSheet, "B4");
+        Assert.IsNotNull(cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
+        Assert.AreEqual(27, excelCellValue.DoubleValue);
+        Assert.IsNotNull(excelCellValue.Currency);
+        Assert.AreEqual(CurrencyName.Euro, excelCellValue.Currency.Name);
+        Assert.AreEqual(CurrencyCode.EUR, excelCellValue.Currency.Code);
+
+        // 56 €
+        cell = proc.GetCellAt(excelSheet, "B5");
+        Assert.IsNotNull(cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
+        Assert.AreEqual(56, excelCellValue.DoubleValue);
+        Assert.IsNotNull(excelCellValue.Currency);
+        Assert.AreEqual(CurrencyName.Euro, excelCellValue.Currency.Name);
+        Assert.AreEqual(CurrencyCode.EUR, excelCellValue.Currency.Code);
+
+        // $ 123,45  - US dollar
+        cell = proc.GetCellAt(excelSheet, "B6");
+        Assert.IsNotNull(cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
+        Assert.AreEqual(123.45, excelCellValue.DoubleValue);
+        Assert.IsNotNull(excelCellValue.Currency);
+        Assert.AreEqual(CurrencyName.UsDollar, excelCellValue.Currency.Name);
+        Assert.AreEqual(CurrencyCode.USD, excelCellValue.Currency.Code);
+
+        //  $325,48 - US dollar
+        cell = proc.GetCellAt(excelSheet, "B7");
+        Assert.IsNotNull(cell);
+        excelCellValue = proc.GetCellValue(excelSheet, cell);
+        Assert.AreEqual(ExcelCellType.Double, excelCellValue.CellType);
+        Assert.AreEqual(325.48, excelCellValue.DoubleValue);
+        Assert.IsNotNull(excelCellValue.Currency);
+        Assert.AreEqual(CurrencyName.UsDollar, excelCellValue.Currency.Name);
+        Assert.AreEqual(CurrencyCode.USD, excelCellValue.Currency.Code);
+
+        proc.CloseExcelFile(excelFile);
+    }
+
+    [TestMethod]
+    public void CopyCellValueCurrencyEmpty()
+    {
+        bool res;
+        ExcelProcessor proc = new ExcelProcessor();
+
+        string filename = PathFiles + "CopyCellValueCurrency2.xlsx";
+        ExcelFile excelFile = proc.OpenExcelFile(filename);
+        ExcelSheet excelSheet = proc.GetSheetAt(excelFile, 0);
+
+        string filenameDest = PathFiles + "CopyCellValueCurrencyDest2.xlsx";
+        if (File.Exists(filenameDest)) File.Delete(filenameDest);
+
+        ExcelFile excelFileDest = proc.CreateExcelFile(filenameDest);
         ExcelSheet excelSheetDest = proc.GetSheetAt(excelFileDest, 0);
 
         ExcelCell cell;

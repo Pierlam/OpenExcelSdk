@@ -1,4 +1,13 @@
-﻿## 0.7.0 Release (2026-03-28)
+﻿## 0.8.0 Release (2026-XX-XX)
+
+-todo:
+
+-Bugs fixing
+
+-43 unit tests, all are green.
+
+
+## 0.7.0 Release (2026-03-28)
 
 -Improve scanning of rows and cells.
 
