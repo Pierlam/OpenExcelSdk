@@ -161,6 +161,11 @@ public class ExcelProcessor : ExcelProcessorBase
             WorksheetPart worksheetPart = workbookPart.AddNewPart<WorksheetPart>();
             worksheetPart.Worksheet = new Worksheet(new SheetData());
 
+            // Add WorkbookStylesPart and create a basic stylesheet
+            WorkbookStylesPart stylesPart = workbookPart.AddNewPart<WorkbookStylesPart>();
+            stylesPart.Stylesheet = StyleMgr.CreateStylesheet();
+            stylesPart.Stylesheet.Save();
+
             // Add Sheets to the Workbook.
             Sheets sheets = workbookPart.Workbook.AppendChild(new Sheets());
 
@@ -506,8 +511,8 @@ public class ExcelProcessor : ExcelProcessorBase
     }
 
     /// <summary>
-    /// Get a cell in the sheet by the address name. exp: A1
-    ///
+    /// Get a cell in the sheet by the address name. e.g.: A1
+    /// !not by index!
     /// If the cell does not exists, return a  null ExcelCell without error.
     /// If the access to the cell fails, then return an error.
     /// https://learn.microsoft.com/en-us/office/open-xml/spreadsheet/how-to-retrieve-the-values-of-cells-in-a-spreadsheet?tabs=cs-0%2Ccs-2%2Ccs-3%2Ccs-4%2Ccs-5%2Ccs-6%2Ccs-7%2Ccs-8%2Ccs-9%2Ccs-10%2Ccs-11%2Ccs

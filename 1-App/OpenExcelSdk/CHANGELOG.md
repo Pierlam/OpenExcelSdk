@@ -1,4 +1,13 @@
-﻿## 0.7.0 Release (2026-03-28)
+﻿## 0.7.1 Release (2026-03-28)
+
+-Bugs fixed:  managed excelFile.WorkbookPart.WorkbookStylesPart is null.
+
+-45 unit tests, all are green.
+
+
+## 0.7.0 Release (2026-03-28)
+
+-Improve scanning of rows and cells.
 
 -Add GetLastRowAddress(): Get the last row address.
 
@@ -8,7 +17,7 @@
 
 -Add GetLastColAddress(): Get the last cell col address in the row
 
--Remove some GetRowAt to GetRowAtIndex
+-Rename GetRowAt to GetRowAtIndex
 
 -Bugs fixing
 
