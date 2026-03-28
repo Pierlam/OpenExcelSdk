@@ -13,11 +13,11 @@ OpenExcelSdk is focus only on Excel documents.
 This Microsoft library is not easy to use, so OpenExcelSdk propose a simple way to use Excel rows and cells values.
 Main use cases are to get/read or set a type, define a format and set a value into a new cell or an existing one.  
 
-OpenExcelSdk offers light and basic framework, main classes are : ExcelFile, ExcelSheet, ExcelRow, ExcelCell.
-
 OpenExcelSdk is useful to scan cells in datarows, get or set value, manage format (date, time, currencies) and also color of cells.
 
 OpenExcelSdk is a wrapper over OpenXML SDK library.
+
+OpenExcelSdk offers light and basic framework, main classes are : ExcelFile, ExcelSheet, ExcelRow, ExcelCell.
 
 OpenXML SDK classes are always available in each of these classes: SpreadsheetDocument, Sheet, WorkbookPart, Sheet, Row, Cell, ...
 
@@ -251,7 +251,7 @@ There are There ways to scan cells of a datatable, row by row.
 
 ### 1. Scan only existing rows and cells
 
-This is the default way to scan cells of a datatable, row by row. Only existing rows and cells will be scanned.
+Based on OpenXML SDK, this is the default way to scan cells of a datatable, row by row. Only existing rows and cells are scanned.
 
 ```
 // get the index of the last row containing cells
@@ -275,7 +275,7 @@ for (int r = 1; r <= lastRowIdx; r++)
 
 ### 2. Scan only all rows but only existing cells
 
-You can scan all rows of a datatable, even empty rows, but only existing cells will be scanned. 
+You can scan all rows of a datatable, even empty rows, but only existing cells are scanned. 
 
 ```
 int lastRowAddr = proc.GetLastRowAddress(excelSheet);
@@ -320,46 +320,6 @@ for (int r = 1; r <= lastRowAddr; r++)
         }
     }
 }
-```
-
-
-#################
-## Get row/last row index
-
-The code below get a the last row index, and also get a row at an index.
-Be careful first row index is 0. First cell column index is 1, first cell row index is 1.
-
-```
-bool res;
-ExcelProcessor proc = new ExcelProcessor();
-
-// open an existing excel file
-string filename = @".\Files\data.xlsx";
-ExcelFile excelFile= proc.OpenExcelFile(filename);
-
-// get the first sheet
-ExcelSheet excelSheet= proc.GetSheetAt(excelFile, 0);
-
-// get the index of the last row containing cells
-int lastRowIdx = proc.GetLastRowIndex(excelSheet);
-Console.WriteLine("last row idx: " + lastRowIdx);
-
-// get the row at index 0, the first one
-ExcelRow row = proc.GetRowAt(excelSheet, 0);
-if (row==null)
-	Console.WriteLine("ERROR, unable to read the row");
-```
-
-it's also possible to get all cells of a row:
-
-```
- // get all cells of the row at index 2
- List<ExcelCell> cells = proc.GetRowCells(excelSheet, 2);
- foreach(ExcelCell cell in cells)
- {
-	excelCellValue cellValue = proc.GetCellValue(excelSheet, cell);
-	Console.WriteLine("Cell " + proc.GetCellAddress(cell) + " value: " + cellValue.ToString());
- }
 ```
 
 
