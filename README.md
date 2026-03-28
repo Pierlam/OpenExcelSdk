@@ -5,7 +5,7 @@ OpenExcelSdk is an open-source backend .NET library to use Excel (xlsx) very eas
 It's written in C#/NET8 with VS2026. The code is covered by 43 unit tests to ensure the non-regression of incoming evolutions.
 
 The only dependency is OpenXML SDK, the official Microsoft library to work with Excel files.
-The last available version 3.4.1 is used.
+The last available version 3.5.1 is used.
 
 OpenXML SDK is a big library to manage Excel, Word and Power-Point documents.
 OpenExcelSdk is focus only on Excel documents.
