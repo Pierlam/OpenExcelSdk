@@ -17,10 +17,9 @@ OpenExcelSdk is useful to scan cells in datarows, get or set value, manage forma
 
 OpenExcelSdk is a wrapper over OpenXML SDK library.
 
-OpenExcelSdk offers light and basic framework, main classes are : ExcelFile, ExcelSheet, ExcelRow, ExcelCell.
+OpenExcelSdk offers light and basic framework, main classes are : ExcelProcessor, ExcelFile, ExcelSheet, ExcelRow, ExcelCell and ExcelCellValue.
 
 OpenXML SDK classes are always available in each of these classes: SpreadsheetDocument, Sheet, WorkbookPart, Sheet, Row, Cell, ...
-
 
 
 # A quick example

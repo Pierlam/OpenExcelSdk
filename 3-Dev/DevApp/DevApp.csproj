@@ -12,6 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Files\1mb.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Files\CellFormat.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
