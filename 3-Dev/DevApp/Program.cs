@@ -44,7 +44,8 @@ void ScanDataTableWayOne()
     Console.WriteLine("ScanDataTableWayOne: Scan only existing rows and cells");
 
     // open an excel file
-    string filename = @"Files\scanDatatable.xlsx";
+    //string filename = @"Files\scanDatatable.xlsx";
+    string filename = @"Files\1mb.xlsx";
     ExcelFile excelFile = proc.OpenExcelFile(filename);
 
     // get the first sheet of the excel file
@@ -331,11 +332,15 @@ Console.WriteLine("=> OpenExcelSdk DevApp:");
 
 //CreateWrongExcel();
 
-//DataTableHasEmptyRow();
+
+var watch = System.Diagnostics.Stopwatch.StartNew();
 
 ScanDataTableWayOne();
 //ScanDataTableWayTwo();
 //ScanDataTableWayThree();
+
+watch.Stop();
+Console.WriteLine($"ScanDataTableWayOne elapsed time: {watch.Elapsed}");
 
 //ExcelAllStylesExport excelStyles =ExportAllStyles();
 
