@@ -14,11 +14,6 @@ if (args.Length==0 || args[0].ToLower() == "-help" || args[0].ToLower() == "/?")
     return;
 }
 
-//if (args[0].ToLower() == "-help" || args[0].ToLower() == "/?")
-//{
-//    HelpPrinter.PrintHelp(vers);
-//    return;
-//}
 
 if (args[0].ToLower() == "-debug")
 {
@@ -43,6 +38,7 @@ if (Path.GetExtension(progParams.OutputExcelFile).Length==0)
     progParams.OutputExcelFile += ".xlsx";
 }
 
+Console.WriteLine("version " + vers + ", by Pierlam, March 2026");
 Console.WriteLine("Ok, Will analyse the Excel file : " + progParams.InputExcelFile);
 
 // remove previous result file
