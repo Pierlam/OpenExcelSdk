@@ -13,12 +13,12 @@ public class HelpPrinter
         Console.WriteLine();
         Console.WriteLine("=> OpenExcelExport - Excel styles exporter");
         Console.WriteLine();
-        Console.WriteLine("Version: " + vers + " by Pierlam, March 2026");
+        Console.WriteLine("Version: " + vers + ", by Pierlam, March 2026");
         Console.WriteLine();
         Console.WriteLine("Website: https://pierlam.github.io/OpenExcelExport/");
         Console.WriteLine();
         Console.WriteLine("Goal:");
-        Console.WriteLine("  Axport all styles from an input excel file: Shared strings, CellFormat, NumberFormat, Fill, Font,...");
+        Console.WriteLine("  Export all styles from an input excel file: Shared strings, CellFormat, NumberFormat, Fill, Font,...");
         Console.WriteLine("  Result is saved into an output excel file.");
         Console.WriteLine();
         Console.WriteLine("Usage:");

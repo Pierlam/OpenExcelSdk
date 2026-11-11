@@ -1,4 +1,11 @@
-﻿## 0.7.1 Release (2026-03-28)
+﻿## 0.8.0 Release (2026-XX-XX)
+
+-todo: 
+
+-45 unit tests, all are green.
+
+
+## 0.7.1 Release (2026-03-28)
 
 -Bugs fixed:  managed excelFile.WorkbookPart.WorkbookStylesPart is null.
 
